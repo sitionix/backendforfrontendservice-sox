@@ -12,7 +12,7 @@
 
     <artifactId>client-athssox</artifactId>
     <properties>
-        <athssox.api.version>0.0.6</athssox.api.version>
+        <athssox.api.version>0.0.7</athssox.api.version>
     </properties>
     <dependencies>
         <!-- MODULE -->
@@ -64,7 +64,7 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/vlad-vinskevitch/app-afesox</url>
+            <url>https://maven.pkg.github.com/sitionix/app-afesox</url>
         </repository>
     </repositories>
     <build>
