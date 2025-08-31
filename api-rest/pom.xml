@@ -95,7 +95,7 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/vlad-vinskevitch/app-afesox</url>
+            <url>https://maven.pkg.github.com/sitionix/app-afesox</url>
         </repository>
     </repositories>
 </project>
