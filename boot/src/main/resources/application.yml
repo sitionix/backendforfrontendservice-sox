@@ -5,4 +5,4 @@ server:
 api:
   rest:
     athssox:
-      base-path: http://localhost:8081
+      base-path: http://localhost:8081/authsox
