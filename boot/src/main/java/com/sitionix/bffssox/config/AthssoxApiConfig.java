@@ -1,13 +1,12 @@
 package com.sitionix.bffssox.config;
 
 import com.app_afesox.athssox.client.api.AuthApi;
-import com.app_afesox.athssox.client.api.UserApi;
 import com.app_afesox.athssox.client.invoker.ApiClient;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import lombok.Data;
 
 @Data
 @Configuration
