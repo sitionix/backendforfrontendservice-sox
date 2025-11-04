@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "api.rest.athssox")
+@ConfigurationProperties(prefix = "api.rest.client.athssox")
 public class AthssoxApiConfig {
 
     private String basePath;
