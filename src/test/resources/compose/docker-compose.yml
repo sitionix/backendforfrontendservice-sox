@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  wiremock:
+    image: wiremock/wiremock:3.6.0
+    command: ["--port", "18080", "--global-response-templating", "--verbose"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:18080/__admin"]
+      interval: 5s
+      timeout: 2s
+      retries: 12

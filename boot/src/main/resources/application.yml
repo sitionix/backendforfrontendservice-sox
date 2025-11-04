@@ -4,5 +4,6 @@ server:
     context-path: /bffssox
 api:
   rest:
-    athssox:
-      base-path: http://localhost:8081/authsox
+    client:
+      athssox:
+        base-path: http://localhost:8081/authsox

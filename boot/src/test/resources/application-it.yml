@@ -1,0 +1,10 @@
+mock:
+  http:
+    host: localhost
+    port: 18080
+    base-url: http://${mock.http.host}:${mock.http.port}
+api:
+  rest:
+    client:
+      athssox:
+        base-path: ${mock.http.base-url}/authsox
