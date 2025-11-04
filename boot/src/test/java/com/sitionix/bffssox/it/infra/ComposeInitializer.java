@@ -24,7 +24,7 @@ public class ComposeInitializer implements ApplicationContextInitializer<Configu
                     );
 
     @Override
-    public void initialize(ConfigurableApplicationContext ctx) {
+    public void initialize(final ConfigurableApplicationContext ctx) {
         boolean local = Boolean.parseBoolean(System.getenv("LOCAL_CONTAINERS"));
         if (!local) {
             compose.start();
