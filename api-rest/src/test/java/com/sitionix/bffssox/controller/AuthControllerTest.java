@@ -15,8 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
@@ -53,5 +52,9 @@ class AuthControllerTest {
 
         //then
         assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK).body(loginResponseDTO));
+
+        verify(this.mapper).asLoginRequest(loginRequestDTO);
+        verify(this.loginUser).execute(loginRequest);
+        verify(this.mapper).asLoginResponseDTO(loginResponse);
     }
 }

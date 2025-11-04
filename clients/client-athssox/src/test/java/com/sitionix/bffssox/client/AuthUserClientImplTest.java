@@ -58,5 +58,9 @@ class AuthUserClientImplTest {
 
         //then
         assertThat(actual).isEqualTo(response);
+
+        verify(this.authApi).login(requestDTO);
+        verify(this.clientMapper).asLoginRequestDto(request);
+        verify(this.clientMapper).asLoginResponse(responseDTO);
     }
 }
