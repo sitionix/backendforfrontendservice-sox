@@ -1,5 +1,6 @@
 package com.sitionix.bffssox.config;
 
+import com.app_afesox.athssox.client.api.AuthApi;
 import com.app_afesox.athssox.client.api.UserApi;
 import com.app_afesox.athssox.client.invoker.ApiClient;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +27,8 @@ public class AthssoxApiConfig {
     }
 
     @Bean
-    public UserApi userApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
-        return new UserApi(apiClient);
+    public AuthApi userApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
+        return new AuthApi(apiClient);
     }
 
 }
