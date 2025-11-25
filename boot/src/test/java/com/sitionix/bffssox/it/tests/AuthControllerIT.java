@@ -25,6 +25,9 @@ class AuthControllerIT {
     @Autowired
     private TestResourceManager resourceManager;
 
+    @Autowired
+    private UserInterface tools;
+
     @Test
     void givenUserLoginRequest_whenLogin_thenReturnLoginResponse() throws Exception{
 

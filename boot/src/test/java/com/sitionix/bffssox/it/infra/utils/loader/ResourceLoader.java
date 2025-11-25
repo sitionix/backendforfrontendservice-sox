@@ -33,7 +33,7 @@ public abstract class ResourceLoader {
         }
     }
 
-    public   <T> T getFromFile(final String fileName, final TypeReference<T> typeReference) {
+    public <T> T getFromFile(final String fileName, final TypeReference<T> typeReference) {
         final String file = this.loadResource(fileName);
         return this.getResourceAsObject(file, typeReference);
     }
