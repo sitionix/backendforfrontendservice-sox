@@ -46,7 +46,7 @@
         <jacoco.version>0.8.10</jacoco.version>
         <validation.version>2.0.1.Final</validation.version>
         <spring.version>3.3.4</spring.version>
-        <forgeit.version>0.3.0-SNAPSHOT</forgeit.version>
+        <forgeit.version>0.5.0-SNAPSHOT</forgeit.version>
     </properties>
 
     <dependencyManagement>
@@ -133,7 +133,7 @@
                                 <annotationProcessorPaths>
                                     <path>
                                         <groupId>com.sitionix.forgeit</groupId>
-                                        <artifactId>forge-it-annotation-processor</artifactId>
+                                        <artifactId>forgeit</artifactId>
                                         <version>${forgeit.version}</version>
                                     </path>
                                     <path>
@@ -169,5 +169,27 @@
             </plugins>
         </pluginManagement>
     </build>
+    <repositories>
+<!--        <repository>-->
+<!--            <id>github-forge-it</id>-->
+<!--            <url>https://maven.pkg.github.com/sitionix/forge-it</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+        <repository>
+            <id>github-app-afesox</id>
+            <url>https://maven.pkg.github.com/sitionix/app-afesox</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
