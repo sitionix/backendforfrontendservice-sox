@@ -76,13 +76,13 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>client-athssox</artifactId>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-dependencies</artifactId>-->
-<!--                <version>3.3.4</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework.boot</groupId>-->
+            <!--                <artifactId>spring-boot-dependencies</artifactId>-->
+            <!--                <version>3.3.4</version>-->
+            <!--                <type>pom</type>-->
+            <!--                <scope>import</scope>-->
+            <!--            </dependency>-->
             <!-- DEPENDENCY -->
         </dependencies>
     </dependencyManagement>
@@ -170,16 +170,16 @@
         </pluginManagement>
     </build>
     <repositories>
-<!--        <repository>-->
-<!--            <id>github-forge-it</id>-->
-<!--            <url>https://maven.pkg.github.com/sitionix/forge-it</url>-->
-<!--            <releases>-->
-<!--                <enabled>true</enabled>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
+        <repository>
+            <id>github-forge-it</id>
+            <url>https://maven.pkg.github.com/sitionix/forge-it</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>github-app-afesox</id>
             <url>https://maven.pkg.github.com/sitionix/app-afesox</url>

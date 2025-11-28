@@ -25,8 +25,11 @@ class AuthControllerIT {
     @Autowired
     private TestResourceManager resourceManager;
 
+    @Autowired
+    CheckForge checkForge;
+
     @Test
-    void givenUserLoginRequest_whenLogin_thenReturnLoginResponse() throws Exception{
+    void givenUserLoginRequest_whenLogin_thenReturnLoginResponse() throws Exception {
 
         //given
         final String request = this.resourceManager.request().getFromFile("requestLoginUserWithHappyPath.json");
