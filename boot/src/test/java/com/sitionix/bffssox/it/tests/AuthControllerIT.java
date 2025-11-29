@@ -1,9 +1,11 @@
 package com.sitionix.bffssox.it.tests;
 
 
+import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -20,6 +22,14 @@ class AuthControllerIT {
     void givenUserLoginRequest_whenLogin_thenReturnLoginResponse() throws Exception {
 
         //given
+
+        this.checkForge.wiremock()
+                .createMapping(WireMockEndpoint.POST_LOGIN_USER)
+                .matchesJson("requestMappingLoginUserWithHappyPath.json")
+                .responseStatus(HttpStatus.OK)
+                .create();
+
+        System.out.println("Wiremock mapping created");
 //        final String request = this.resourceManager.request().getFromFile("requestLoginUserWithHappyPath.json");
 //
 //        final RequestBuilder requestBuilder = this.resourceManager.wireMockJournal()
