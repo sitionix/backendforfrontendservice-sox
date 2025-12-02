@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 
 public class MockMvcEndpoint {
 
-    public static Endpoint<LoginRequestDTO, LoginResponseDTO> POST_LOGIN_USER =
+    public static final Endpoint<LoginRequestDTO, LoginResponseDTO> POST_LOGIN_USER =
             Endpoint.createContract("/api/v1/auth/login",
                     HttpMethod.POST,
                     LoginRequestDTO.class,
