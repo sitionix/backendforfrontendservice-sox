@@ -39,6 +39,8 @@ jobs:
             ${{ runner.os }}-m2-
 
       - name: Setup Maven settings
+        env:
+          BFF_TOKEN: ${{ secrets.BFF_TOKEN }}
         run: |
           mkdir -p ~/.m2
           echo "          <settings>
@@ -46,12 +48,12 @@ jobs:
               <server>
                 <id>github-forge-it</id>
                 <username>${{ github.actor }}</username>
-                <password>${{ secrets.BFF_TOKEN }}</password>
+                <password>${ BFF_TOKEN }</password>
               </server>
               <server>
                 <id>github-app-afesox</id>
                 <username>${{ github.actor }}</username>
-                <password>${{ secrets.BFF_TOKEN }}</password>
+                <password>${ BFF_TOKEN }</password>
               </server>
             </servers>
           </settings>" > ~/.m2/settings.xml
