@@ -48,12 +48,12 @@ jobs:
               <server>
                 <id>github-forge-it</id>
                 <username>${{ github.actor }}</username>
-                <password>${ BFF_TOKEN }</password>
+                <password>${BFF_TOKEN}</password>
               </server>
               <server>
                 <id>github-app-afesox</id>
                 <username>${{ github.actor }}</username>
-                <password>${ BFF_TOKEN }</password>
+                <password>${BFF_TOKEN}</password>
               </server>
             </servers>
           </settings>" > ~/.m2/settings.xml
