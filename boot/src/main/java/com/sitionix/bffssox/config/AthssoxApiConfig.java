@@ -41,12 +41,12 @@ public class AthssoxApiConfig {
     }
 
     @Bean
-    public AuthApi userApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
+    public AuthApi authApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
         return new AuthApi(apiClient);
     }
 
     @Bean
-    public UserApi athssoxUserApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
+    public UserApi userApi(@Qualifier("athssoxClient") final ApiClient apiClient) {
         return new UserApi(apiClient);
     }
 
