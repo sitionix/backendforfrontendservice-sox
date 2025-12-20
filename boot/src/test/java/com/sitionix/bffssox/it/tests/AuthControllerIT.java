@@ -5,9 +5,9 @@ import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
 import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @IntegrationTest
 class AuthControllerIT {
@@ -15,6 +15,7 @@ class AuthControllerIT {
     private TestManager testManager;
 
     @Test
+    @DisplayName("Should return login response when user login request is provided")
     void givenUserLoginRequest_whenLogin_thenReturnLoginResponse() {
 
         //given
@@ -31,8 +32,8 @@ class AuthControllerIT {
     }
 
     @Test
+    @DisplayName("Should return unauthorized with body when invalid credentials are provided")
     void givenInvalidCredentials_whenLogin_thenReturnUnauthorizedWithBody() {
-
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_LOGIN_USER_UNAUTHORIZED)
