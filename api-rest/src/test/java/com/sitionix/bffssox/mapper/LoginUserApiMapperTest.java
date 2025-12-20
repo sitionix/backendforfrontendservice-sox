@@ -51,12 +51,13 @@ class LoginUserApiMapperTest {
     }
 
     private LoginRequestDTO loginRequestDTO(final UUID uuid) {
-        return new LoginRequestDTO()
+        return LoginRequestDTO.builder()
                 .email("email")
                 .password("password")
                 .siteId(uuid)
                 .userAgent("userAgent")
-                .sessionSourceId("sessionSourceId");
+                .sessionSourceId("sessionSourceId")
+                .build();
     }
 
     private LoginRequest loginRequest(final UUID uuid) {
@@ -70,11 +71,12 @@ class LoginUserApiMapperTest {
     }
 
     private LoginResponseDTO loginResponseDTO() {
-        return new LoginResponseDTO()
+        return LoginResponseDTO.builder()
                 .refreshToken("refreshToken")
                 .expiresIn(3600L)
                 .tokenType("tokenType")
-                .accessToken("accessToken");
+                .accessToken("accessToken")
+                .build();
     }
 
     private LoginResponse loginResponse() {

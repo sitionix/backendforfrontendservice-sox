@@ -1,0 +1,5 @@
+{
+  "message": "User registered successfully",
+  "userId": 12345,
+  "status": "ACTIVE"
+}
