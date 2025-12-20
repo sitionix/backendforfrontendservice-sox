@@ -30,4 +30,20 @@ class AuthControllerIT {
         requestBuilder.verify();
     }
 
+    @Test
+    void givenInvalidCredentials_whenLogin_thenReturnUnauthorizedWithBody() {
+
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_LOGIN_USER_UNAUTHORIZED)
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_LOGIN_USER_UNAUTHORIZED)
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
 }

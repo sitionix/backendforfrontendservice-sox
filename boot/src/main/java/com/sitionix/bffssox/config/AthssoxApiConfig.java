@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 @Data
 @Configuration
@@ -16,13 +22,21 @@ public class AthssoxApiConfig {
     private String basePath;
 
     @Bean("athssoxClient")
-    public ApiClient athssoxClient() {
-
-        final ApiClient apiClient = new ApiClient();
+    public ApiClient athssoxClient(@Qualifier("athssoxRestTemplate") final RestTemplate restTemplate) {
+        final ApiClient apiClient = new ApiClient(restTemplate);
 
         apiClient.setBasePath(this.basePath);
+        apiClient.addDefaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        apiClient.addDefaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         return apiClient;
+    }
+
+    @Bean("athssoxRestTemplate")
+    public RestTemplate athssoxRestTemplate() {
+        final HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        return new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
     }
 
     @Bean
