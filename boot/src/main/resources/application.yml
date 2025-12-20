@@ -6,4 +6,4 @@ api:
   rest:
     client:
       athssox:
-        base-path: http://localhost:8081/authsox
+        base-path: http://localhost:9090/authsox
