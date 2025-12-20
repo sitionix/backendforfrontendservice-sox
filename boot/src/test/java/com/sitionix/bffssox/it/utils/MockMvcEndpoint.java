@@ -14,16 +14,16 @@ public class MockMvcEndpoint {
                     HttpMethod.POST,
                     LoginRequestDTO.class,
                     LoginResponseDTO.class,
-                    (MockmvcDefault) context -> context.status(HttpStatus.OK.value())
-                            .request("requestDefaultLoginUserWithHappyPath.json")
-                            .response("responseDefaultLoginUserWithHappyPath.json"));
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultLoginUserWithHappyPath.json")
+                            .expectResponse("responseDefaultLoginUserWithHappyPath.json"));
 
     public static final Endpoint<LoginRequestDTO, LoginResponseDTO> POST_LOGIN_USER_UNAUTHORIZED =
             Endpoint.createContract("/api/v1/auth/login",
                     HttpMethod.POST,
                     LoginRequestDTO.class,
                     LoginResponseDTO.class,
-                    (MockmvcDefault) context -> context.status(HttpStatus.UNAUTHORIZED.value())
-                            .request("requestDefaultLoginUserWithHappyPath.json")
-                            .response("responseDefaultLoginUserUnauthorized.json"));
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                            .withRequest("requestDefaultLoginUserWithHappyPath.json")
+                            .expectResponse("responseDefaultLoginUserUnauthorized.json"));
 }
