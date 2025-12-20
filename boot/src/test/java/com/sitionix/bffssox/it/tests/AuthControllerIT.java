@@ -8,6 +8,7 @@ import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
 @IntegrationTest
 class AuthControllerIT {
@@ -36,12 +37,16 @@ class AuthControllerIT {
     void givenInvalidCredentials_whenLogin_thenReturnUnauthorizedWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
-                .createMapping(WireMockEndpoint.POST_LOGIN_USER_UNAUTHORIZED)
+                .createMapping(WireMockEndpoint.POST_LOGIN_USER)
+                .applyDefault(context -> context.responseStatus(HttpStatus.UNAUTHORIZED.value())
+                        .responseBody("responseDefaultMappingLoginUserUnauthorized.json"))
                 .createDefault();
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.POST_LOGIN_USER_UNAUTHORIZED)
+                .ping(MockMvcEndpoint.POST_LOGIN_USER)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultLoginUserUnauthorized.json"))
                 .assertDefault();
 
         requestBuilder.verify();

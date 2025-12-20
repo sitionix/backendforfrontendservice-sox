@@ -22,18 +22,6 @@ public class WireMockEndpoint {
                                 .responseStatus(200);
                     });
 
-    public static final Endpoint<LoginRequestDTO, LoginResponseDTO> POST_LOGIN_USER_UNAUTHORIZED =
-            Endpoint.createContract("/authsox/api/v1/auth/login",
-                    HttpMethod.POST,
-                    LoginRequestDTO.class,
-                    LoginResponseDTO.class,
-                    (WiremockDefault) context -> {
-                        context.matchesJson("requestDefaultMappingLoginUserWithHappyPath.json")
-                                .responseBody("responseDefaultMappingLoginUserUnauthorized.json")
-                                .plainUrl()
-                                .responseStatus(401);
-                    });
-
     public static final Endpoint<RegisterUserDTO, ResponseRegisterUserDTO> POST_REGISTER_USER =
             Endpoint.createContract("/authsox/api/v1/users",
                     HttpMethod.POST,
