@@ -22,7 +22,8 @@ public class ClientResponseExceptionHandler {
             headers.put(entry.getKey(), new ArrayList<>(entry.getValue()));
         }
 
-        return ResponseEntity.status(ex.getStatusCode())
+        final int statusCode = ex.getStatusCode() >= 500 ? 502 : ex.getStatusCode();
+        return ResponseEntity.status(statusCode)
                 .headers(headers)
                 .body(ex.getResponseBody());
     }
