@@ -1,12 +1,18 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.api.AuthApi;
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.sitionix.bffssox.domain.EmailVerificationRequest;
+import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
 import com.sitionix.bffssox.usecase.LoginUser;
+import com.sitionix.bffssox.usecase.VerifyEmail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +27,10 @@ public class AuthController implements AuthApi {
 
     private final LoginUser loginUser;
 
+    private final EmailVerificationApiMapper emailVerificationApiMapper;
+
+    private final VerifyEmail verifyEmail;
+
     @Override
     public ResponseEntity<LoginResponseDTO> login(@Valid final LoginRequestDTO loginRequestDTO) {
         final LoginRequest loginRequest = this.loginUserApiMapper.asLoginRequest(loginRequestDTO);
@@ -29,5 +39,16 @@ public class AuthController implements AuthApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.loginUserApiMapper.asLoginResponseDTO(response));
+    }
+
+    @Override
+    public ResponseEntity<EmailVerificationResponseDTO> verifyEmail(@Valid final EmailVerificationDTO emailVerificationDTO) {
+        final EmailVerificationRequest request = this.emailVerificationApiMapper
+                .asEmailVerificationRequest(emailVerificationDTO);
+
+        final EmailVerificationResponse response = this.verifyEmail.execute(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.emailVerificationApiMapper.asEmailVerificationResponseDTO(response));
     }
 }

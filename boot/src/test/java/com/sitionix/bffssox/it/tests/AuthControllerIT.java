@@ -52,4 +52,41 @@ class AuthControllerIT {
         requestBuilder.verify();
     }
 
+    @Test
+    @DisplayName("Should return email verification response when verify email request is provided")
+    void givenVerifyEmailRequest_whenVerifyEmail_thenReturnEmailVerificationResponse() {
+
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_VERIFY_EMAIL)
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_VERIFY_EMAIL)
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("Should return unauthorized with body when invalid verify email token is provided")
+    void givenInvalidVerifyEmailToken_whenVerifyEmail_thenReturnUnauthorizedWithBody() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_VERIFY_EMAIL)
+                .applyDefault(context -> context.responseStatus(HttpStatus.UNAUTHORIZED.value())
+                        .responseBody("responseDefaultMappingVerifyEmailUnauthorized.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_VERIFY_EMAIL)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultVerifyEmailUnauthorized.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
 }

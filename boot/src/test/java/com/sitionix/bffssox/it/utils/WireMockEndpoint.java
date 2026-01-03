@@ -1,5 +1,7 @@
 package com.sitionix.bffssox.it.utils;
 
+import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
+import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.athssox.client.dto.RegisterUserDTO;
@@ -18,6 +20,18 @@ public class WireMockEndpoint {
                     (WiremockDefault) context -> {
                         context.matchesJson("requestDefaultMappingLoginUserWithHappyPath.json")
                                 .responseBody("responseDefaultMappingLoginUserWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<EmailVerificationDTO, EmailVerificationResponseDTO> POST_VERIFY_EMAIL =
+            Endpoint.createContract("/authsox/api/v1/auth/email/verify",
+                    HttpMethod.POST,
+                    EmailVerificationDTO.class,
+                    EmailVerificationResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingVerifyEmailWithHappyPath.json")
+                                .responseBody("responseDefaultMappingVerifyEmailWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(200);
                     });
