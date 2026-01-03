@@ -1,4 +1,5 @@
 {
-  "error": "upstream_error",
-  "message": "AuthSox service failed"
+  "code": 502,
+  "title": "upstream_error",
+  "details": "AuthSox service failed"
 }
