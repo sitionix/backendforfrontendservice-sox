@@ -1,11 +1,17 @@
 package com.sitionix.bffssox.controller;
 
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.sitionix.bffssox.domain.EmailVerificationRequest;
+import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
 import com.sitionix.bffssox.usecase.LoginUser;
+import com.sitionix.bffssox.usecase.VerifyEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +34,16 @@ class AuthControllerTest {
     @Mock
     private LoginUserApiMapper mapper;
 
+    @Mock
+    private VerifyEmail verifyEmail;
+
+    @Mock
+    private EmailVerificationApiMapper emailVerificationApiMapper;
+
     @BeforeEach
     void setUp() {
-        this.authController = new AuthController(this.mapper, this.loginUser);
+        this.authController = new AuthController(this.mapper, this.loginUser,
+                this.emailVerificationApiMapper, this.verifyEmail);
     }
 
     @Test
@@ -56,5 +69,33 @@ class AuthControllerTest {
         verify(this.mapper).asLoginRequest(loginRequestDTO);
         verify(this.loginUser).execute(loginRequest);
         verify(this.mapper).asLoginResponseDTO(loginResponse);
+    }
+
+    @Test
+    void givenEmailVerificationDto_whenVerifyEmail_thenReturnsResponseEntity() {
+        //given
+        final EmailVerificationDTO emailVerificationDTO = mock(EmailVerificationDTO.class);
+        final EmailVerificationResponseDTO responseDTO = mock(EmailVerificationResponseDTO.class);
+
+        final EmailVerificationRequest request = mock(EmailVerificationRequest.class);
+        final EmailVerificationResponse response = mock(EmailVerificationResponse.class);
+
+        when(this.verifyEmail.execute(request)).thenReturn(response);
+        when(this.emailVerificationApiMapper.asEmailVerificationResponseDTO(response))
+                .thenReturn(responseDTO);
+
+        when(this.emailVerificationApiMapper.asEmailVerificationRequest(emailVerificationDTO))
+                .thenReturn(request);
+
+        //when
+        final ResponseEntity<EmailVerificationResponseDTO> actual =
+                this.authController.verifyEmail(emailVerificationDTO);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK).body(responseDTO));
+
+        verify(this.emailVerificationApiMapper).asEmailVerificationRequest(emailVerificationDTO);
+        verify(this.verifyEmail).execute(request);
+        verify(this.emailVerificationApiMapper).asEmailVerificationResponseDTO(response);
     }
 }

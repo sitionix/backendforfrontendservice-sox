@@ -1,5 +1,7 @@
 package com.sitionix.bffssox.it.utils;
 
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
+import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
@@ -19,6 +21,15 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .withRequest("requestDefaultLoginUserWithHappyPath.json")
                             .expectResponse("responseDefaultLoginUserWithHappyPath.json"));
+
+    public static final Endpoint<EmailVerificationDTO, EmailVerificationResponseDTO> POST_VERIFY_EMAIL =
+            Endpoint.createContract("/api/v1/auth/email/verify",
+                    HttpMethod.POST,
+                    EmailVerificationDTO.class,
+                    EmailVerificationResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultVerifyEmailWithHappyPath.json")
+                            .expectResponse("responseDefaultVerifyEmailWithHappyPath.json"));
 
     public static final Endpoint<RegisterUserDTO, ResponseRegisterUserDTO> POST_REGISTER_USER =
             Endpoint.createContract("/api/v1/users",

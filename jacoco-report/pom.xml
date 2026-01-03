@@ -45,11 +45,6 @@
             <artifactId>domain</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
