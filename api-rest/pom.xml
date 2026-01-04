@@ -12,7 +12,7 @@
     <artifactId>api-rest</artifactId>
 
     <properties>
-        <bffssox.api.version>0.0.5</bffssox.api.version>
+        <bffssox.api.version>0.0.6</bffssox.api.version>
     </properties>
 
     <dependencies>
@@ -46,6 +46,11 @@
             <groupId>com.afesox</groupId>
             <artifactId>app-afesox-bffssox-api-first-stable</artifactId>
             <version>${bffssox.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

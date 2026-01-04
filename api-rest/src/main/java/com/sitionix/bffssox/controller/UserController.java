@@ -9,10 +9,12 @@ import com.sitionix.bffssox.mapper.RegisterUserApiMapper;
 import com.sitionix.bffssox.usecase.RegisterUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController implements UserApi {
@@ -23,6 +25,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<ResponseRegisterUserDTO> registerUser(@Valid final RegisterUserDTO registerUserDTO) {
+        log.info("Received request to register user with email: {}", registerUserDTO.getEmail());
         final RegisterUserRequest registerUserRequest =
                 this.registerUserApiMapper.asRegisterUserRequest(registerUserDTO);
 
