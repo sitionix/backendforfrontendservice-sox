@@ -89,4 +89,41 @@ class AuthControllerIT {
         requestBuilder.verify();
     }
 
+    @Test
+    @DisplayName("Should return refresh access token response when refresh request is provided")
+    void givenRefreshAccessTokenRequest_whenRefreshAccessToken_thenReturnRefreshAccessTokenResponse() {
+
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("Should return unauthorized with body when invalid refresh token is provided")
+    void givenInvalidRefreshAccessToken_whenRefreshAccessToken_thenReturnUnauthorizedWithBody() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .applyDefault(context -> context.responseStatus(HttpStatus.UNAUTHORIZED.value())
+                        .responseBody("responseDefaultMappingRefreshAccessTokenUnauthorized.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultRefreshAccessTokenUnauthorized.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
 }

@@ -5,12 +5,17 @@ import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
 import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
+import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import com.sitionix.bffssox.mapper.EmailVerificationClientMapper;
 import com.sitionix.bffssox.mapper.LoginUserClientMapper;
+import com.sitionix.bffssox.mapper.RefreshAccessTokenClientMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,8 @@ public class AuthUserClientImpl implements AuthUserClient {
     private final LoginUserClientMapper clientMapper;
 
     private final EmailVerificationClientMapper emailVerificationClientMapper;
+
+    private final RefreshAccessTokenClientMapper refreshAccessTokenClientMapper;
 
     private final ClientCallExecutor clientCallExecutor;
 
@@ -42,5 +49,15 @@ public class AuthUserClientImpl implements AuthUserClient {
                 () -> this.authApi.verifyEmail(requestDTO)
         );
         return this.emailVerificationClientMapper.asEmailVerificationResponse(responseDTO);
+    }
+
+    @Override
+    public RefreshAccessTokenResponse refreshAccessToken(final RefreshAccessTokenRequest request) {
+        final RefreshAccessTokenRequestDTO requestDTO =
+                this.refreshAccessTokenClientMapper.asRefreshAccessTokenRequestDto(request);
+        final RefreshAccessTokenResponseDTO responseDTO = this.clientCallExecutor.execute(
+                () -> this.authApi.refreshAccessToken(requestDTO)
+        );
+        return this.refreshAccessTokenClientMapper.asRefreshAccessTokenResponse(responseDTO);
     }
 }

@@ -5,19 +5,23 @@ import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
 import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
+import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import com.sitionix.bffssox.mapper.EmailVerificationClientMapper;
 import com.sitionix.bffssox.mapper.LoginUserClientMapper;
+import com.sitionix.bffssox.mapper.RefreshAccessTokenClientMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +42,9 @@ class AuthUserClientImplTest {
     private EmailVerificationClientMapper emailVerificationClientMapper;
 
     @Mock
+    private RefreshAccessTokenClientMapper refreshAccessTokenClientMapper;
+
+    @Mock
     private ClientCallExecutor clientCallExecutor;
 
     @BeforeEach
@@ -45,6 +52,7 @@ class AuthUserClientImplTest {
         this.authUserClient = new AuthUserClientImpl(this.authApi,
                 this.clientMapper,
                 this.emailVerificationClientMapper,
+                this.refreshAccessTokenClientMapper,
                 this.clientCallExecutor);
     }
 
@@ -52,6 +60,7 @@ class AuthUserClientImplTest {
     void tearDown() {
         verifyNoMoreInteractions(this.clientMapper,
                 this.emailVerificationClientMapper,
+                this.refreshAccessTokenClientMapper,
                 this.authApi,
                 this.clientCallExecutor);
     }
@@ -112,5 +121,34 @@ class AuthUserClientImplTest {
         verify(this.emailVerificationClientMapper).asEmailVerificationResponse(responseDTO);
         verify(this.clientCallExecutor).execute(any());
         verify(this.authApi).verifyEmail(requestDTO);
+    }
+
+    @Test
+    void givenRefreshAccessTokenRequest_whenRefreshAccessToken_thenReturnRefreshAccessTokenResponse() throws Exception {
+        //given
+        final RefreshAccessTokenRequest request = mock(RefreshAccessTokenRequest.class);
+        final RefreshAccessTokenResponse response = mock(RefreshAccessTokenResponse.class);
+
+        final RefreshAccessTokenRequestDTO requestDTO = mock(RefreshAccessTokenRequestDTO.class);
+        final RefreshAccessTokenResponseDTO responseDTO = mock(RefreshAccessTokenResponseDTO.class);
+
+        when(this.refreshAccessTokenClientMapper.asRefreshAccessTokenRequestDto(request)).thenReturn(requestDTO);
+        when(this.refreshAccessTokenClientMapper.asRefreshAccessTokenResponse(responseDTO)).thenReturn(response);
+        when(this.clientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<RefreshAccessTokenResponseDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.authApi.refreshAccessToken(requestDTO)).thenReturn(responseDTO);
+
+        //when
+        final RefreshAccessTokenResponse actual = this.authUserClient.refreshAccessToken(request);
+
+        //then
+        assertThat(actual).isEqualTo(response);
+
+        verify(this.refreshAccessTokenClientMapper).asRefreshAccessTokenRequestDto(request);
+        verify(this.refreshAccessTokenClientMapper).asRefreshAccessTokenResponse(responseDTO);
+        verify(this.clientCallExecutor).execute(any());
+        verify(this.authApi).refreshAccessToken(requestDTO);
     }
 }

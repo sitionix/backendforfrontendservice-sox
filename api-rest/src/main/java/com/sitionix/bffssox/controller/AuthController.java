@@ -5,13 +5,19 @@ import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
+import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
+import com.sitionix.bffssox.mapper.RefreshAccessTokenApiMapper;
 import com.sitionix.bffssox.usecase.LoginUser;
+import com.sitionix.bffssox.usecase.RefreshAccessToken;
 import com.sitionix.bffssox.usecase.VerifyEmail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +36,10 @@ public class AuthController implements AuthApi {
     private final EmailVerificationApiMapper emailVerificationApiMapper;
 
     private final VerifyEmail verifyEmail;
+
+    private final RefreshAccessTokenApiMapper refreshAccessTokenApiMapper;
+
+    private final RefreshAccessToken refreshAccessToken;
 
     @Override
     public ResponseEntity<LoginResponseDTO> login(@Valid final LoginRequestDTO loginRequestDTO) {
@@ -50,5 +60,17 @@ public class AuthController implements AuthApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.emailVerificationApiMapper.asEmailVerificationResponseDTO(response));
+    }
+
+    @Override
+    public ResponseEntity<RefreshAccessTokenResponseDTO> refreshAccessToken(
+            @Valid final RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO) {
+        final RefreshAccessTokenRequest request = this.refreshAccessTokenApiMapper
+                .asRefreshAccessTokenRequest(refreshAccessTokenRequestDTO);
+
+        final RefreshAccessTokenResponse response = this.refreshAccessToken.execute(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response));
     }
 }

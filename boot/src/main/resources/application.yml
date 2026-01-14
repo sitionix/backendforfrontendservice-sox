@@ -1,3 +1,7 @@
+sitionix:
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
 server:
   port: 8080
   servlet:

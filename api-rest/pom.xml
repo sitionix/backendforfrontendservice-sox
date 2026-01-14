@@ -12,7 +12,7 @@
     <artifactId>api-rest</artifactId>
 
     <properties>
-        <bffssox.api.version>0.0.6</bffssox.api.version>
+        <bffssox.api.version>0.0.7</bffssox.api.version>
     </properties>
 
     <dependencies>
