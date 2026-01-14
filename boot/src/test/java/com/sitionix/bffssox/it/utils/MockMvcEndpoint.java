@@ -4,6 +4,8 @@ import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.ResponseRegisterUserDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
@@ -30,6 +32,15 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .withRequest("requestDefaultVerifyEmailWithHappyPath.json")
                             .expectResponse("responseDefaultVerifyEmailWithHappyPath.json"));
+
+    public static final Endpoint<RefreshAccessTokenRequestDTO, RefreshAccessTokenResponseDTO> POST_REFRESH_ACCESS_TOKEN =
+            Endpoint.createContract("/api/v1/auth/refresh",
+                    HttpMethod.POST,
+                    RefreshAccessTokenRequestDTO.class,
+                    RefreshAccessTokenResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultRefreshAccessTokenWithHappyPath.json")
+                            .expectResponse("responseDefaultRefreshAccessTokenWithHappyPath.json"));
 
     public static final Endpoint<RegisterUserDTO, ResponseRegisterUserDTO> POST_REGISTER_USER =
             Endpoint.createContract("/api/v1/users",

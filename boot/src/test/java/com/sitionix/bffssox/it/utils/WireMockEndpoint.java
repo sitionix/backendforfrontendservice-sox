@@ -4,6 +4,8 @@ import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
 import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
+import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.RegisterUserDTO;
 import com.app_afesox.athssox.client.dto.ResponseRegisterUserDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
@@ -32,6 +34,18 @@ public class WireMockEndpoint {
                     (WiremockDefault) context -> {
                         context.matchesJson("requestDefaultMappingVerifyEmailWithHappyPath.json")
                                 .responseBody("responseDefaultMappingVerifyEmailWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<RefreshAccessTokenRequestDTO, RefreshAccessTokenResponseDTO> POST_REFRESH_ACCESS_TOKEN =
+            Endpoint.createContract("/authsox/api/v1/auth/refresh",
+                    HttpMethod.POST,
+                    RefreshAccessTokenRequestDTO.class,
+                    RefreshAccessTokenResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingRefreshAccessTokenWithHappyPath.json")
+                                .responseBody("responseDefaultMappingRefreshAccessTokenWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(200);
                     });
