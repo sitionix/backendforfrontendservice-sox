@@ -7,7 +7,6 @@ import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
-import com.app_afesox.athssox.client.invoker.ApiClient;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
@@ -23,13 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Collections;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,9 +47,6 @@ class AuthUserClientImplTest {
     @Mock
     private ClientCallExecutor clientCallExecutor;
 
-    @Mock
-    private ApiClient apiClient;
-
     @BeforeEach
     void setUp() {
         this.authUserClient = new AuthUserClientImpl(this.authApi,
@@ -73,8 +62,7 @@ class AuthUserClientImplTest {
                 this.emailVerificationClientMapper,
                 this.refreshAccessTokenClientMapper,
                 this.authApi,
-                this.clientCallExecutor,
-                this.apiClient);
+                this.clientCallExecutor);
     }
 
     @Test
@@ -150,22 +138,7 @@ class AuthUserClientImplTest {
             final Supplier<RefreshAccessTokenResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.authApi.getApiClient()).thenReturn(this.apiClient);
-        when(this.apiClient.selectHeaderAccept(any())).thenReturn(Collections.singletonList(MediaType.APPLICATION_JSON));
-        when(this.apiClient.selectHeaderContentType(any())).thenReturn(MediaType.APPLICATION_JSON);
-        when(this.apiClient.invokeAPI(anyString(),
-                any(HttpMethod.class),
-                anyMap(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                anyList(),
-                any(),
-                any(),
-                any(ParameterizedTypeReference.class)))
-                .thenReturn(new ResponseEntity<>(responseDTO, HttpStatus.OK));
+        when(this.authApi.refreshAccessToken(requestDTO)).thenReturn(responseDTO);
 
         //when
         final RefreshAccessTokenResponse actual = this.authUserClient.refreshAccessToken(request);
@@ -176,20 +149,6 @@ class AuthUserClientImplTest {
         verify(this.refreshAccessTokenClientMapper).asRefreshAccessTokenRequestDto(request);
         verify(this.refreshAccessTokenClientMapper).asRefreshAccessTokenResponse(responseDTO);
         verify(this.clientCallExecutor).execute(any());
-        verify(this.authApi).getApiClient();
-        verify(this.apiClient).selectHeaderAccept(any());
-        verify(this.apiClient).selectHeaderContentType(any());
-        verify(this.apiClient).invokeAPI(anyString(),
-                any(HttpMethod.class),
-                anyMap(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                anyList(),
-                any(),
-                any(),
-                any(ParameterizedTypeReference.class));
+        verify(this.authApi).refreshAccessToken(requestDTO);
     }
 }
