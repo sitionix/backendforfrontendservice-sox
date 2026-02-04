@@ -3,3 +3,13 @@ api:
     client:
       athssox:
         base-path: ${forgeit.wiremock.base-url}/authsox
+forge:
+  security:
+    service-id: sitionixBff
+    dev:
+      jwt-secret: dev-internal-auth-secret
+      issuer: sitionix-internal
+      ttl-seconds: 300
+    targets:
+      sitionixAuth:
+        host: localhost
