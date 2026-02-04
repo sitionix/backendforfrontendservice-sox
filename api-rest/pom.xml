@@ -42,10 +42,15 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.afesox</groupId>-->
+<!--            <artifactId>app-afesox-bffssox-api-first-stable</artifactId>-->
+<!--            <version>${bffssox.api.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-bffssox-api-first-stable</artifactId>
-            <version>${bffssox.api.version}</version>
+            <artifactId>app-afesox-bffssox-api-first-sitionix-68-unstable</artifactId>
+            <version>0.0.9</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>

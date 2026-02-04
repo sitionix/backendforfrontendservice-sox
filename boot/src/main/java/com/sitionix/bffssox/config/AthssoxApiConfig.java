@@ -4,6 +4,7 @@ import com.app_afesox.athssox.client.api.AuthApi;
 import com.app_afesox.athssox.client.api.UserApi;
 import com.app_afesox.athssox.client.invoker.ApiClient;
 import lombok.Data;
+import com.sitionix.bffssox.client.UserAccessTokenForwardingInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,10 +35,12 @@ public class AthssoxApiConfig {
     }
 
     @Bean("athssoxRestTemplate")
-    public RestTemplate athssoxRestTemplate() {
+    public RestTemplate athssoxRestTemplate(final UserAccessTokenForwardingInterceptor userAccessTokenForwardingInterceptor) {
         final HttpComponentsClientHttpRequestFactory requestFactory =
                 new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        return new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        final RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        restTemplate.getInterceptors().add(userAccessTokenForwardingInterceptor);
+        return restTemplate;
     }
 
     @Bean

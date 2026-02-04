@@ -7,15 +7,18 @@ import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
+import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
 import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
 import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
+import com.sitionix.bffssox.domain.ResendEmailVerificationResponse;
 import com.sitionix.bffssox.mapper.EmailVerificationClientMapper;
 import com.sitionix.bffssox.mapper.LoginUserClientMapper;
 import com.sitionix.bffssox.mapper.RefreshAccessTokenClientMapper;
+import com.sitionix.bffssox.mapper.ResendEmailVerificationClientMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,9 @@ class AuthUserClientImplTest {
     private RefreshAccessTokenClientMapper refreshAccessTokenClientMapper;
 
     @Mock
+    private ResendEmailVerificationClientMapper resendEmailVerificationClientMapper;
+
+    @Mock
     private ClientCallExecutor clientCallExecutor;
 
     @BeforeEach
@@ -53,6 +59,7 @@ class AuthUserClientImplTest {
                 this.clientMapper,
                 this.emailVerificationClientMapper,
                 this.refreshAccessTokenClientMapper,
+                this.resendEmailVerificationClientMapper,
                 this.clientCallExecutor);
     }
 
@@ -61,6 +68,7 @@ class AuthUserClientImplTest {
         verifyNoMoreInteractions(this.clientMapper,
                 this.emailVerificationClientMapper,
                 this.refreshAccessTokenClientMapper,
+                this.resendEmailVerificationClientMapper,
                 this.authApi,
                 this.clientCallExecutor);
     }
@@ -150,5 +158,30 @@ class AuthUserClientImplTest {
         verify(this.refreshAccessTokenClientMapper).asRefreshAccessTokenResponse(responseDTO);
         verify(this.clientCallExecutor).execute(any());
         verify(this.authApi).refreshAccessToken(requestDTO);
+    }
+
+    @Test
+    void givenResendEmailVerificationRequest_whenResendEmailVerification_thenReturnResendEmailVerificationResponse() throws Exception {
+        //given
+        final ResendEmailVerificationResponse response = mock(ResendEmailVerificationResponse.class);
+        final ResendEmailVerificationResponseDTO responseDTO = mock(ResendEmailVerificationResponseDTO.class);
+
+        when(this.resendEmailVerificationClientMapper.asResendEmailVerificationResponse(responseDTO))
+                .thenReturn(response);
+        when(this.clientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<ResendEmailVerificationResponseDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.authApi.resendEmailVerification(any())).thenReturn(responseDTO);
+
+        //when
+        final ResendEmailVerificationResponse actual = this.authUserClient.resendEmailVerification();
+
+        //then
+        assertThat(actual).isEqualTo(response);
+
+        verify(this.resendEmailVerificationClientMapper).asResendEmailVerificationResponse(responseDTO);
+        verify(this.clientCallExecutor).execute(any());
+        verify(this.authApi).resendEmailVerification(any());
     }
 }
