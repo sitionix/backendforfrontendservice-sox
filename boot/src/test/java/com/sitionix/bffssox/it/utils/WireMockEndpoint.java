@@ -59,7 +59,7 @@ public class WireMockEndpoint {
                     ResendEmailVerificationResponseDTO.class,
                     (WiremockDefault) context -> {
                         context.matchesJson("requestDefaultMappingResendEmailVerificationWithHappyPath.json")
-                                .header("X-Forge-User-Sub", Parameter.equalTo("123"))
+                                .header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseBody("responseDefaultMappingResendEmailVerificationWithHappyPath.json")
                                 .plainUrl()
