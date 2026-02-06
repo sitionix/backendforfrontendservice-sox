@@ -1,4 +1,5 @@
 {
-  "error": "unauthorized",
-  "message": "Unauthorized"
+  "code": 401,
+  "title": "unauthorized",
+  "details": "Authentication required"
 }
