@@ -15,7 +15,6 @@ import com.sitionix.bffssox.domain.LoginResponse;
 import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
 import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import com.sitionix.bffssox.domain.ResendEmailVerificationResponse;
-import com.sitionix.bffssox.domain.UserAccessTokenContext;
 import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
 import com.sitionix.bffssox.mapper.RefreshAccessTokenApiMapper;
@@ -24,12 +23,11 @@ import com.sitionix.bffssox.usecase.LoginUser;
 import com.sitionix.bffssox.usecase.RefreshAccessToken;
 import com.sitionix.bffssox.usecase.ResendEmailVerification;
 import com.sitionix.bffssox.usecase.VerifyEmail;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,10 +49,6 @@ public class AuthController implements AuthApi {
     private final ResendEmailVerificationApiMapper resendEmailVerificationApiMapper;
 
     private final ResendEmailVerification resendEmailVerification;
-
-    private final HttpServletRequest httpServletRequest;
-
-    private final UserAccessTokenContext userAccessTokenContext;
 
     @Override
     public ResponseEntity<LoginResponseDTO> login(@Valid final LoginRequestDTO loginRequestDTO) {
@@ -90,15 +84,10 @@ public class AuthController implements AuthApi {
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ResendEmailVerificationResponseDTO> resendEmailVerification(final Object body) {
-        final String authorizationHeader = this.httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        this.userAccessTokenContext.set(authorizationHeader);
-        try {
-            final ResendEmailVerificationResponse response = this.resendEmailVerification.execute();
-            return ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body(this.resendEmailVerificationApiMapper.asResendEmailVerificationResponseDTO(response));
-        } finally {
-            this.userAccessTokenContext.clear();
-        }
+        final ResendEmailVerificationResponse response = this.resendEmailVerification.execute();
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(this.resendEmailVerificationApiMapper.asResendEmailVerificationResponseDTO(response));
     }
 }

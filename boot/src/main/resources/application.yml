@@ -12,6 +12,8 @@ api:
       athssox:
         base-path: http://localhost:9090/authsox
 forge:
+  user-jwt:
+    auth-base-url: http://authorisationservice-sox/authsox
   security:
     service-id: sitionixBff
     dev:

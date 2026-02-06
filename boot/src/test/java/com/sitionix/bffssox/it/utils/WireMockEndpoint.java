@@ -6,11 +6,13 @@ import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
+import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.RegisterUserDTO;
 import com.app_afesox.athssox.client.dto.ResponseRegisterUserDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
 import com.sitionix.forgeit.domain.endpoint.HttpMethod;
 import com.sitionix.forgeit.domain.endpoint.wiremock.WiremockDefault;
+import com.sitionix.forgeit.wiremock.api.Parameter;
 
 public class WireMockEndpoint {
 
@@ -46,6 +48,31 @@ public class WireMockEndpoint {
                     (WiremockDefault) context -> {
                         context.matchesJson("requestDefaultMappingRefreshAccessTokenWithHappyPath.json")
                                 .responseBody("responseDefaultMappingRefreshAccessTokenWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Object, ResendEmailVerificationResponseDTO> POST_RESEND_EMAIL_VERIFICATION =
+            Endpoint.createContract("/authsox/api/v1/auth/email/verify/resend",
+                    HttpMethod.POST,
+                    Object.class,
+                    ResendEmailVerificationResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingResendEmailVerificationWithHappyPath.json")
+                                .header("X-Forge-User-Sub", Parameter.equalTo("123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingResendEmailVerificationWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(202);
+                    });
+
+    public static final Endpoint<Object, Object> GET_JWKS =
+            Endpoint.createContract("/authsox/.well-known/jwks.json",
+                    HttpMethod.GET,
+                    Object.class,
+                    Object.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingJwks.json")
                                 .plainUrl()
                                 .responseStatus(200);
                     });

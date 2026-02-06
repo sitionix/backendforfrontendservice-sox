@@ -14,7 +14,6 @@ import com.sitionix.bffssox.domain.LoginResponse;
 import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
 import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import com.sitionix.bffssox.domain.ResendEmailVerificationResponse;
-import com.sitionix.bffssox.domain.UserAccessTokenContext;
 import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
 import com.sitionix.bffssox.mapper.RefreshAccessTokenApiMapper;
@@ -23,14 +22,12 @@ import com.sitionix.bffssox.usecase.LoginUser;
 import com.sitionix.bffssox.usecase.RefreshAccessToken;
 import com.sitionix.bffssox.usecase.ResendEmailVerification;
 import com.sitionix.bffssox.usecase.VerifyEmail;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -66,19 +63,12 @@ class AuthControllerTest {
     @Mock
     private ResendEmailVerification resendEmailVerification;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
-
-    @Mock
-    private UserAccessTokenContext userAccessTokenContext;
-
     @BeforeEach
     void setUp() {
         this.authController = new AuthController(this.mapper, this.loginUser,
                 this.emailVerificationApiMapper, this.verifyEmail,
                 this.refreshAccessTokenApiMapper, this.refreshAccessToken,
-                this.resendEmailVerificationApiMapper, this.resendEmailVerification,
-                this.httpServletRequest, this.userAccessTokenContext);
+                this.resendEmailVerificationApiMapper, this.resendEmailVerification);
     }
 
     @AfterEach
@@ -90,9 +80,7 @@ class AuthControllerTest {
                 this.emailVerificationApiMapper,
                 this.refreshAccessTokenApiMapper,
                 this.resendEmailVerificationApiMapper,
-                this.resendEmailVerification,
-                this.httpServletRequest,
-                this.userAccessTokenContext);
+                this.resendEmailVerification);
     }
 
     @Test
@@ -182,10 +170,7 @@ class AuthControllerTest {
         final Object body = new Object();
         final ResendEmailVerificationResponse response = mock(ResendEmailVerificationResponse.class);
         final ResendEmailVerificationResponseDTO responseDTO = mock(ResendEmailVerificationResponseDTO.class);
-        final String authorizationHeader = "Bearer access-token";
 
-        when(this.httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION))
-                .thenReturn(authorizationHeader);
         when(this.resendEmailVerification.execute())
                 .thenReturn(response);
         when(this.resendEmailVerificationApiMapper.asResendEmailVerificationResponseDTO(response))
@@ -198,10 +183,7 @@ class AuthControllerTest {
         //then
         assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO));
 
-        verify(this.httpServletRequest).getHeader(HttpHeaders.AUTHORIZATION);
-        verify(this.userAccessTokenContext).set(authorizationHeader);
         verify(this.resendEmailVerification).execute();
         verify(this.resendEmailVerificationApiMapper).asResendEmailVerificationResponseDTO(response);
-        verify(this.userAccessTokenContext).clear();
     }
 }

@@ -47,7 +47,7 @@
         <spring.version>3.3.4</spring.version>
         <forgeit.version>0.0.33</forgeit.version>
         <swagger.annotations.version>2.2.20</swagger.annotations.version>
-        <forge.security.version>0.0.3</forge.security.version>
+        <forge.security.version>0.0.4</forge.security.version>
     </properties>
 
     <dependencyManagement>
