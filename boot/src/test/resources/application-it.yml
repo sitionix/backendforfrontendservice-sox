@@ -4,6 +4,8 @@ api:
       athssox:
         base-path: ${forgeit.wiremock.base-url}/authsox
 forge:
+  user-jwt:
+    auth-base-url: ${forgeit.wiremock.base-url}/authsox
   security:
     service-id: sitionixBff
     dev:

@@ -64,7 +64,7 @@ class RefreshAccessTokenClientMapperTest {
         return new RefreshAccessTokenResponseDTO()
                 .refreshToken("refreshToken")
                 .expiresIn(3600L)
-                .tokenType("Bearer")
+                .tokenType(RefreshAccessTokenResponseDTO.TokenTypeEnum.BEARER)
                 .accessToken("accessToken");
     }
 
@@ -72,7 +72,7 @@ class RefreshAccessTokenClientMapperTest {
         return RefreshAccessTokenResponse.builder()
                 .refreshToken("refreshToken")
                 .expiresIn(3600L)
-                .tokenType("Bearer")
+                .tokenType(RefreshAccessTokenResponseDTO.TokenTypeEnum.BEARER.getValue())
                 .accessToken("accessToken")
                 .build();
     }

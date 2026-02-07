@@ -6,18 +6,23 @@ import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
 import com.sitionix.bffssox.domain.LoginResponse;
 import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
 import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
+import com.sitionix.bffssox.domain.ResendEmailVerificationResponse;
 import com.sitionix.bffssox.mapper.EmailVerificationApiMapper;
 import com.sitionix.bffssox.mapper.LoginUserApiMapper;
 import com.sitionix.bffssox.mapper.RefreshAccessTokenApiMapper;
+import com.sitionix.bffssox.mapper.ResendEmailVerificationApiMapper;
 import com.sitionix.bffssox.usecase.LoginUser;
 import com.sitionix.bffssox.usecase.RefreshAccessToken;
+import com.sitionix.bffssox.usecase.ResendEmailVerification;
 import com.sitionix.bffssox.usecase.VerifyEmail;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,11 +57,30 @@ class AuthControllerTest {
     @Mock
     private RefreshAccessTokenApiMapper refreshAccessTokenApiMapper;
 
+    @Mock
+    private ResendEmailVerificationApiMapper resendEmailVerificationApiMapper;
+
+    @Mock
+    private ResendEmailVerification resendEmailVerification;
+
     @BeforeEach
     void setUp() {
         this.authController = new AuthController(this.mapper, this.loginUser,
                 this.emailVerificationApiMapper, this.verifyEmail,
-                this.refreshAccessTokenApiMapper, this.refreshAccessToken);
+                this.refreshAccessTokenApiMapper, this.refreshAccessToken,
+                this.resendEmailVerificationApiMapper, this.resendEmailVerification);
+    }
+
+    @AfterEach
+    void tearDown() {
+        verifyNoMoreInteractions(this.loginUser,
+                this.mapper,
+                this.verifyEmail,
+                this.refreshAccessToken,
+                this.emailVerificationApiMapper,
+                this.refreshAccessTokenApiMapper,
+                this.resendEmailVerificationApiMapper,
+                this.resendEmailVerification);
     }
 
     @Test
@@ -138,5 +162,28 @@ class AuthControllerTest {
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(requestDTO);
         verify(this.refreshAccessToken).execute(request);
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenResponseDTO(response);
+    }
+
+    @Test
+    void givenResendEmailVerification_whenResendEmailVerification_thenReturnsResponseEntity() {
+        //given
+        final Object body = new Object();
+        final ResendEmailVerificationResponse response = mock(ResendEmailVerificationResponse.class);
+        final ResendEmailVerificationResponseDTO responseDTO = mock(ResendEmailVerificationResponseDTO.class);
+
+        when(this.resendEmailVerification.execute())
+                .thenReturn(response);
+        when(this.resendEmailVerificationApiMapper.asResendEmailVerificationResponseDTO(response))
+                .thenReturn(responseDTO);
+
+        //when
+        final ResponseEntity<ResendEmailVerificationResponseDTO> actual =
+                this.authController.resendEmailVerification(body);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO));
+
+        verify(this.resendEmailVerification).execute();
+        verify(this.resendEmailVerificationApiMapper).asResendEmailVerificationResponseDTO(response);
     }
 }

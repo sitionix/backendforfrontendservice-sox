@@ -1,6 +1,7 @@
 package com.sitionix.bffssox.it.tests;
 
-
+import com.sitionix.bffssox.it.preparation.AuthJwksDataPreparation;
+import com.sitionix.bffssox.it.utils.ItUserTokens;
 import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-@IntegrationTest
+@IntegrationTest(preparations = AuthJwksDataPreparation.class)
 class AuthControllerIT {
     @Autowired
     private TestManager testManager;
@@ -126,4 +127,33 @@ class AuthControllerIT {
         requestBuilder.verify();
     }
 
+    @Test
+    @DisplayName("Should return unauthorized when resend email verification is called without user token")
+    void givenMissingUserToken_whenResendEmailVerification_thenReturnUnauthorized() {
+        //given
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_RESEND_EMAIL_VERIFICATION)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultResendEmailVerificationUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("Should return accepted when resend email verification is called with valid user token")
+    void givenValidUserToken_whenResendEmailVerification_thenReturnAccepted() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_RESEND_EMAIL_VERIFICATION)
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_RESEND_EMAIL_VERIFICATION)
+                .token(ItUserTokens.USER_JWT)
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
 }

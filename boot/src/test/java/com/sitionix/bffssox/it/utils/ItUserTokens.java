@@ -1,0 +1,9 @@
+package com.sitionix.bffssox.it.utils;
+
+public final class ItUserTokens {
+
+    public static final String USER_JWT = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Iml0LWtpZCJ9.eyJzdWIiOiJpdC11c2VyLTEyMyIsImVtYWlsIjoiaXQtdXNlci0xMjNAZXhhbXBsZS5jb20iLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.CsFAlFMxBYMHyuHIrTvzdVU54Z3tKuLI7edW3QZUztv709NTUKR4GJtWWj1bspubQzfJimu9NQlKdrTcNCu9HZLyOXAkkH9s2tHnHTZHpwbol87dOq5uJs2Z-Jo0icv_3-oLZF0HA01QxsUgq4wNGmi6iXEUS_zAd6P7W7db69pm6yeMWWAXKFHCCUtbUhtzCrh3ZpVv-V9Im3MwReCpQNoZd6gDHpdMCo-K3ynYg14FxoLw5XpUBoj0IRK4LtwWmvTY-hgBFPPcNldd-cdGwE8igyBf-um55QN5XhaST5M2qDllvs3yFN3HwkDL-4sGkXFNSA17vpyJa0tWcrovKQ";
+
+    private ItUserTokens() {
+    }
+}

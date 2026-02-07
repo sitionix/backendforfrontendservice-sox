@@ -55,22 +55,13 @@ jobs:
                 <username>${{ github.actor }}</username>
                 <password>${BFF_TOKEN}</password>
               </server>
+              <server>
+                <id>github-forge-security</id>
+                <username>${{ github.actor }}</username>
+                <password>${BFF_TOKEN}</password>
+              </server>
             </servers>
           </settings>" > ~/.m2/settings.xml
-
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze
         env:
