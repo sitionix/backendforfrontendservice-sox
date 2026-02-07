@@ -40,15 +40,10 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.afesox</groupId>-->
-<!--            <artifactId>app-afesox-athssox-client-stable</artifactId>-->
-<!--            <version>${athssox.api.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-athssox-client-sitionix-68-unstable</artifactId>
-            <version>0.0.25</version>
+            <artifactId>app-afesox-athssox-client-stable</artifactId>
+            <version>${athssox.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
