@@ -2,6 +2,8 @@ package com.sitionix.bffssox.it.utils;
 
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
@@ -60,4 +62,13 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .withRequest("requestDefaultRegisterUserWithHappyPath.json")
                             .expectResponse("responseDefaultRegisterUserWithHappyPath.json"));
+
+    public static final Endpoint<CreateSiteRequestDTO, CreateSiteResponseDTO> POST_CREATE_SITE =
+            Endpoint.createContract("/api/v1/sites",
+                    HttpMethod.POST,
+                    CreateSiteRequestDTO.class,
+                    CreateSiteResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
+                            .withRequest("requestDefaultCreateSiteWithHappyPath.json")
+                            .expectResponse("responseDefaultCreateSiteWithHappyPath.json"));
 }

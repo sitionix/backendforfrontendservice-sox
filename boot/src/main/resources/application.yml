@@ -11,6 +11,8 @@ api:
     client:
       athssox:
         base-path: http://localhost:9090/authsox
+      stsssox:
+        base-path: ${API_REST_CLIENT_STSSSOX_BASE_PATH:http://localhost:8081/stsssox}
 forge:
   user-jwt:
     auth-base-url: http://authorisationservice-sox/authsox
@@ -23,3 +25,5 @@ forge:
     targets:
       sitionixAuth:
         host: authorisationservice-sox
+      sitionixSite:
+        host: siteservice-sox
