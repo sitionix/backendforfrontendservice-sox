@@ -14,5 +14,6 @@
 
     <modules>
         <module>client-athssox</module>
+        <module>client-stsssox</module>
     </modules>
 </project>

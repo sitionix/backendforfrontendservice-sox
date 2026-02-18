@@ -9,6 +9,8 @@ import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.RegisterUserDTO;
 import com.app_afesox.athssox.client.dto.ResponseRegisterUserDTO;
+import com.app_afesox.stsssox.client.dto.CreateSiteRequestDTO;
+import com.app_afesox.stsssox.client.dto.CreateSiteResponseDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
 import com.sitionix.forgeit.domain.endpoint.HttpMethod;
 import com.sitionix.forgeit.domain.endpoint.wiremock.WiremockDefault;
@@ -87,5 +89,19 @@ public class WireMockEndpoint {
                                 .responseBody("responseDefaultMappingRegisterUserWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(200);
+                    });
+
+    public static final Endpoint<CreateSiteRequestDTO, CreateSiteResponseDTO> POST_CREATE_SITE =
+            Endpoint.createContract("/stsssox/api/v1/sites",
+                    HttpMethod.POST,
+                    CreateSiteRequestDTO.class,
+                    CreateSiteResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingCreateSiteWithHappyPath.json")
+                                .header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingCreateSiteWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(201);
                     });
 }

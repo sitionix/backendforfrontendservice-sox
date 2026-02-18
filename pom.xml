@@ -45,9 +45,9 @@
         <jacoco.version>0.8.10</jacoco.version>
         <validation.version>2.0.1.Final</validation.version>
         <spring.version>3.3.4</spring.version>
-        <forgeit.version>0.0.35</forgeit.version>
+        <forgeit.version>0.0.37</forgeit.version>
         <swagger.annotations.version>2.2.20</swagger.annotations.version>
-        <forge.security.version>0.0.4</forge.security.version>
+        <forge.security.version>0.0.5</forge.security.version>
     </properties>
 
     <dependencyManagement>
@@ -72,6 +72,10 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>client-athssox</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>client-stsssox</artifactId>
             </dependency>
 
         </dependencies>
