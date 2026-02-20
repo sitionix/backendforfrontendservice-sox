@@ -11,6 +11,7 @@ import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.ResponseRegisterUserDTO;
+import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
 import com.sitionix.forgeit.domain.endpoint.HttpMethod;
 import com.sitionix.forgeit.domain.endpoint.mockmvc.MockmvcDefault;
@@ -71,4 +72,42 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
                             .withRequest("requestDefaultCreateSiteWithHappyPath.json")
                             .expectResponse("responseDefaultCreateSiteWithHappyPath.json"));
+
+    public static final Endpoint<Void, WorkspaceSitesResponseDTO> GET_SITES_FIRST_PAGE =
+            Endpoint.createContract("/api/v1/sites?page=0&size=20",
+                    HttpMethod.GET,
+                    Void.class,
+                    WorkspaceSitesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetSitesFirstPageWithHappyPath.json"));
+
+    public static final Endpoint<Void, WorkspaceSitesResponseDTO> GET_SITES_NEXT_PAGE =
+            Endpoint.createContract("/api/v1/sites?page=1&size=20",
+                    HttpMethod.GET,
+                    Void.class,
+                    WorkspaceSitesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetSitesNextPageWithHappyPath.json"));
+
+    public static final Endpoint<Void, WorkspaceSitesResponseDTO> GET_SITES_END_OF_LIST =
+            Endpoint.createContract("/api/v1/sites?page=1&size=20",
+                    HttpMethod.GET,
+                    Void.class,
+                    WorkspaceSitesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetSitesEndOfListWithHappyPath.json"));
+
+    public static final Endpoint<Void, Void> GET_SITES_INVALID_SIZE =
+            Endpoint.createContract("/api/v1/sites?page=0&size=0",
+                    HttpMethod.GET,
+                    Void.class,
+                    Void.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()));
+
+    public static final Endpoint<Void, Void> GET_SITES_NEGATIVE_PAGE =
+            Endpoint.createContract("/api/v1/sites?page=-1&size=20",
+                    HttpMethod.GET,
+                    Void.class,
+                    Void.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()));
 }

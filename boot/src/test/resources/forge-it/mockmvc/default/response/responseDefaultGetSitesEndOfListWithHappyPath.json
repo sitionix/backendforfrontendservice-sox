@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130005",
+      "name": "Store front",
+      "status": "PUBLISHED",
+      "type": "STORE",
+      "description": null,
+      "createdAt": "2026-01-12T12:00:00Z",
+      "updatedAt": "2026-01-31T08:30:00Z"
+    },
+    {
+      "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130006",
+      "name": "Landing page",
+      "status": "DRAFT",
+      "type": "LANDING",
+      "description": null,
+      "createdAt": "2026-01-12T12:10:00Z",
+      "updatedAt": "2026-01-31T08:20:00Z"
+    },
+    {
+      "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130007",
+      "name": "Company site",
+      "status": "PUBLISHED",
+      "type": "BUSINESS",
+      "description": "Corporate website",
+      "createdAt": "2026-01-12T12:20:00Z",
+      "updatedAt": "2026-01-31T08:10:00Z"
+    },
+    {
+      "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130008",
+      "name": "Portfolio 2",
+      "status": "DRAFT",
+      "type": "PORTFOLIO",
+      "description": null,
+      "createdAt": "2026-01-12T12:30:00Z",
+      "updatedAt": "2026-01-31T08:00:00Z"
+    },
+    {
+      "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130009",
+      "name": "Blog 2",
+      "status": "PUBLISHED",
+      "type": "BLOG",
+      "description": "Content blog",
+      "createdAt": "2026-01-12T12:40:00Z",
+      "updatedAt": "2026-01-31T07:50:00Z"
+    }
+  ],
+  "page": 1,
+  "size": 20,
+  "hasNext": false
+}
