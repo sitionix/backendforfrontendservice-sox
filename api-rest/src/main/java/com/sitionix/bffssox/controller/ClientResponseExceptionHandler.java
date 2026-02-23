@@ -21,7 +21,7 @@ public class ClientResponseExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDTO> handleBadRequest(final IllegalArgumentException ex) {
-        return this.asBadRequest(ex.getMessage());
+        return this.asErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -30,7 +30,7 @@ public class ClientResponseExceptionHandler {
                 .findFirst()
                 .map(ConstraintViolation::getMessage)
                 .orElse(ex.getMessage());
-        return this.asBadRequest(details);
+        return this.asErrorResponse(HttpStatus.BAD_REQUEST, details);
     }
 
     @ExceptionHandler({HandlerMethodValidationException.class, MethodArgumentNotValidException.class})
@@ -40,16 +40,16 @@ public class ClientResponseExceptionHandler {
                     .flatMap(result -> result.getResolvableErrors().stream())
                     .map(error -> error.getDefaultMessage())
                     .findFirst();
-            return this.asBadRequest(details.orElse("Validation failed"));
+            return this.asErrorResponse(HttpStatus.BAD_REQUEST, details.orElse("Validation failed"));
         }
         if (ex instanceof MethodArgumentNotValidException methodArgumentNotValidException) {
             final String details = methodArgumentNotValidException.getBindingResult().getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
                     .findFirst()
                     .orElse("Validation failed");
-            return this.asBadRequest(details);
+            return this.asErrorResponse(HttpStatus.BAD_REQUEST, details);
         }
-        return this.asBadRequest("Validation failed");
+        return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed");
     }
 
     @ExceptionHandler(ClientResponseException.class)
@@ -68,12 +68,12 @@ public class ClientResponseExceptionHandler {
                 .body(ex.getResponseBody());
     }
 
-    private ResponseEntity<ErrorDTO> asBadRequest(final String details) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    private ResponseEntity<ErrorDTO> asErrorResponse(final HttpStatus status, final String message) {
+        return ResponseEntity.status(status)
                 .body(ErrorDTO.builder()
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                        .details(details)
+                        .code(status.value())
+                        .title(status.getReasonPhrase())
+                        .details(message)
                         .build());
     }
 }
