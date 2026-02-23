@@ -106,8 +106,8 @@ public class WireMockEndpoint {
                                 .responseStatus(201);
                     });
 
-    public static final Endpoint<Void, WorkspaceSitesPageDTO> GET_SITES_FIRST_PAGE =
-            Endpoint.createContract("/wagssox/api/v1/sites?page=0&size=20",
+    public static final Endpoint<Void, WorkspaceSitesPageDTO> GET_SITES =
+            Endpoint.createContract("/wagssox/api/v1/sites",
                     HttpMethod.GET,
                     Void.class,
                     WorkspaceSitesPageDTO.class,
@@ -115,32 +115,6 @@ public class WireMockEndpoint {
                         context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseBody("responseDefaultMappingGetSitesFirstPageWithHappyPath.json")
-                                .plainUrl()
-                                .responseStatus(200);
-                    });
-
-    public static final Endpoint<Void, WorkspaceSitesPageDTO> GET_SITES_NEXT_PAGE =
-            Endpoint.createContract("/wagssox/api/v1/sites?page=1&size=20",
-                    HttpMethod.GET,
-                    Void.class,
-                    WorkspaceSitesPageDTO.class,
-                    (WiremockDefault) context -> {
-                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
-                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
-                                .responseBody("responseDefaultMappingGetSitesNextPageWithHappyPath.json")
-                                .plainUrl()
-                                .responseStatus(200);
-                    });
-
-    public static final Endpoint<Void, WorkspaceSitesPageDTO> GET_SITES_END_OF_LIST =
-            Endpoint.createContract("/wagssox/api/v1/sites?page=1&size=20",
-                    HttpMethod.GET,
-                    Void.class,
-                    WorkspaceSitesPageDTO.class,
-                    (WiremockDefault) context -> {
-                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
-                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
-                                .responseBody("responseDefaultMappingGetSitesEndOfListWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(200);
                     });

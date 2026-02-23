@@ -1,10 +1,11 @@
 package com.sitionix.bffssox.it.tests;
 
 import com.sitionix.bffssox.it.preparation.AuthJwksDataPreparation;
-import com.sitionix.bffssox.it.utils.ItUserTokens;
 import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
+import com.sitionix.forgeit.mockmvc.api.QueryParams;
+import com.sitionix.forgeit.wiremock.api.WireMockQueryParams;
 import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,13 +23,19 @@ class SiteQueryControllerIT {
     void givenValidUserToken_whenGetSitesFirstPage_thenReturnSitesPage() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
-                .createMapping(WireMockEndpoint.GET_SITES_FIRST_PAGE)
+                .createMapping(WireMockEndpoint.GET_SITES)
+                .urlWithQueryParam(WireMockQueryParams.create()
+                        .add("page", 0)
+                        .add("size", 20))
                 .createDefault();
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_FIRST_PAGE)
-                .token(ItUserTokens.USER_JWT)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", 0)
+                        .add("size", 20))
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesFirstPageWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -39,13 +46,20 @@ class SiteQueryControllerIT {
     void givenValidUserToken_whenGetSitesNextPage_thenReturnSitesPage() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
-                .createMapping(WireMockEndpoint.GET_SITES_NEXT_PAGE)
+                .createMapping(WireMockEndpoint.GET_SITES)
+                .urlWithQueryParam(WireMockQueryParams.create()
+                        .add("page", 1)
+                        .add("size", 20))
+                .applyDefault(context -> context.responseBody("responseDefaultMappingGetSitesNextPageWithHappyPath.json"))
                 .createDefault();
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_NEXT_PAGE)
-                .token(ItUserTokens.USER_JWT)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", 1)
+                        .add("size", 20))
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesNextPageWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -56,13 +70,20 @@ class SiteQueryControllerIT {
     void givenValidUserToken_whenGetSitesEndOfList_thenReturnHasNextFalse() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
-                .createMapping(WireMockEndpoint.GET_SITES_END_OF_LIST)
+                .createMapping(WireMockEndpoint.GET_SITES)
+                .urlWithQueryParam(WireMockQueryParams.create()
+                        .add("page", 1)
+                        .add("size", 20))
+                .applyDefault(context -> context.responseBody("responseDefaultMappingGetSitesEndOfListWithHappyPath.json"))
                 .createDefault();
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_END_OF_LIST)
-                .token(ItUserTokens.USER_JWT)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", 1)
+                        .add("size", 20))
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesEndOfListWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -75,8 +96,11 @@ class SiteQueryControllerIT {
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_INVALID_SIZE)
-                .token(ItUserTokens.USER_JWT)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", 0)
+                        .add("size", 0))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()))
                 .assertDefault();
     }
 
@@ -87,8 +111,11 @@ class SiteQueryControllerIT {
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_NEGATIVE_PAGE)
-                .token(ItUserTokens.USER_JWT)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", -1)
+                        .add("size", 20))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()))
                 .assertDefault();
     }
 
@@ -99,7 +126,10 @@ class SiteQueryControllerIT {
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.GET_SITES_FIRST_PAGE)
+                .ping(MockMvcEndpoint.GET_SITES)
+                .withQueryParameters(QueryParams.create()
+                        .add("page", 0)
+                        .add("size", 20))
                 .token(null)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultGetSitesUnauthorized.json"))

@@ -1,7 +1,6 @@
 package com.sitionix.bffssox.it.tests;
 
 import com.sitionix.bffssox.it.preparation.AuthJwksDataPreparation;
-import com.sitionix.bffssox.it.utils.ItUserTokens;
 import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
@@ -28,7 +27,6 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .token(ItUserTokens.USER_JWT)
                 .assertDefault();
 
         requestBuilder.verify();
@@ -42,6 +40,7 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
+                .token(null)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultCreateSiteUnauthorized.json"))
                 .assertDefault();
@@ -60,7 +59,6 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .token(ItUserTokens.USER_JWT)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultCreateSiteUnauthorizedUpstream.json"))
                 .assertDefault();
@@ -81,7 +79,6 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .token(ItUserTokens.USER_JWT)
                 .applyDefault(context -> context.expectStatus(HttpStatus.BAD_GATEWAY.value())
                         .expectResponse("responseDefaultCreateSiteBadGateway.json"))
                 .assertDefault();
