@@ -35,7 +35,7 @@ class SiteQueryControllerIT {
                 .withQueryParameters(QueryParams.create()
                         .add("page", 0)
                         .add("size", 20))
-                .expectResponse("responseDefaultGetSitesFirstPageWithHappyPath.json")
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesFirstPageWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -50,7 +50,7 @@ class SiteQueryControllerIT {
                 .urlWithQueryParam(WireMockQueryParams.create()
                         .add("page", 1)
                         .add("size", 20))
-                .responseBody("responseDefaultMappingGetSitesNextPageWithHappyPath.json")
+                .applyDefault(context -> context.responseBody("responseDefaultMappingGetSitesNextPageWithHappyPath.json"))
                 .createDefault();
 
         //when then
@@ -59,7 +59,7 @@ class SiteQueryControllerIT {
                 .withQueryParameters(QueryParams.create()
                         .add("page", 1)
                         .add("size", 20))
-                .expectResponse("responseDefaultGetSitesNextPageWithHappyPath.json")
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesNextPageWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -74,7 +74,7 @@ class SiteQueryControllerIT {
                 .urlWithQueryParam(WireMockQueryParams.create()
                         .add("page", 1)
                         .add("size", 20))
-                .responseBody("responseDefaultMappingGetSitesEndOfListWithHappyPath.json")
+                .applyDefault(context -> context.responseBody("responseDefaultMappingGetSitesEndOfListWithHappyPath.json"))
                 .createDefault();
 
         //when then
@@ -83,7 +83,7 @@ class SiteQueryControllerIT {
                 .withQueryParameters(QueryParams.create()
                         .add("page", 1)
                         .add("size", 20))
-                .expectResponse("responseDefaultGetSitesEndOfListWithHappyPath.json")
+                .applyDefault(context -> context.expectResponse("responseDefaultGetSitesEndOfListWithHappyPath.json"))
                 .assertDefault();
 
         requestBuilder.verify();
