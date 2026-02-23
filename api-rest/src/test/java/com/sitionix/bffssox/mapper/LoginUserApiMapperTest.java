@@ -2,13 +2,17 @@ package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SessionUserDTO;
 import com.sitionix.bffssox.domain.LoginRequest;
-import com.sitionix.bffssox.domain.LoginResponse;
+import com.sitionix.bffssox.domain.SessionResponse;
+import com.sitionix.bffssox.domain.SessionUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,10 +42,10 @@ class LoginUserApiMapperTest {
     }
 
     @Test
-    void givenLoginResponse_whenAsLoginResponseDto_thenReturnLoginResponseDto() {
+    void givenSessionResponse_whenAsLoginResponseDto_thenReturnLoginResponseDto() {
         //given
         final LoginResponseDTO expected = this.loginResponseDTO();
-        final LoginResponse given = this.loginResponse();
+        final SessionResponse given = this.sessionResponse();
 
         //when
         final LoginResponseDTO actual = this.mapper.asLoginResponseDTO(given);
@@ -55,8 +59,6 @@ class LoginUserApiMapperTest {
                 .email("email")
                 .password("password")
                 .siteId(uuid)
-                .userAgent("userAgent")
-                .sessionSourceId("sessionSourceId")
                 .build();
     }
 
@@ -65,26 +67,34 @@ class LoginUserApiMapperTest {
                 .email("email")
                 .password("password")
                 .siteId(uuid)
-                .userAgent("userAgent")
-                .sessionSourceId("sessionSourceId")
                 .build();
     }
 
     private LoginResponseDTO loginResponseDTO() {
         return LoginResponseDTO.builder()
-                .refreshToken("refreshToken")
-                .expiresIn(3600L)
-                .tokenType("tokenType")
-                .accessToken("accessToken")
+                .authenticated(Boolean.TRUE)
+                .user(SessionUserDTO.builder()
+                        .id("123")
+                        .email("email@example.com")
+                        .role("SUPER_ADMIN")
+                        .siteId(UUID.fromString("261f6b83-f95f-4ab2-be1b-70f5c2ee7f54"))
+                        .build())
+                .expiresAt(OffsetDateTime.parse("2030-01-01T00:00:00Z"))
+                .idleTimeoutSeconds(86_400L)
                 .build();
     }
 
-    private LoginResponse loginResponse() {
-        return LoginResponse.builder()
-                .refreshToken("refreshToken")
-                .expiresIn(3600L)
-                .tokenType("tokenType")
-                .accessToken("accessToken")
+    private SessionResponse sessionResponse() {
+        return SessionResponse.builder()
+                .authenticated(Boolean.TRUE)
+                .user(SessionUser.builder()
+                        .id("123")
+                        .email("email@example.com")
+                        .role("SUPER_ADMIN")
+                        .siteId(UUID.fromString("261f6b83-f95f-4ab2-be1b-70f5c2ee7f54"))
+                        .build())
+                .expiresAt(Instant.parse("2030-01-01T00:00:00Z"))
+                .idleTimeoutSeconds(86_400L)
                 .build();
     }
 }

@@ -1,6 +1,10 @@
 {
-  "accessToken": "eyJhbGciOi...",
-  "refreshToken": "dGhpc0lzUmVmcmVzaA==",
-  "expiresIn": 3600,
-  "tokenType": "Bearer"
+  "authenticated": true,
+  "user": {
+    "id": "it-user-123",
+    "email": "it-user-123@example.com",
+    "role": "SUPER_ADMIN",
+    "siteId": "c9b1f3f4-12c7-11ec-82a8-0242ac130003"
+  },
+  "idleTimeoutSeconds": 86400
 }

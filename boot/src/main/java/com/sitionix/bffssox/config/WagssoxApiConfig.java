@@ -2,6 +2,7 @@ package com.sitionix.bffssox.config;
 
 import com.app_afesox.wagssox.client.api.SiteApi;
 import com.app_afesox.wagssox.client.invoker.ApiClient;
+import com.sitionix.bffssox.security.BffUserTokenPropagationInterceptor;
 import lombok.Data;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,10 +34,12 @@ public class WagssoxApiConfig {
     }
 
     @Bean("wagssoxRestTemplate")
-    public RestTemplate wagssoxRestTemplate() {
+    public RestTemplate wagssoxRestTemplate(final BffUserTokenPropagationInterceptor bffUserTokenPropagationInterceptor) {
         final HttpComponentsClientHttpRequestFactory requestFactory =
                 new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        return new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        final RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        restTemplate.getInterceptors().add(0, bffUserTokenPropagationInterceptor);
+        return restTemplate;
     }
 
     @Bean

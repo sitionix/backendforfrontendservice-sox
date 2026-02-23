@@ -1,9 +1,15 @@
 package com.sitionix.bffssox.client;
 
+import com.sitionix.bffssox.domain.BffSessionContextHolder;
+import com.sitionix.bffssox.domain.BffSessionManager;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,20 +17,36 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+@ExtendWith(MockitoExtension.class)
 
 class StsssoxClientCallExecutorTest {
 
     private StsssoxClientCallExecutor stsssoxClientCallExecutor;
 
+    @Mock
+    private BffSessionManager bffSessionManager;
+
     @BeforeEach
     void setUp() {
-        this.stsssoxClientCallExecutor = new StsssoxClientCallExecutor();
+        this.stsssoxClientCallExecutor = new StsssoxClientCallExecutor(this.bffSessionManager);
+    }
+
+    @AfterEach
+    void tearDown() {
+        BffSessionContextHolder.clear();
+        verifyNoMoreInteractions(this.bffSessionManager);
     }
 
     @Test
     void givenSuccessSupplier_whenExecute_thenReturnValue() {
+        //given
+
+        //when
         final String result = this.stsssoxClientCallExecutor.execute(() -> "ok");
 
+        //then
         assertThat(result).isEqualTo("ok");
     }
 

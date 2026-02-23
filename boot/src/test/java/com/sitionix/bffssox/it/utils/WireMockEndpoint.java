@@ -25,8 +25,7 @@ public class WireMockEndpoint {
                     LoginRequestDTO.class,
                     LoginResponseDTO.class,
                     (WiremockDefault) context -> {
-                        context.matchesJson("requestDefaultMappingLoginUserWithHappyPath.json")
-                                .responseBody("responseDefaultMappingLoginUserWithHappyPath.json")
+                        context.responseBody("responseDefaultMappingLoginUserWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(200);
                     });

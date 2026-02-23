@@ -1,8 +1,8 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AuthUserClient;
+import com.sitionix.bffssox.domain.BffLoginSessionResult;
+import com.sitionix.bffssox.domain.BffSessionManager;
 import com.sitionix.bffssox.domain.LoginRequest;
-import com.sitionix.bffssox.domain.LoginResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,33 +19,33 @@ class LoginUserImplTest {
     private LoginUser loginUser;
 
     @Mock
-    private AuthUserClient authUserClient;
+    private BffSessionManager bffSessionManager;
 
     @BeforeEach
     void setUp() {
-        loginUser = new LoginUserImpl(this.authUserClient);
+        this.loginUser = new LoginUserImpl(this.bffSessionManager);
     }
 
     @AfterEach
     void tearDown() {
-        verifyNoMoreInteractions(this.authUserClient);
+        verifyNoMoreInteractions(this.bffSessionManager);
     }
 
     @Test
-    void givenLoginRequest_whenExecute_thenReturnLoginResponse() {
-        // given
+    void givenLoginRequest_whenExecute_thenReturnLoginSessionResult() {
+        //given
         final LoginRequest loginRequest = mock(LoginRequest.class);
-        final LoginResponse loginResponse = mock(LoginResponse.class);
+        final BffLoginSessionResult loginSessionResult = mock(BffLoginSessionResult.class);
 
-        when(this.authUserClient.login(loginRequest)).thenReturn(loginResponse);
+        when(this.bffSessionManager.createSession(loginRequest, "Mozilla", "10.0.0.5"))
+                .thenReturn(loginSessionResult);
 
-        // when
-        final LoginResponse actual = this.loginUser.execute(loginRequest);
+        //when
+        final BffLoginSessionResult actual = this.loginUser.execute(loginRequest, "Mozilla", "10.0.0.5");
 
-        // then
-        assertThat(actual).isEqualTo(loginResponse);
+        //then
+        assertThat(actual).isEqualTo(loginSessionResult);
 
-        verify(this.authUserClient).login(loginRequest);
-
+        verify(this.bffSessionManager).createSession(loginRequest, "Mozilla", "10.0.0.5");
     }
 }

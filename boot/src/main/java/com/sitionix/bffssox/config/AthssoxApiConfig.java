@@ -3,6 +3,7 @@ package com.sitionix.bffssox.config;
 import com.app_afesox.athssox.client.api.AuthApi;
 import com.app_afesox.athssox.client.api.UserApi;
 import com.app_afesox.athssox.client.invoker.ApiClient;
+import com.sitionix.bffssox.security.BffUserTokenPropagationInterceptor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,10 +35,12 @@ public class AthssoxApiConfig {
     }
 
     @Bean("athssoxRestTemplate")
-    public RestTemplate athssoxRestTemplate() {
+    public RestTemplate athssoxRestTemplate(final BffUserTokenPropagationInterceptor bffUserTokenPropagationInterceptor) {
         final HttpComponentsClientHttpRequestFactory requestFactory =
                 new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        return new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        final RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        restTemplate.getInterceptors().add(0, bffUserTokenPropagationInterceptor);
+        return restTemplate;
     }
 
     @Bean

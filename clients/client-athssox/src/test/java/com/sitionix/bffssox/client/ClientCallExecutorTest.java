@@ -2,6 +2,7 @@ package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.ClientResponseException;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,20 +16,25 @@ class ClientCallExecutorTest {
 
     private ClientCallExecutor clientCallExecutor;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         this.clientCallExecutor = new ClientCallExecutor();
     }
 
     @Test
     void givenSuccessSupplier_whenExecute_thenReturnValue() {
+        //given
+
+        //when
         final String result = this.clientCallExecutor.execute(() -> "ok");
 
+        //then
         assertThat(result).isEqualTo("ok");
     }
 
     @Test
     void givenHttpError_whenExecute_thenThrowClientResponseExceptionWithBody() {
+        //given
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-Trace-Id", "trace-123");
@@ -41,6 +47,7 @@ class ClientCallExecutorTest {
                 StandardCharsets.UTF_8
         );
 
+        //when then
         assertThatThrownBy(() -> this.clientCallExecutor.execute(() -> {
             throw exception;
         }))

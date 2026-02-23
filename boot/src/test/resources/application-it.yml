@@ -19,3 +19,8 @@ forge:
     targets:
       sitionixAuth:
         host: localhost
+security:
+  session:
+    secure: false
+    csrf:
+      enabled: false

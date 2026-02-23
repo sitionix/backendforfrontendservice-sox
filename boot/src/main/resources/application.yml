@@ -2,6 +2,34 @@ sitionix:
   cors:
     allowed-origins:
       - "http://localhost:3000"
+security:
+  session:
+    cookie-name: "__Host-admin_session"
+    same-site: "Lax"
+    secure: true
+    http-only: true
+    idle-timeout-seconds: 86400
+    absolute-timeout-seconds: 1209600
+    rotation-interval-seconds: 86400
+    refresh-skew-seconds: 60
+    touch-throttle-seconds: 30
+    public-paths:
+      - "/api/v1/session"
+      - "/api/v1/auth/login"
+      - "/api/v1/auth/refresh"
+      - "/api/v1/users"
+      - "/api/v1/auth/email/verify"
+    csrf:
+      enabled: true
+      cookie-name: "XSRF-TOKEN"
+      header-name: "X-CSRF"
+      protected-methods: [ "POST", "PUT", "PATCH", "DELETE" ]
+      ignore-paths:
+        - "/api/v1/auth/login"
+        - "/api/v1/users"
+        - "/api/v1/auth/email/verify"
+    session-store:
+      type: "inmemory"
 server:
   port: 8080
   servlet:

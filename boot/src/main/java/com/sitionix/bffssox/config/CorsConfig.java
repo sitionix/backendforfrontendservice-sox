@@ -24,7 +24,7 @@ public class CorsConfig implements WebMvcConfigurer {
                         HttpMethod.DELETE.name(),
                         HttpMethod.OPTIONS.name()
                 )
-                .allowedHeaders("Content-Type", "Authorization")
+                .allowedHeaders("Content-Type", "Authorization", "X-CSRF")
                 .allowCredentials(true);
     }
 }
