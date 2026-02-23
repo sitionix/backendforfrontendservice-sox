@@ -2,7 +2,6 @@ package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
 import com.sitionix.bffssox.domain.ClientResponseException;
-import jakarta.servlet.ServletException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Optional;
@@ -51,17 +50,6 @@ public class ClientResponseExceptionHandler {
             return this.asBadRequest(details);
         }
         return this.asBadRequest("Validation failed");
-    }
-
-    @ExceptionHandler(ServletException.class)
-    public ResponseEntity<ErrorDTO> handleServletException(final ServletException ex) throws ServletException {
-        if (ex.getCause() instanceof ConstraintViolationException constraintViolationException) {
-            return this.handleConstraintViolationException(constraintViolationException);
-        }
-        if (ex.getCause() instanceof HandlerMethodValidationException handlerMethodValidationException) {
-            return this.handleValidationException(handlerMethodValidationException);
-        }
-        throw ex;
     }
 
     @ExceptionHandler(ClientResponseException.class)
