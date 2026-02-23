@@ -2,10 +2,15 @@ package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.bffssox.domain.CreateSiteRequest;
 import com.sitionix.bffssox.domain.CreateSiteResponse;
+import com.sitionix.bffssox.domain.WorkspaceSitesPage;
 import com.sitionix.bffssox.mapper.CreateSiteApiMapper;
+import com.sitionix.bffssox.mapper.WorkspaceApiMapper;
 import com.sitionix.bffssox.usecase.CreateSite;
+import com.sitionix.bffssox.usecase.GetWorkspaceSites;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,9 +36,25 @@ class SiteControllerTest {
     @Mock
     private CreateSite createSite;
 
+    @Mock
+    private WorkspaceApiMapper workspaceApiMapper;
+
+    @Mock
+    private GetWorkspaceSites getWorkspaceSites;
+
     @BeforeEach
     void setUp() {
-        this.siteController = new SiteController(this.createSiteApiMapper, this.createSite);
+        this.siteController = new SiteController(
+                this.createSiteApiMapper,
+                this.createSite,
+                this.workspaceApiMapper,
+                this.getWorkspaceSites
+        );
+    }
+
+    @AfterEach
+    void tearDown() {
+        verifyNoMoreInteractions(this.createSiteApiMapper, this.createSite, this.workspaceApiMapper, this.getWorkspaceSites);
     }
 
     @Test
@@ -56,5 +78,24 @@ class SiteControllerTest {
         verify(this.createSiteApiMapper).asCreateSiteRequest(createSiteRequestDTO);
         verify(this.createSite).execute(createSiteRequest);
         verify(this.createSiteApiMapper).asCreateSiteResponseDto(createSiteResponse);
+    }
+
+    @Test
+    void givenValidParams_whenGetSites_thenReturnOkResponse() {
+        //given
+        final Integer page = 0;
+        final Integer size = 20;
+        final WorkspaceSitesPage response = mock(WorkspaceSitesPage.class);
+        final WorkspaceSitesResponseDTO responseDTO = mock(WorkspaceSitesResponseDTO.class);
+        when(this.getWorkspaceSites.execute(page, size)).thenReturn(response);
+        when(this.workspaceApiMapper.asWorkspaceSitesResponseDto(response)).thenReturn(responseDTO);
+
+        //when
+        final ResponseEntity<WorkspaceSitesResponseDTO> actual = this.siteController.getSites(page, size);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
+        verify(this.getWorkspaceSites).execute(page, size);
+        verify(this.workspaceApiMapper).asWorkspaceSitesResponseDto(response);
     }
 }

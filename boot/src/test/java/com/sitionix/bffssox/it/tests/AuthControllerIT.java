@@ -1,7 +1,6 @@
 package com.sitionix.bffssox.it.tests;
 
 import com.sitionix.bffssox.it.preparation.AuthJwksDataPreparation;
-import com.sitionix.bffssox.it.utils.ItUserTokens;
 import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
@@ -135,6 +134,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_RESEND_EMAIL_VERIFICATION)
+                .token(null)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultResendEmailVerificationUnauthorized.json"))
                 .assertDefault();
@@ -151,7 +151,6 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_RESEND_EMAIL_VERIFICATION)
-                .token(ItUserTokens.USER_JWT)
                 .assertDefault();
 
         requestBuilder.verify();

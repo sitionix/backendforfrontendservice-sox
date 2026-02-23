@@ -9,11 +9,15 @@ COPY domain/pom.xml domain/pom.xml
 COPY jacoco-report/pom.xml jacoco-report/pom.xml
 COPY clients/pom.xml clients/pom.xml
 COPY clients/client-athssox/pom.xml clients/client-athssox/pom.xml
+COPY clients/client-stsssox/pom.xml clients/client-stsssox/pom.xml
+COPY clients/client-wagssox/pom.xml clients/client-wagssox/pom.xml
 COPY boot/src boot/src
 COPY api-rest/src api-rest/src
 COPY application/src application/src
 COPY domain/src domain/src
 COPY clients/client-athssox/src clients/client-athssox/src
+COPY clients/client-stsssox/src clients/client-stsssox/src
+COPY clients/client-wagssox/src clients/client-wagssox/src
 
 RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
     mvn -pl boot -am -DskipTests package

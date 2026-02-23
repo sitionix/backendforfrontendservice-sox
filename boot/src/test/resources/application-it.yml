@@ -5,6 +5,8 @@ api:
         base-path: ${forgeit.wiremock.base-url}/authsox
       stsssox:
         base-path: ${forgeit.wiremock.base-url}/stsssox
+      wagssox:
+        base-path: ${forgeit.wiremock.base-url}/wagssox
 forge:
   user-jwt:
     auth-base-url: ${forgeit.wiremock.base-url}/authsox

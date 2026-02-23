@@ -11,6 +11,7 @@ import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.ResponseRegisterUserDTO;
+import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
 import com.sitionix.forgeit.domain.endpoint.HttpMethod;
 import com.sitionix.forgeit.domain.endpoint.mockmvc.MockmvcDefault;
@@ -52,7 +53,8 @@ public class MockMvcEndpoint {
                     ResendEmailVerificationResponseDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.ACCEPTED.value())
                             .withRequest("requestDefaultResendEmailVerificationWithHappyPath.json")
-                            .expectResponse("responseDefaultResendEmailVerificationWithHappyPath.json"));
+                            .expectResponse("responseDefaultResendEmailVerificationWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
 
     public static final Endpoint<RegisterUserDTO, ResponseRegisterUserDTO> POST_REGISTER_USER =
             Endpoint.createContract("/api/v1/users",
@@ -70,5 +72,14 @@ public class MockMvcEndpoint {
                     CreateSiteResponseDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
                             .withRequest("requestDefaultCreateSiteWithHappyPath.json")
-                            .expectResponse("responseDefaultCreateSiteWithHappyPath.json"));
+                            .expectResponse("responseDefaultCreateSiteWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, WorkspaceSitesResponseDTO> GET_SITES =
+            Endpoint.createContract("/api/v1/sites",
+                    HttpMethod.GET,
+                    Void.class,
+                    WorkspaceSitesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
+                    ItUserTokens.USER_JWT);
 }

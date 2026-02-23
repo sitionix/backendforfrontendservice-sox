@@ -15,5 +15,6 @@
     <modules>
         <module>client-athssox</module>
         <module>client-stsssox</module>
+        <module>client-wagssox</module>
     </modules>
 </project>

@@ -11,6 +11,7 @@ import com.app_afesox.athssox.client.dto.RegisterUserDTO;
 import com.app_afesox.athssox.client.dto.ResponseRegisterUserDTO;
 import com.app_afesox.stsssox.client.dto.CreateSiteRequestDTO;
 import com.app_afesox.stsssox.client.dto.CreateSiteResponseDTO;
+import com.app_afesox.wagssox.client.dto.WorkspaceSitesPageDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
 import com.sitionix.forgeit.domain.endpoint.HttpMethod;
 import com.sitionix.forgeit.domain.endpoint.wiremock.WiremockDefault;
@@ -103,5 +104,18 @@ public class WireMockEndpoint {
                                 .responseBody("responseDefaultMappingCreateSiteWithHappyPath.json")
                                 .plainUrl()
                                 .responseStatus(201);
+                    });
+
+    public static final Endpoint<Void, WorkspaceSitesPageDTO> GET_SITES =
+            Endpoint.createContract("/wagssox/api/v1/sites",
+                    HttpMethod.GET,
+                    Void.class,
+                    WorkspaceSitesPageDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetSitesFirstPageWithHappyPath.json")
+                                .plainUrl()
+                                .responseStatus(200);
                     });
 }
