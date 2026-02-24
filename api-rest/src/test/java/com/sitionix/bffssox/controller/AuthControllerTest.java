@@ -139,6 +139,7 @@ class AuthControllerTest {
     @Test
     void givenRefreshAccessTokenRequestDto_whenRefreshAccessToken_thenReturnsResponseEntity() {
         //given
+        final String refreshToken = "refreshToken";
         final RefreshAccessTokenRequestDTO requestDTO = mock(RefreshAccessTokenRequestDTO.class);
         final RefreshAccessTokenResponseDTO responseDTO = mock(RefreshAccessTokenResponseDTO.class);
 
@@ -149,17 +150,17 @@ class AuthControllerTest {
         when(this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response))
                 .thenReturn(responseDTO);
 
-        when(this.refreshAccessTokenApiMapper.asRefreshAccessTokenRequest(requestDTO))
+        when(this.refreshAccessTokenApiMapper.asRefreshAccessTokenRequest(refreshToken, requestDTO))
                 .thenReturn(request);
 
         //when
         final ResponseEntity<RefreshAccessTokenResponseDTO> actual =
-                this.authController.refreshAccessToken(requestDTO);
+                this.authController.refreshAccessToken(refreshToken, requestDTO, "http://localhost:3000", null);
 
         //then
         assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK).body(responseDTO));
 
-        verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(requestDTO);
+        verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(refreshToken, requestDTO);
         verify(this.refreshAccessToken).execute(request);
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenResponseDTO(response);
     }

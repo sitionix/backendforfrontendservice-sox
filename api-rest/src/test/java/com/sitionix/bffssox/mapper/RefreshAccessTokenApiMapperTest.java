@@ -24,11 +24,12 @@ class RefreshAccessTokenApiMapperTest {
     @Test
     void givenRefreshAccessTokenRequestDto_whenAsRefreshAccessTokenRequest_thenReturnRequest() {
         //given
+        final String refreshToken = "refreshToken";
         final RefreshAccessTokenRequest expected = this.refreshAccessTokenRequest();
         final RefreshAccessTokenRequestDTO given = this.refreshAccessTokenRequestDTO();
 
         //when
-        final RefreshAccessTokenRequest actual = this.mapper.asRefreshAccessTokenRequest(given);
+        final RefreshAccessTokenRequest actual = this.mapper.asRefreshAccessTokenRequest(refreshToken, given);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -49,7 +50,6 @@ class RefreshAccessTokenApiMapperTest {
 
     private RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO() {
         return RefreshAccessTokenRequestDTO.builder()
-                .refreshToken("refreshToken")
                 .sessionSourceId("sessionSourceId")
                 .build();
     }
@@ -63,7 +63,6 @@ class RefreshAccessTokenApiMapperTest {
 
     private RefreshAccessTokenResponseDTO refreshAccessTokenResponseDTO() {
         return RefreshAccessTokenResponseDTO.builder()
-                .refreshToken("refreshToken")
                 .expiresIn(3600L)
                 .tokenType(RefreshAccessTokenResponseDTO.TokenTypeEnum.BEARER)
                 .accessToken("accessToken")

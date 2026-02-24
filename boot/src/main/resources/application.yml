@@ -2,6 +2,12 @@ sitionix:
   cors:
     allowed-origins:
       - "http://localhost:3000"
+      - "http://localhost:3001"
+  csrf-origin-guard:
+    enabled: true
+    protect-all-api-unsafe-methods: false
+    protected-paths:
+      - "/api/v1/auth/refresh"
 server:
   port: 8080
   servlet:
