@@ -8,7 +8,11 @@ import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.hamcrest.Matchers.containsString;
 
 @IntegrationTest(preparations = AuthJwksDataPreparation.class)
 class AuthControllerIT {
@@ -27,6 +31,8 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_LOGIN_USER)
+                .andExpectPath(MockMvcResultMatchers.header().string(HttpHeaders.SET_COOKIE,
+                        containsString("__Host-refresh_token=dGhpc0lzUmVmcmVzaA==")))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -101,6 +107,8 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .andExpectPath(MockMvcResultMatchers.header().string(HttpHeaders.SET_COOKIE,
+                        containsString("__Host-refresh_token=bmV4dFJlZnJlc2g=")))
                 .assertDefault();
 
         requestBuilder.verify();

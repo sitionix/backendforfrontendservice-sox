@@ -91,7 +91,6 @@ public class AuthController implements AuthApi {
             @Valid final RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO,
             @Size(min = 1) @RequestHeader(value = "Origin", required = false) final String origin,
             @Size(min = 1) @RequestHeader(value = "Referer", required = false) final String referer) {
-
         final RefreshAccessTokenRequest request =
                 this.refreshAccessTokenApiMapper
                         .asRefreshAccessTokenRequest(refreshToken, refreshAccessTokenRequestDTO);

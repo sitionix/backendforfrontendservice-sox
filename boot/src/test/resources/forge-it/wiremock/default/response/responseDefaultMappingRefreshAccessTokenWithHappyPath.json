@@ -1,6 +1,6 @@
 {
   "accessToken": "eyJhbGciOi...",
-  "refreshToken": "dGhpc0lzUmVmcmVzaA==",
+  "refreshToken": "bmV4dFJlZnJlc2g=",
   "expiresIn": 3600,
   "tokenType": "Bearer"
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,6 +53,22 @@ class ClientCallExecutorTest {
                     assertThat(responseException.getResponseHeaders())
                             .containsKey(HttpHeaders.CONTENT_TYPE)
                             .containsKey("X-Trace-Id");
+                });
+    }
+
+    @Test
+    void givenResourceAccessException_whenExecute_thenThrowClientResponseExceptionWithBadGateway() {
+        final ResourceAccessException exception = new ResourceAccessException("Connection refused");
+
+        assertThatThrownBy(() -> this.clientCallExecutor.execute(() -> {
+            throw exception;
+        }))
+                .isInstanceOf(ClientResponseException.class)
+                .satisfies(thrown -> {
+                    final ClientResponseException responseException = (ClientResponseException) thrown;
+                    assertThat(responseException.getStatusCode()).isEqualTo(502);
+                    assertThat(responseException.getResponseBody()).isEqualTo(
+                            "{\"code\":502,\"title\":\"upstream_error\",\"details\":\"Upstream service unavailable\"}");
                 });
     }
 }
