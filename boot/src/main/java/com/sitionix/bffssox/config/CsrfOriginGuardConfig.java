@@ -9,11 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class CsrfOriginGuardConfig implements WebMvcConfigurer {
 
+    private final CsrfOriginGuardProps props;
     private final CsrfOriginGuardInterceptor csrfOriginGuardInterceptor;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
+        if (!this.props.enabled()) {
+            return;
+        }
         registry.addInterceptor(this.csrfOriginGuardInterceptor)
-                .addPathPatterns("/api/**");
+                .addPathPatterns(this.props.protectedPaths().toArray(new String[0]));
     }
 }

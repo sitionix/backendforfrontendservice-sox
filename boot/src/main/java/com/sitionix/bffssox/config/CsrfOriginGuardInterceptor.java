@@ -4,38 +4,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 @Component
 public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
 
-    private static final Set<String> UNSAFE_METHODS = Set.of("POST", "PUT", "PATCH", "DELETE");
+    private static final Set<String> UNSAFE_METHODS = Set.of(
+            HttpMethod.POST.name(),
+            HttpMethod.PUT.name(),
+            HttpMethod.PATCH.name(),
+            HttpMethod.DELETE.name()
+    );
 
-    private final CsrfOriginGuardProps props;
     private final ObjectMapper objectMapper;
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
-    private final Set<String> allowedOrigins;
+    private final CorsConfiguration corsConfiguration;
 
-    public CsrfOriginGuardInterceptor(final CsrfOriginGuardProps props,
-                                      final CorsProps corsProps,
+    public CsrfOriginGuardInterceptor(final CorsProps corsProps,
                                       final ObjectMapper objectMapper) {
-        this.props = props;
         this.objectMapper = objectMapper;
-        this.allowedOrigins = this.normalizeAllowedOrigins(corsProps.allowedOrigins());
+        this.corsConfiguration = new CorsConfiguration();
+        this.corsConfiguration.setAllowedOrigins(Objects.isNull(corsProps.allowedOrigins()) ? List.of() : corsProps.allowedOrigins());
     }
 
     @Override
@@ -51,78 +52,45 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
     }
 
     private boolean shouldEnforce(final HttpServletRequest request) {
-        if (!this.props.enabled()) {
-            return false;
-        }
-        if (!UNSAFE_METHODS.contains(request.getMethod())) {
-            return false;
-        }
-        final String path = this.getPathWithinApplication(request);
-        return this.props.protectedPaths().stream()
-                .anyMatch(pattern -> this.antPathMatcher.match(pattern, path));
+        return UNSAFE_METHODS.contains(request.getMethod());
     }
 
     private boolean isAllowed(final HttpServletRequest request) {
-        if (this.allowedOrigins.isEmpty()) {
-            return false;
-        }
-
         final String originHeader = request.getHeader(HttpHeaders.ORIGIN);
         if (StringUtils.hasText(originHeader)) {
-            final String normalizedOrigin = this.normalizeOrigin(originHeader);
-            return StringUtils.hasText(normalizedOrigin) && this.allowedOrigins.contains(normalizedOrigin);
+            return this.isAllowedOrigin(originHeader);
         }
 
         final String refererHeader = request.getHeader(HttpHeaders.REFERER);
         if (StringUtils.hasText(refererHeader)) {
-            final String normalizedRefererOrigin = this.normalizeOrigin(refererHeader);
-            return StringUtils.hasText(normalizedRefererOrigin) && this.allowedOrigins.contains(normalizedRefererOrigin);
+            return this.isAllowedOrigin(this.extractOriginFromReferer(refererHeader));
         }
 
         return false;
     }
 
-    private Set<String> normalizeAllowedOrigins(final List<String> configuredOrigins) {
-        final Set<String> origins = new LinkedHashSet<>();
-        if (configuredOrigins == null || configuredOrigins.isEmpty()) {
-            return Collections.emptySet();
+    private boolean isAllowedOrigin(final String origin) {
+        if (!StringUtils.hasText(origin)) {
+            return false;
         }
-        for (final String origin : configuredOrigins) {
-            final String normalized = this.normalizeOrigin(origin);
-            if (StringUtils.hasText(normalized)) {
-                origins.add(normalized);
-            }
-        }
-        return Collections.unmodifiableSet(origins);
+        return StringUtils.hasText(this.corsConfiguration.checkOrigin(origin));
     }
 
-    private String normalizeOrigin(final String value) {
-        if (!StringUtils.hasText(value)) {
-            return null;
-        }
+    private String extractOriginFromReferer(final String referer) {
         try {
-            final URI uri = URI.create(value.trim());
-            if (!StringUtils.hasText(uri.getScheme()) || !StringUtils.hasText(uri.getHost())) {
+            final var refererUri = UriComponentsBuilder.fromUriString(referer).build().toUri();
+            final String scheme = refererUri.getScheme();
+            final String host = refererUri.getHost();
+            if (!StringUtils.hasText(scheme) || !StringUtils.hasText(host)) {
                 return null;
             }
-            final String scheme = uri.getScheme().toLowerCase(Locale.ROOT);
-            final String host = uri.getHost().toLowerCase(Locale.ROOT);
-            if (uri.getPort() >= 0) {
-                return scheme + "://" + host + ":" + uri.getPort();
+            if (refererUri.getPort() >= 0) {
+                return scheme + "://" + host + ":" + refererUri.getPort();
             }
             return scheme + "://" + host;
-        } catch (final IllegalArgumentException ex) {
+        } catch (final RuntimeException ex) {
             return null;
         }
-    }
-
-    private String getPathWithinApplication(final HttpServletRequest request) {
-        final String requestUri = request.getRequestURI();
-        final String contextPath = request.getContextPath();
-        if (StringUtils.hasText(contextPath) && requestUri.startsWith(contextPath)) {
-            return requestUri.substring(contextPath.length());
-        }
-        return requestUri;
     }
 
     private void writeForbidden(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

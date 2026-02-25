@@ -19,17 +19,12 @@ import static org.mockito.Mockito.when;
 class CsrfOriginGuardInterceptorTest {
 
     @Mock
-    private CsrfOriginGuardProps props;
-
-    @Mock
     private CorsProps corsProps;
 
     @Test
     void givenAllowedOrigin_whenPreHandle_thenReturnTrue() throws Exception {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
-                true,
-                List.of("/api/v1/auth/refresh"),
                 List.of("http://localhost:3000", "http://localhost:3001")
         );
         final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
@@ -48,8 +43,6 @@ class CsrfOriginGuardInterceptorTest {
     void givenMissingOriginAndAllowedReferer_whenPreHandle_thenReturnTrue() throws Exception {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
-                true,
-                List.of("/api/v1/auth/refresh"),
                 List.of("http://localhost:3000")
         );
         final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
@@ -68,8 +61,6 @@ class CsrfOriginGuardInterceptorTest {
     void givenMissingOriginAndReferer_whenPreHandle_thenReturnForbiddenPayload() throws Exception {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
-                true,
-                List.of("/api/v1/auth/refresh"),
                 List.of("http://localhost:3000")
         );
         final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
@@ -93,14 +84,10 @@ class CsrfOriginGuardInterceptorTest {
     }
 
     private CsrfOriginGuardInterceptor csrfOriginGuardInterceptor(
-            final boolean enabled,
-            final List<String> protectedPaths,
             final List<String> allowedOrigins
     ) {
-        when(this.props.enabled()).thenReturn(enabled);
-        when(this.props.protectedPaths()).thenReturn(protectedPaths);
         when(this.corsProps.allowedOrigins()).thenReturn(allowedOrigins);
-        return new CsrfOriginGuardInterceptor(this.props, this.corsProps, new ObjectMapper());
+        return new CsrfOriginGuardInterceptor(this.corsProps, new ObjectMapper());
     }
 
     private MockHttpServletRequest request(final String method, final String path) {
