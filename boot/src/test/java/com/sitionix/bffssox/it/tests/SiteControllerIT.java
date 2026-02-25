@@ -67,8 +67,8 @@ class SiteControllerIT {
     }
 
     @Test
-    @DisplayName("Should return bad gateway with body when site service fails")
-    void givenUpstreamServerError_whenCreateSite_thenReturnBadGatewayWithBody() {
+    @DisplayName("Should return service unavailable with body when site service fails")
+    void givenUpstreamServerError_whenCreateSite_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_CREATE_SITE)
@@ -79,7 +79,7 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_GATEWAY.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultCreateSiteBadGateway.json"))
                 .assertDefault();
 

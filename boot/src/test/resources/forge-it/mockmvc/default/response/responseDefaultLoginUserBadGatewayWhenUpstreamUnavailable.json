@@ -1,5 +1,5 @@
 {
-  "code": 502,
-  "title": "upstream_error",
+  "code": 503,
+  "title": "Service Unavailable",
   "details": "Upstream service unavailable"
 }

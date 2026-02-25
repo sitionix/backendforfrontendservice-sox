@@ -16,14 +16,14 @@ class AuthControllerUpstreamUnavailableIT {
     private TestManager testManager;
 
     @Test
-    @DisplayName("Should return bad gateway with body when auth service is unavailable")
-    void givenAuthServiceUnavailable_whenLogin_thenReturnBadGatewayWithBody() {
+    @DisplayName("Should return service unavailable with body when auth service is unavailable")
+    void givenAuthServiceUnavailable_whenLogin_thenReturnServiceUnavailableWithBody() {
         //given
 
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_LOGIN_USER)
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_GATEWAY.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultLoginUserBadGatewayWhenUpstreamUnavailable.json"))
                 .assertDefault();
     }

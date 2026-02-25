@@ -68,8 +68,8 @@ class UserControllerIT {
     }
 
     @Test
-    @DisplayName("Should return bad gateway with body when upstream fails")
-    void givenUpstreamServerError_whenRegisterUser_thenReturnBadGatewayWithBody() {
+    @DisplayName("Should return service unavailable with body when upstream fails")
+    void givenUpstreamServerError_whenRegisterUser_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_REGISTER_USER)
@@ -80,7 +80,7 @@ class UserControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REGISTER_USER)
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_GATEWAY.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultRegisterUserBadGateway.json"))
                 .assertDefault();
 

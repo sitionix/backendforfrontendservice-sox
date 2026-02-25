@@ -4,8 +4,6 @@ import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.net.SocketTimeoutException;
-import java.util.Locale;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -63,27 +61,25 @@ public class ClientResponseExceptionHandler {
 
     @ExceptionHandler(ResourceAccessException.class)
     public ResponseEntity<ErrorDTO> handleResourceAccessException(final ResourceAccessException ex) {
-        final HttpStatus status = this.isTimeout(ex) ? HttpStatus.GATEWAY_TIMEOUT : HttpStatus.BAD_GATEWAY;
-        final String details = status == HttpStatus.GATEWAY_TIMEOUT
-                ? "Upstream request timed out"
-                : "Upstream service unavailable";
-
+        final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        final String details = "Upstream service unavailable";
         log.warn("Upstream transport error: statusToClient={}", status.value());
-        return this.asUpstreamTransportErrorResponse(status, details);
+        return this.asErrorResponse(status, details);
     }
 
     @ExceptionHandler(ClientResponseException.class)
-    public ResponseEntity<String> handle(final ClientResponseException ex) {
-
+    public ResponseEntity<?> handle(final ClientResponseException ex) {
         final int upstreamStatus = ex.getStatusCode();
-        final int statusToClient = upstreamStatus >= 500
-                ? HttpStatus.BAD_GATEWAY.value()
-                : upstreamStatus;
 
-        log.warn("Forwarding upstream error: upstreamStatus={}, statusToClient={}",
-                upstreamStatus, statusToClient);
+        if (upstreamStatus >= HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+            final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+            log.warn("Upstream server error: upstreamStatus={}, statusToClient={}",
+                    upstreamStatus, status.value());
+            return this.asErrorResponse(status, "Upstream service unavailable");
+        }
 
-        return ResponseEntity.status(statusToClient)
+        log.warn("Forwarding upstream client error: upstreamStatus={}", upstreamStatus);
+        return ResponseEntity.status(upstreamStatus)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(ex.getResponseBody());
     }
@@ -97,32 +93,4 @@ public class ClientResponseExceptionHandler {
                         .build());
     }
 
-    private ResponseEntity<ErrorDTO> asUpstreamTransportErrorResponse(final HttpStatus status, final String message) {
-        return ResponseEntity.status(status)
-                .body(ErrorDTO.builder()
-                        .code(status.value())
-                        .title("upstream_error")
-                        .details(message)
-                        .build());
-    }
-
-    private boolean isTimeout(final ResourceAccessException ex) {
-        if (this.hasCause(ex, SocketTimeoutException.class)) {
-            return true;
-        }
-
-        final String message = ex.getMessage();
-        return message != null && message.toLowerCase(Locale.ROOT).contains("timed out");
-    }
-
-    private boolean hasCause(final Throwable ex, final Class<? extends Throwable> type) {
-        Throwable current = ex;
-        while (current != null) {
-            if (type.isInstance(current)) {
-                return true;
-            }
-            current = current.getCause();
-        }
-        return false;
-    }
 }
