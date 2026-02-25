@@ -3,7 +3,6 @@ package com.sitionix.bffssox.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,23 +11,32 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
 public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
 
     private static final Set<String> UNSAFE_METHODS = Set.of("POST", "PUT", "PATCH", "DELETE");
 
     private final CsrfOriginGuardProps props;
-    private final CorsProps corsProps;
     private final ObjectMapper objectMapper;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private final Set<String> allowedOrigins;
+
+    public CsrfOriginGuardInterceptor(final CsrfOriginGuardProps props,
+                                      final CorsProps corsProps,
+                                      final ObjectMapper objectMapper) {
+        this.props = props;
+        this.objectMapper = objectMapper;
+        this.allowedOrigins = this.normalizeAllowedOrigins(corsProps.allowedOrigins());
+    }
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
@@ -50,49 +58,48 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
             return false;
         }
         final String path = this.getPathWithinApplication(request);
-        if (this.props.protectAllApiUnsafeMethods() && path.startsWith("/api/")) {
-            return true;
-        }
         return this.props.protectedPaths().stream()
                 .anyMatch(pattern -> this.antPathMatcher.match(pattern, path));
     }
 
     private boolean isAllowed(final HttpServletRequest request) {
-        final Set<String> allowedOrigins = this.normalizedAllowedOrigins();
-        if (allowedOrigins.isEmpty()) {
+        if (this.allowedOrigins.isEmpty()) {
             return false;
         }
 
         final String originHeader = request.getHeader(HttpHeaders.ORIGIN);
         if (StringUtils.hasText(originHeader)) {
             final String normalizedOrigin = this.normalizeOrigin(originHeader);
-            return StringUtils.hasText(normalizedOrigin) && allowedOrigins.contains(normalizedOrigin);
+            return StringUtils.hasText(normalizedOrigin) && this.allowedOrigins.contains(normalizedOrigin);
         }
 
         final String refererHeader = request.getHeader(HttpHeaders.REFERER);
         if (StringUtils.hasText(refererHeader)) {
             final String normalizedRefererOrigin = this.normalizeOrigin(refererHeader);
-            return StringUtils.hasText(normalizedRefererOrigin) && allowedOrigins.contains(normalizedRefererOrigin);
+            return StringUtils.hasText(normalizedRefererOrigin) && this.allowedOrigins.contains(normalizedRefererOrigin);
         }
 
         return false;
     }
 
-    private Set<String> normalizedAllowedOrigins() {
+    private Set<String> normalizeAllowedOrigins(final List<String> configuredOrigins) {
         final Set<String> origins = new LinkedHashSet<>();
-        final Set<String> configuredOrigins = this.corsProps.allowedOrigins() == null
-                ? Set.of()
-                : new LinkedHashSet<>(this.corsProps.allowedOrigins());
+        if (configuredOrigins == null || configuredOrigins.isEmpty()) {
+            return Collections.emptySet();
+        }
         for (final String origin : configuredOrigins) {
             final String normalized = this.normalizeOrigin(origin);
             if (StringUtils.hasText(normalized)) {
                 origins.add(normalized);
             }
         }
-        return origins;
+        return Collections.unmodifiableSet(origins);
     }
 
     private String normalizeOrigin(final String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
         try {
             final URI uri = URI.create(value.trim());
             if (!StringUtils.hasText(uri.getScheme()) || !StringUtils.hasText(uri.getHost())) {

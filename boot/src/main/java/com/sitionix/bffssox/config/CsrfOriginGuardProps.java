@@ -8,7 +8,6 @@ import java.util.Objects;
 @ConfigurationProperties(prefix = "sitionix.csrf-origin-guard")
 public record CsrfOriginGuardProps(
         boolean enabled,
-        boolean protectAllApiUnsafeMethods,
         List<String> protectedPaths
 ) {
 

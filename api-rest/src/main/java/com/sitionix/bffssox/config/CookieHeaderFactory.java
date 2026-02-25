@@ -11,11 +11,11 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class RefreshCookieManager {
+public class CookieHeaderFactory {
 
     private final RefreshCookieProps props;
 
-    public List<String> buildRefreshCookies(final String refreshToken) {
+    private List<String> buildRefreshCookies(final String refreshToken) {
         if (!StringUtils.hasText(refreshToken)) {
             return List.of();
         }

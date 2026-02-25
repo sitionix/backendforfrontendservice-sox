@@ -7,7 +7,7 @@ import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
-import com.sitionix.bffssox.config.RefreshCookieManager;
+import com.sitionix.bffssox.config.CookieHeaderFactory;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
@@ -66,7 +66,7 @@ class AuthControllerTest {
     private ResendEmailVerification resendEmailVerification;
 
     @Mock
-    private RefreshCookieManager refreshCookieManager;
+    private CookieHeaderFactory cookieHeaderFactory;
 
     @BeforeEach
     void setUp() {
@@ -74,7 +74,7 @@ class AuthControllerTest {
                 this.emailVerificationApiMapper, this.verifyEmail,
                 this.refreshAccessTokenApiMapper, this.refreshAccessToken,
                 this.resendEmailVerificationApiMapper, this.resendEmailVerification,
-                this.refreshCookieManager);
+                this.cookieHeaderFactory);
     }
 
     @AfterEach
@@ -87,7 +87,7 @@ class AuthControllerTest {
                 this.refreshAccessTokenApiMapper,
                 this.resendEmailVerificationApiMapper,
                 this.resendEmailVerification,
-                this.refreshCookieManager);
+                this.cookieHeaderFactory);
     }
 
     @Test
@@ -105,7 +105,7 @@ class AuthControllerTest {
         when(loginResponse.getRefreshToken()).thenReturn("refresh-token");
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, "refresh-cookie-value");
-        when(this.refreshCookieManager.buildRefreshCookieHeaders("refresh-token"))
+        when(this.cookieHeaderFactory.buildRefreshCookieHeaders("refresh-token"))
                 .thenReturn(headers);
 
         //when
@@ -118,7 +118,7 @@ class AuthControllerTest {
 
         verify(this.mapper).asLoginRequest(loginRequestDTO);
         verify(this.loginUser).execute(loginRequest);
-        verify(this.refreshCookieManager).buildRefreshCookieHeaders("refresh-token");
+        verify(this.cookieHeaderFactory).buildRefreshCookieHeaders("refresh-token");
         verify(this.mapper).asLoginResponseDTO(loginResponse);
     }
 
@@ -169,7 +169,7 @@ class AuthControllerTest {
         when(response.getRefreshToken()).thenReturn("next-refresh-token");
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, "next-refresh-cookie-value");
-        when(this.refreshCookieManager.buildRefreshCookieHeaders("next-refresh-token"))
+        when(this.cookieHeaderFactory.buildRefreshCookieHeaders("next-refresh-token"))
                 .thenReturn(headers);
 
         //when
@@ -183,7 +183,7 @@ class AuthControllerTest {
 
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(refreshToken, requestDTO);
         verify(this.refreshAccessToken).execute(request);
-        verify(this.refreshCookieManager).buildRefreshCookieHeaders("next-refresh-token");
+        verify(this.cookieHeaderFactory).buildRefreshCookieHeaders("next-refresh-token");
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenResponseDTO(response);
     }
 

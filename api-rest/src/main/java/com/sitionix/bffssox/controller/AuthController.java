@@ -8,7 +8,7 @@ import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
-import com.sitionix.bffssox.config.RefreshCookieManager;
+import com.sitionix.bffssox.config.CookieHeaderFactory;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
@@ -56,7 +56,7 @@ public class AuthController implements AuthApi {
 
     private final ResendEmailVerification resendEmailVerification;
 
-    private final RefreshCookieManager refreshCookieManager;
+    private final CookieHeaderFactory cookieHeaderFactory;
 
     @Override
     public ResponseEntity<LoginResponseDTO> login(@Valid final LoginRequestDTO loginRequestDTO) {
@@ -64,7 +64,7 @@ public class AuthController implements AuthApi {
 
         final LoginResponse response = this.loginUser.execute(loginRequest);
 
-        final HttpHeaders headers = this.refreshCookieManager.buildRefreshCookieHeaders(response.getRefreshToken());
+        final HttpHeaders headers = this.cookieHeaderFactory.buildRefreshCookieHeaders(response.getRefreshToken());
 
         return new ResponseEntity<>(
                 this.loginUserApiMapper.asLoginResponseDTO(response),
@@ -96,7 +96,7 @@ public class AuthController implements AuthApi {
 
         final RefreshAccessTokenResponse response = this.refreshAccessToken.execute(request);
 
-        final HttpHeaders headers = this.refreshCookieManager.buildRefreshCookieHeaders(response.getRefreshToken());
+        final HttpHeaders headers = this.cookieHeaderFactory.buildRefreshCookieHeaders(response.getRefreshToken());
 
         return new ResponseEntity<>(
                 this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response),
