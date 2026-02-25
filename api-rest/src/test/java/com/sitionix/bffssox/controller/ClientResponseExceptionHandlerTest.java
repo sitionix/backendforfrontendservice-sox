@@ -91,7 +91,7 @@ class ClientResponseExceptionHandlerTest {
         );
 
         //when
-        final ResponseEntity<?> actual = this.clientResponseExceptionHandler.handle(exception);
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
@@ -115,7 +115,7 @@ class ClientResponseExceptionHandlerTest {
         );
 
         //when
-        final ResponseEntity<?> actual = this.clientResponseExceptionHandler.handle(exception);
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);

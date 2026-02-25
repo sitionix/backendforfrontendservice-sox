@@ -12,6 +12,6 @@ public record CsrfOriginGuardProps(
 ) {
 
     public CsrfOriginGuardProps {
-        protectedPaths = Objects.isNull(protectedPaths) ? List.of("/api/v1/auth/refresh") : protectedPaths;
+        protectedPaths = Objects.isNull(protectedPaths) ? List.of("/api/v1/auth/refresh") : List.copyOf(protectedPaths);
     }
 }

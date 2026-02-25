@@ -35,7 +35,7 @@ class CsrfOriginGuardInterceptorTest {
         final boolean actual = interceptor.preHandle(request, response, new Object());
 
         //then
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isTrue();
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
@@ -53,7 +53,7 @@ class CsrfOriginGuardInterceptorTest {
         final boolean actual = interceptor.preHandle(request, response, new Object());
 
         //then
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isTrue();
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
@@ -71,7 +71,7 @@ class CsrfOriginGuardInterceptorTest {
         final boolean actual = interceptor.preHandle(request, response, new Object());
 
         //then
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isTrue();
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
@@ -89,7 +89,7 @@ class CsrfOriginGuardInterceptorTest {
         final boolean actual = interceptor.preHandle(request, response, new Object());
 
         //then
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isTrue();
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
@@ -111,12 +111,48 @@ class CsrfOriginGuardInterceptorTest {
         );
 
         //then
-        assertThat(actual).isEqualTo(false);
+        assertThat(actual).isFalse();
         assertThat(response.getStatus()).isEqualTo(403);
         assertThat(payload.get("code")).isEqualTo("CSRF_ORIGIN");
         assertThat(payload.get("title")).isEqualTo("Forbidden");
         assertThat(payload.get("details")).isEqualTo("Invalid request origin");
         assertThat(payload.get("traceId")).isNotBlank();
+    }
+
+    @Test
+    void givenAllowedRefererWithDefaultHttpsPort_whenPreHandle_thenReturnTrue() throws Exception {
+        //given
+        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
+                List.of("https://localhost")
+        );
+        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
+        request.addHeader("Referer", "https://localhost/auth");
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        //when
+        final boolean actual = interceptor.preHandle(request, response, new Object());
+
+        //then
+        assertThat(actual).isTrue();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void givenInvalidOriginScheme_whenPreHandle_thenReturnForbiddenPayload() throws Exception {
+        //given
+        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
+                List.of("https://localhost:3000")
+        );
+        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
+        request.addHeader("Origin", "javascript://localhost:3000");
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        //when
+        final boolean actual = interceptor.preHandle(request, response, new Object());
+
+        //then
+        assertThat(actual).isFalse();
+        assertThat(response.getStatus()).isEqualTo(403);
     }
 
     private CsrfOriginGuardInterceptor csrfOriginGuardInterceptor(

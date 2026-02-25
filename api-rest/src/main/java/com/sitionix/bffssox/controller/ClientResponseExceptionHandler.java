@@ -66,7 +66,7 @@ public class ClientResponseExceptionHandler {
     }
 
     @ExceptionHandler(ClientResponseException.class)
-    public ResponseEntity<?> handle(final ClientResponseException ex) {
+    public ResponseEntity<ErrorDTO> handle(final ClientResponseException ex) {
         final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
         log.warn("Upstream error mapped to service unavailable: upstreamStatus={}, statusToClient={}",
                 ex.getStatusCode(), status.value());
