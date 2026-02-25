@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -70,24 +71,37 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
     }
 
     private boolean isAllowedOrigin(final String origin) {
-        if (!StringUtils.hasText(origin)) {
+        final String canonicalOrigin = this.toCanonicalOrigin(origin);
+        if (!StringUtils.hasText(canonicalOrigin)) {
             return false;
         }
-        return StringUtils.hasText(this.corsConfiguration.checkOrigin(origin));
+        return StringUtils.hasText(this.corsConfiguration.checkOrigin(canonicalOrigin));
     }
 
     private String extractOriginFromReferer(final String referer) {
+        return this.toCanonicalOrigin(referer);
+    }
+
+    private String toCanonicalOrigin(final String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+
         try {
-            final var refererUri = UriComponentsBuilder.fromUriString(referer).build().toUri();
-            final String scheme = refererUri.getScheme();
-            final String host = refererUri.getHost();
-            if (!StringUtils.hasText(scheme) || !StringUtils.hasText(host)) {
+            final var uri = UriComponentsBuilder.fromUriString(value.trim()).build().toUri();
+            if (!StringUtils.hasText(uri.getScheme()) || !StringUtils.hasText(uri.getHost())) {
                 return null;
             }
-            if (refererUri.getPort() >= 0) {
-                return scheme + "://" + host + ":" + refererUri.getPort();
-            }
-            return scheme + "://" + host;
+
+            final String scheme = uri.getScheme().toLowerCase(Locale.ROOT);
+            final String host = uri.getHost().toLowerCase(Locale.ROOT);
+
+            return UriComponentsBuilder.newInstance()
+                    .scheme(scheme)
+                    .host(host)
+                    .port(uri.getPort() >= 0 ? uri.getPort() : null)
+                    .build()
+                    .toUriString();
         } catch (final RuntimeException ex) {
             return null;
         }

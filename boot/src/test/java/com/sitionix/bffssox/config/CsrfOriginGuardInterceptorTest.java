@@ -58,6 +58,42 @@ class CsrfOriginGuardInterceptorTest {
     }
 
     @Test
+    void givenOriginWithUppercaseHost_whenPreHandle_thenReturnTrue() throws Exception {
+        //given
+        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
+                List.of("https://localhost:3000")
+        );
+        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
+        request.addHeader("Origin", "https://LOCALHOST:3000");
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        //when
+        final boolean actual = interceptor.preHandle(request, response, new Object());
+
+        //then
+        assertThat(actual).isEqualTo(true);
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void givenRefererWithUppercaseHost_whenPreHandle_thenReturnTrue() throws Exception {
+        //given
+        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
+                List.of("https://localhost:3000")
+        );
+        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
+        request.addHeader("Referer", "https://LOCALHOST:3000/auth?foo=bar");
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        //when
+        final boolean actual = interceptor.preHandle(request, response, new Object());
+
+        //then
+        assertThat(actual).isEqualTo(true);
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
     void givenMissingOriginAndReferer_whenPreHandle_thenReturnForbiddenPayload() throws Exception {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
