@@ -7,6 +7,7 @@ import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
+import com.sitionix.bffssox.config.RefreshCookieManager;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -63,12 +65,16 @@ class AuthControllerTest {
     @Mock
     private ResendEmailVerification resendEmailVerification;
 
+    @Mock
+    private RefreshCookieManager refreshCookieManager;
+
     @BeforeEach
     void setUp() {
         this.authController = new AuthController(this.mapper, this.loginUser,
                 this.emailVerificationApiMapper, this.verifyEmail,
                 this.refreshAccessTokenApiMapper, this.refreshAccessToken,
-                this.resendEmailVerificationApiMapper, this.resendEmailVerification);
+                this.resendEmailVerificationApiMapper, this.resendEmailVerification,
+                this.refreshCookieManager);
     }
 
     @AfterEach
@@ -80,7 +86,8 @@ class AuthControllerTest {
                 this.emailVerificationApiMapper,
                 this.refreshAccessTokenApiMapper,
                 this.resendEmailVerificationApiMapper,
-                this.resendEmailVerification);
+                this.resendEmailVerification,
+                this.refreshCookieManager);
     }
 
     @Test
@@ -94,17 +101,25 @@ class AuthControllerTest {
 
         when(this.loginUser.execute(loginRequest)).thenReturn(loginResponse);
         when(this.mapper.asLoginResponseDTO(loginResponse)).thenReturn(loginResponseDTO);
-
         when(this.mapper.asLoginRequest(loginRequestDTO)).thenReturn(loginRequest);
+        when(loginResponse.getRefreshToken()).thenReturn("refresh-token");
+        doAnswer(invocation -> {
+            final HttpHeaders headers = invocation.getArgument(0);
+            headers.add(HttpHeaders.SET_COOKIE, "refresh-cookie-value");
+            return null;
+        }).when(this.refreshCookieManager).addRefreshCookieHeader(any(HttpHeaders.class), eq("refresh-token"));
 
         //when
         final ResponseEntity<LoginResponseDTO> actual = this.authController.login(loginRequestDTO);
 
         //then
-        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK).body(loginResponseDTO));
+        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, "refresh-cookie-value")
+                .body(loginResponseDTO));
 
         verify(this.mapper).asLoginRequest(loginRequestDTO);
         verify(this.loginUser).execute(loginRequest);
+        verify(this.refreshCookieManager).addRefreshCookieHeader(any(HttpHeaders.class), eq("refresh-token"));
         verify(this.mapper).asLoginResponseDTO(loginResponse);
     }
 
@@ -152,16 +167,25 @@ class AuthControllerTest {
 
         when(this.refreshAccessTokenApiMapper.asRefreshAccessTokenRequest(refreshToken, requestDTO))
                 .thenReturn(request);
+        when(response.getRefreshToken()).thenReturn("next-refresh-token");
+        doAnswer(invocation -> {
+            final HttpHeaders headers = invocation.getArgument(0);
+            headers.add(HttpHeaders.SET_COOKIE, "next-refresh-cookie-value");
+            return null;
+        }).when(this.refreshCookieManager).addRefreshCookieHeader(any(HttpHeaders.class), eq("next-refresh-token"));
 
         //when
         final ResponseEntity<RefreshAccessTokenResponseDTO> actual =
                 this.authController.refreshAccessToken(refreshToken, requestDTO, "http://localhost:3000", null);
 
         //then
-        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK).body(responseDTO));
+        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, "next-refresh-cookie-value")
+                .body(responseDTO));
 
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(refreshToken, requestDTO);
         verify(this.refreshAccessToken).execute(request);
+        verify(this.refreshCookieManager).addRefreshCookieHeader(any(HttpHeaders.class), eq("next-refresh-token"));
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenResponseDTO(response);
     }
 

@@ -8,6 +8,13 @@ sitionix:
     protect-all-api-unsafe-methods: false
     protected-paths:
       - "/api/v1/auth/refresh"
+security:
+  refresh-cookie:
+    name: "__Host-refresh_token"
+    http-only: true
+    same-site: "Lax"
+    path: "/"
+    secure: true
 server:
   port: 8080
   servlet:
