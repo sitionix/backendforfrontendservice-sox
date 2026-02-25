@@ -33,8 +33,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -105,8 +103,10 @@ class AuthControllerTest {
         when(this.mapper.asLoginResponseDTO(loginResponse)).thenReturn(loginResponseDTO);
         when(this.mapper.asLoginRequest(loginRequestDTO)).thenReturn(loginRequest);
         when(loginResponse.getRefreshToken()).thenReturn("refresh-token");
-        when(this.refreshCookieManager.buildRefreshCookies("refresh-token"))
-                .thenReturn(List.of("refresh-cookie-value"));
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, "refresh-cookie-value");
+        when(this.refreshCookieManager.buildRefreshCookieHeaders("refresh-token"))
+                .thenReturn(headers);
 
         //when
         final ResponseEntity<LoginResponseDTO> actual = this.authController.login(loginRequestDTO);
@@ -118,7 +118,7 @@ class AuthControllerTest {
 
         verify(this.mapper).asLoginRequest(loginRequestDTO);
         verify(this.loginUser).execute(loginRequest);
-        verify(this.refreshCookieManager).buildRefreshCookies("refresh-token");
+        verify(this.refreshCookieManager).buildRefreshCookieHeaders("refresh-token");
         verify(this.mapper).asLoginResponseDTO(loginResponse);
     }
 
@@ -167,8 +167,10 @@ class AuthControllerTest {
         when(this.refreshAccessTokenApiMapper.asRefreshAccessTokenRequest(refreshToken, requestDTO))
                 .thenReturn(request);
         when(response.getRefreshToken()).thenReturn("next-refresh-token");
-        when(this.refreshCookieManager.buildRefreshCookies("next-refresh-token"))
-                .thenReturn(List.of("next-refresh-cookie-value"));
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, "next-refresh-cookie-value");
+        when(this.refreshCookieManager.buildRefreshCookieHeaders("next-refresh-token"))
+                .thenReturn(headers);
 
         //when
         final ResponseEntity<RefreshAccessTokenResponseDTO> actual =
@@ -181,7 +183,7 @@ class AuthControllerTest {
 
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenRequest(refreshToken, requestDTO);
         verify(this.refreshAccessToken).execute(request);
-        verify(this.refreshCookieManager).buildRefreshCookies("next-refresh-token");
+        verify(this.refreshCookieManager).buildRefreshCookieHeaders("next-refresh-token");
         verify(this.refreshAccessTokenApiMapper).asRefreshAccessTokenResponseDTO(response);
     }
 

@@ -1,6 +1,7 @@
 package com.sitionix.bffssox.config;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
@@ -39,5 +40,47 @@ class RefreshCookieManagerTest {
 
         //then
         assertThat(cookies).isEmpty();
+    }
+
+    @Test
+    void givenCookies_whenBuildSetCookieHeaders_thenReturnsHeadersWithSetCookie() {
+        //given
+        final RefreshCookieProps props = new RefreshCookieProps("__Host-refresh_token", true, "Lax", "/", true);
+        final RefreshCookieManager manager = new RefreshCookieManager(props);
+        final List<String> cookies = List.of("cookie-value");
+
+        //when
+        final HttpHeaders headers = manager.buildSetCookieHeaders(cookies);
+
+        //then
+        assertThat(headers.get(HttpHeaders.SET_COOKIE)).containsExactly("cookie-value");
+    }
+
+    @Test
+    void givenRefreshToken_whenBuildRefreshCookieHeaders_thenReturnsHeadersWithSetCookie() {
+        //given
+        final RefreshCookieProps props = new RefreshCookieProps("__Host-refresh_token", true, "Lax", "/", true);
+        final RefreshCookieManager manager = new RefreshCookieManager(props);
+
+        //when
+        final HttpHeaders headers = manager.buildRefreshCookieHeaders("refresh-token");
+
+        //then
+        assertThat(headers.get(HttpHeaders.SET_COOKIE))
+                .singleElement()
+                .contains("__Host-refresh_token=refresh-token");
+    }
+
+    @Test
+    void givenBlankToken_whenBuildRefreshCookieHeaders_thenReturnsHeadersWithoutSetCookie() {
+        //given
+        final RefreshCookieProps props = new RefreshCookieProps("__Host-refresh_token", true, "Lax", "/", true);
+        final RefreshCookieManager manager = new RefreshCookieManager(props);
+
+        //when
+        final HttpHeaders headers = manager.buildRefreshCookieHeaders(" ");
+
+        //then
+        assertThat(headers.containsKey(HttpHeaders.SET_COOKIE)).isFalse();
     }
 }
