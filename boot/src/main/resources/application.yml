@@ -2,8 +2,6 @@ sitionix:
   cors:
     allowed-origins:
       - "https://localhost:3000"
-      - "https://localhost:3001"
-      - "https://localhost:3002"
   csrf-origin-guard:
     enabled: true
     protected-paths:

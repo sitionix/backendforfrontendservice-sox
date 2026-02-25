@@ -66,8 +66,8 @@ public class ClientResponseExceptionHandler {
                 ? HttpStatus.BAD_GATEWAY.value()
                 : upstreamStatus;
 
-        log.warn("Forwarding upstream error: upstreamStatus={}, statusToClient={}, body={}",
-                upstreamStatus, statusToClient, ex.getResponseBody());
+        log.warn("Forwarding upstream error: upstreamStatus={}, statusToClient={}",
+                upstreamStatus, statusToClient);
 
         return ResponseEntity.status(statusToClient)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
