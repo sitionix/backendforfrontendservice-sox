@@ -57,18 +57,15 @@ class ClientCallExecutorTest {
     }
 
     @Test
-    void givenResourceAccessException_whenExecute_thenThrowClientResponseExceptionWithBadGateway() {
+    void givenResourceAccessException_whenExecute_thenRethrowResourceAccessException() {
+        //given
         final ResourceAccessException exception = new ResourceAccessException("Connection refused");
 
+        //when then
         assertThatThrownBy(() -> this.clientCallExecutor.execute(() -> {
             throw exception;
         }))
-                .isInstanceOf(ClientResponseException.class)
-                .satisfies(thrown -> {
-                    final ClientResponseException responseException = (ClientResponseException) thrown;
-                    assertThat(responseException.getStatusCode()).isEqualTo(502);
-                    assertThat(responseException.getResponseBody()).isEqualTo(
-                            "{\"code\":502,\"title\":\"upstream_error\",\"details\":\"Upstream service unavailable\"}");
-                });
+                .isInstanceOf(ResourceAccessException.class)
+                .hasMessageContaining("Connection refused");
     }
 }

@@ -1,11 +1,13 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
+import java.net.SocketTimeoutException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestCookieException;
+import org.springframework.web.client.ResourceAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -35,6 +37,47 @@ class ClientResponseExceptionHandlerTest {
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .title(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                         .details("Missing refresh cookie")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenResourceAccessExceptionWithoutTimeoutCause_whenHandleResourceAccessException_thenReturnsBadGateway() {
+        //given
+        final ResourceAccessException exception = new ResourceAccessException("Connection refused");
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleResourceAccessException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_GATEWAY);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_GATEWAY.value())
+                        .title(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+                        .details("Upstream service unavailable")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenResourceAccessExceptionWithTimeoutCause_whenHandleResourceAccessException_thenReturnsGatewayTimeout() {
+        //given
+        final ResourceAccessException exception = new ResourceAccessException(
+                "Read timed out",
+                new SocketTimeoutException("Read timed out")
+        );
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleResourceAccessException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.GATEWAY_TIMEOUT.value())
+                        .title(HttpStatus.GATEWAY_TIMEOUT.getReasonPhrase())
+                        .details("Upstream request timed out")
                         .build()
         );
     }

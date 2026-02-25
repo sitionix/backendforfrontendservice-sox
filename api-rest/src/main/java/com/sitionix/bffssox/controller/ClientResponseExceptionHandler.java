@@ -4,6 +4,8 @@ import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import java.net.SocketTimeoutException;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @RestControllerAdvice
@@ -58,6 +61,17 @@ public class ClientResponseExceptionHandler {
         return this.asErrorResponse(HttpStatus.UNAUTHORIZED, "Missing refresh cookie");
     }
 
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<ErrorDTO> handleResourceAccessException(final ResourceAccessException ex) {
+        final HttpStatus status = this.isTimeout(ex) ? HttpStatus.GATEWAY_TIMEOUT : HttpStatus.BAD_GATEWAY;
+        final String details = status == HttpStatus.GATEWAY_TIMEOUT
+                ? "Upstream request timed out"
+                : "Upstream service unavailable";
+
+        log.warn("Upstream transport error: statusToClient={}", status.value());
+        return this.asErrorResponse(status, details);
+    }
+
     @ExceptionHandler(ClientResponseException.class)
     public ResponseEntity<String> handle(final ClientResponseException ex) {
 
@@ -81,5 +95,25 @@ public class ClientResponseExceptionHandler {
                         .title(status.getReasonPhrase())
                         .details(message)
                         .build());
+    }
+
+    private boolean isTimeout(final ResourceAccessException ex) {
+        if (this.hasCause(ex, SocketTimeoutException.class)) {
+            return true;
+        }
+
+        final String message = ex.getMessage();
+        return message != null && message.toLowerCase(Locale.ROOT).contains("timed out");
+    }
+
+    private boolean hasCause(final Throwable ex, final Class<? extends Throwable> type) {
+        Throwable current = ex;
+        while (current != null) {
+            if (type.isInstance(current)) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }
