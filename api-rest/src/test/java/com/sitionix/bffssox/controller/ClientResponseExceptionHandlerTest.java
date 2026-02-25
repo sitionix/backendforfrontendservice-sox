@@ -54,7 +54,7 @@ class ClientResponseExceptionHandlerTest {
         assertThat(actual.getBody()).isEqualTo(
                 ErrorDTO.builder()
                         .code(HttpStatus.BAD_GATEWAY.value())
-                        .title(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+                        .title("upstream_error")
                         .details("Upstream service unavailable")
                         .build()
         );
@@ -76,7 +76,7 @@ class ClientResponseExceptionHandlerTest {
         assertThat(actual.getBody()).isEqualTo(
                 ErrorDTO.builder()
                         .code(HttpStatus.GATEWAY_TIMEOUT.value())
-                        .title(HttpStatus.GATEWAY_TIMEOUT.getReasonPhrase())
+                        .title("upstream_error")
                         .details("Upstream request timed out")
                         .build()
         );

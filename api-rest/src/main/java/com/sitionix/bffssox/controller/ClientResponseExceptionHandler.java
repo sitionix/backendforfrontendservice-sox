@@ -69,7 +69,7 @@ public class ClientResponseExceptionHandler {
                 : "Upstream service unavailable";
 
         log.warn("Upstream transport error: statusToClient={}", status.value());
-        return this.asErrorResponse(status, details);
+        return this.asUpstreamTransportErrorResponse(status, details);
     }
 
     @ExceptionHandler(ClientResponseException.class)
@@ -93,6 +93,15 @@ public class ClientResponseExceptionHandler {
                 .body(ErrorDTO.builder()
                         .code(status.value())
                         .title(status.getReasonPhrase())
+                        .details(message)
+                        .build());
+    }
+
+    private ResponseEntity<ErrorDTO> asUpstreamTransportErrorResponse(final HttpStatus status, final String message) {
+        return ResponseEntity.status(status)
+                .body(ErrorDTO.builder()
+                        .code(status.value())
+                        .title("upstream_error")
                         .details(message)
                         .build());
     }
