@@ -1,10 +1,11 @@
 package com.sitionix.bffssox.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -12,9 +13,9 @@ public class RefreshCookieManager {
 
     private final RefreshCookieProps props;
 
-    public void addRefreshCookieHeader(final HttpHeaders headers, final String refreshToken) {
+    public List<String> buildRefreshCookies(final String refreshToken) {
         if (!StringUtils.hasText(refreshToken)) {
-            return;
+            return List.of();
         }
 
         final String cookieValue = ResponseCookie.from(this.props.name(), refreshToken)
@@ -25,6 +26,6 @@ public class RefreshCookieManager {
                 .build()
                 .toString();
 
-        headers.add(HttpHeaders.SET_COOKIE, cookieValue);
+        return List.of(cookieValue);
     }
 }

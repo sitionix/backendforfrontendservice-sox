@@ -65,7 +65,7 @@ public class AuthController implements AuthApi {
         final LoginResponse response = this.loginUser.execute(loginRequest);
 
         final HttpHeaders headers = new HttpHeaders();
-        this.refreshCookieManager.addRefreshCookieHeader(headers, response.getRefreshToken());
+        headers.addAll(HttpHeaders.SET_COOKIE, this.refreshCookieManager.buildRefreshCookies(response.getRefreshToken()));
 
         return new ResponseEntity<>(
                 this.loginUserApiMapper.asLoginResponseDTO(response),
@@ -98,7 +98,7 @@ public class AuthController implements AuthApi {
         final RefreshAccessTokenResponse response = this.refreshAccessToken.execute(request);
 
         final HttpHeaders headers = new HttpHeaders();
-        this.refreshCookieManager.addRefreshCookieHeader(headers, response.getRefreshToken());
+        headers.addAll(HttpHeaders.SET_COOKIE, this.refreshCookieManager.buildRefreshCookies(response.getRefreshToken()));
 
         return new ResponseEntity<>(
                 this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response),
