@@ -48,8 +48,8 @@ class UserControllerIT {
     }
 
     @Test
-    @DisplayName("Should return unauthorized with body when register request is not authorized")
-    void givenUnauthorizedRegisterRequest_whenRegisterUser_thenReturnUnauthorizedWithBody() {
+    @DisplayName("Should return service unavailable with body when register request is rejected upstream")
+    void givenUnauthorizedRegisterRequest_whenRegisterUser_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_REGISTER_USER)
@@ -60,7 +60,7 @@ class UserControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REGISTER_USER)
-                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultRegisterUserUnauthorized.json"))
                 .assertDefault();
 

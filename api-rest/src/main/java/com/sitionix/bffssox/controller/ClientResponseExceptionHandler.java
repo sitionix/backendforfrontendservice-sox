@@ -6,9 +6,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -69,19 +67,10 @@ public class ClientResponseExceptionHandler {
 
     @ExceptionHandler(ClientResponseException.class)
     public ResponseEntity<?> handle(final ClientResponseException ex) {
-        final int upstreamStatus = ex.getStatusCode();
-
-        if (upstreamStatus >= HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-            final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
-            log.warn("Upstream server error: upstreamStatus={}, statusToClient={}",
-                    upstreamStatus, status.value());
-            return this.asErrorResponse(status, "Upstream service unavailable");
-        }
-
-        log.warn("Forwarding upstream client error: upstreamStatus={}", upstreamStatus);
-        return ResponseEntity.status(upstreamStatus)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(ex.getResponseBody());
+        final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        log.warn("Upstream error mapped to service unavailable: upstreamStatus={}, statusToClient={}",
+                ex.getStatusCode(), status.value());
+        return this.asErrorResponse(status, "Upstream service unavailable");
     }
 
     private ResponseEntity<ErrorDTO> asErrorResponse(final HttpStatus status, final String message) {

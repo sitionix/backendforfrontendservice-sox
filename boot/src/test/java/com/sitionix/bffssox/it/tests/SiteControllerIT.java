@@ -47,8 +47,8 @@ class SiteControllerIT {
     }
 
     @Test
-    @DisplayName("Should return unauthorized with body when create site request is not authorized upstream")
-    void givenUnauthorizedCreateSiteRequest_whenCreateSite_thenReturnUnauthorizedWithBody() {
+    @DisplayName("Should return service unavailable with body when create site request is rejected upstream")
+    void givenUnauthorizedCreateSiteRequest_whenCreateSite_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_CREATE_SITE)
@@ -59,7 +59,7 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultCreateSiteUnauthorizedUpstream.json"))
                 .assertDefault();
 

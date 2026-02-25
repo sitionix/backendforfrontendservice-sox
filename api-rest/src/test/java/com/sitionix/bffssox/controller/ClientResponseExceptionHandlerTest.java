@@ -105,12 +105,11 @@ class ClientResponseExceptionHandlerTest {
     }
 
     @Test
-    void givenClientResponseExceptionWithClientError_whenHandle_thenForwardsOriginalResponse() {
+    void givenClientResponseExceptionWithClientError_whenHandle_thenReturnsServiceUnavailable() {
         //given
-        final String body = "{\"code\":401,\"title\":\"Unauthorized\",\"details\":\"Bad token\"}";
         final ClientResponseException exception = new ClientResponseException(
                 HttpStatus.UNAUTHORIZED.value(),
-                body,
+                "{\"code\":401,\"title\":\"Unauthorized\",\"details\":\"Bad token\"}",
                 Collections.emptyMap(),
                 new RuntimeException("Unauthorized")
         );
@@ -119,7 +118,13 @@ class ClientResponseExceptionHandlerTest {
         final ResponseEntity<?> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
-        assertThat(actual.getStatusCode().value()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-        assertThat(actual.getBody()).isEqualTo(body);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.SERVICE_UNAVAILABLE.value())
+                        .title(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
+                        .details("Upstream service unavailable")
+                        .build()
+        );
     }
 }
