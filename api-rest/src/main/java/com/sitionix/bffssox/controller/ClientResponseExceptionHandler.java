@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,6 +51,11 @@ public class ClientResponseExceptionHandler {
             return this.asErrorResponse(HttpStatus.BAD_REQUEST, details);
         }
         return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed");
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ErrorDTO> handleMissingRequestCookieException(final MissingRequestCookieException ex) {
+        return this.asErrorResponse(HttpStatus.UNAUTHORIZED, "Missing refresh cookie");
     }
 
     @ExceptionHandler(ClientResponseException.class)
