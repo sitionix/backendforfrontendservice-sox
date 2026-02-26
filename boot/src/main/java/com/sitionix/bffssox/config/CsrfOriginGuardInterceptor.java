@@ -31,6 +31,7 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
     private static final String B3_TRACE_ID_HEADER = "X-B3-TraceId";
     private static final String REQUEST_ID_HEADER = "X-Request-Id";
     private static final String TRACE_ID_ATTRIBUTE = "traceId";
+    private static final String TRACE_ID_FIELD = TRACE_ID_ATTRIBUTE;
     private static final String FORBIDDEN_CODE = "CSRF_ORIGIN";
     private static final String FORBIDDEN_TITLE = "Forbidden";
     private static final String FORBIDDEN_DETAILS = "Invalid request origin";
@@ -52,15 +53,19 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
         if (!this.shouldEnforce(request)) {
             return true;
         }
         if (this.isAllowed(request)) {
             return true;
         }
-        this.writeForbidden(request, response);
-        return false;
+        try {
+            this.writeForbidden(request, response);
+            return false;
+        } catch (final IOException ex) {
+            throw new IllegalStateException("Failed to write CSRF origin error response", ex);
+        }
     }
 
     private boolean shouldEnforce(final HttpServletRequest request) {
@@ -153,7 +158,7 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
         body.put("code", FORBIDDEN_CODE);
         body.put("title", FORBIDDEN_TITLE);
         body.put("details", FORBIDDEN_DETAILS);
-        body.put("traceId", this.resolveTraceId(request));
+        body.put(TRACE_ID_FIELD, this.resolveTraceId(request));
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

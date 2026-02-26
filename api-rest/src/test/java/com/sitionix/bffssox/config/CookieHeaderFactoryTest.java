@@ -20,14 +20,15 @@ class CookieHeaderFactoryTest {
 
         //then
         final List<String> cookies = headers.get(HttpHeaders.SET_COOKIE);
-        assertThat(cookies).hasSize(1);
+        assertThat(cookies).singleElement();
         final String setCookie = cookies.getFirst();
-        assertThat(setCookie).isNotBlank();
-        assertThat(setCookie).contains("__Host-refresh_token=refresh-token");
-        assertThat(setCookie).contains("Path=/");
-        assertThat(setCookie).contains("Secure");
-        assertThat(setCookie).contains("HttpOnly");
-        assertThat(setCookie).contains("SameSite=Lax");
+        assertThat(setCookie)
+                .isNotBlank()
+                .contains("__Host-refresh_token=refresh-token")
+                .contains("Path=/")
+                .contains("Secure")
+                .contains("HttpOnly")
+                .contains("SameSite=Lax");
     }
 
     @Test
