@@ -3,6 +3,8 @@ package com.sitionix.bffssox.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CookieHeaderFactoryTest {
