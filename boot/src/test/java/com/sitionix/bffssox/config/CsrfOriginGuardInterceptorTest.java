@@ -1,7 +1,8 @@
 package com.sitionix.bffssox.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +15,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,26 +28,34 @@ class CsrfOriginGuardInterceptorTest {
     private CorsProps corsProps;
 
     @ParameterizedTest
-    @MethodSource("allowedOriginRequests")
-    void givenAllowedOriginRequest_whenPreHandle_thenReturnTrue(final List<String> allowedOrigins,
-                                                                final String headerName,
-                                                                final String headerValue) throws Exception {
+    @MethodSource("preHandleRequests")
+    void givenRequest_whenPreHandle_thenReturnExpectedResult(final List<String> allowedOrigins,
+                                                             final String headerName,
+                                                             final String headerValue,
+                                                             final boolean expectedAllowed,
+                                                             final int expectedStatus) {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(allowedOrigins);
         final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
-        request.addHeader(headerName, headerValue);
+        if (Objects.nonNull(headerName)) {
+            request.addHeader(headerName, headerValue);
+        }
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
         //when
         final boolean actual = interceptor.preHandle(request, response, new Object());
 
         //then
-        assertThat(actual).isTrue();
-        assertThat(response.getStatus()).isEqualTo(200);
+        if (expectedAllowed) {
+            assertThat(actual).isTrue();
+        } else {
+            assertThat(actual).isFalse();
+        }
+        assertThat(response.getStatus()).isEqualTo(expectedStatus);
     }
 
     @Test
-    void givenMissingOriginAndReferer_whenPreHandle_thenReturnForbiddenPayload() throws Exception {
+    void givenMissingOriginAndReferer_whenPreHandle_thenReturnForbiddenPayload() {
         //given
         final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
                 List.of("http://localhost:3000")
@@ -55,11 +65,7 @@ class CsrfOriginGuardInterceptorTest {
 
         //when
         final boolean actual = interceptor.preHandle(request, response, new Object());
-        final Map<String, String> payload = new ObjectMapper().readValue(
-                response.getContentAsString(),
-                new TypeReference<>() {
-                }
-        );
+        final Map<String, String> payload = this.parsePayload(response);
 
         //then
         assertThat(actual).isFalse();
@@ -69,42 +75,6 @@ class CsrfOriginGuardInterceptorTest {
                 .containsEntry("title", "Forbidden")
                 .containsEntry("details", "Invalid request origin");
         assertThat(payload.get("traceId")).isNotBlank();
-    }
-
-    @Test
-    void givenAllowedRefererWithDefaultHttpsPort_whenPreHandle_thenReturnTrue() throws Exception {
-        //given
-        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
-                List.of("https://localhost")
-        );
-        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
-        request.addHeader("Referer", "https://localhost/auth");
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        //when
-        final boolean actual = interceptor.preHandle(request, response, new Object());
-
-        //then
-        assertThat(actual).isTrue();
-        assertThat(response.getStatus()).isEqualTo(200);
-    }
-
-    @Test
-    void givenInvalidOriginScheme_whenPreHandle_thenReturnForbiddenPayload() throws Exception {
-        //given
-        final CsrfOriginGuardInterceptor interceptor = this.csrfOriginGuardInterceptor(
-                List.of("https://localhost:3000")
-        );
-        final MockHttpServletRequest request = this.request("POST", "/api/v1/auth/refresh");
-        request.addHeader("Origin", "javascript://localhost:3000");
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        //when
-        final boolean actual = interceptor.preHandle(request, response, new Object());
-
-        //then
-        assertThat(actual).isFalse();
-        assertThat(response.getStatus()).isEqualTo(403);
     }
 
     private CsrfOriginGuardInterceptor csrfOriginGuardInterceptor(
@@ -120,28 +90,62 @@ class CsrfOriginGuardInterceptorTest {
         return request;
     }
 
-    private static Stream<Arguments> allowedOriginRequests() {
+    private static Stream<Arguments> preHandleRequests() {
         return Stream.of(
                 Arguments.of(
                         List.of("http://localhost:3000", "http://localhost:3001"),
                         "Origin",
-                        "http://localhost:3000"
+                        "http://localhost:3000",
+                        true,
+                        200
                 ),
                 Arguments.of(
                         List.of("http://localhost:3000"),
                         "Referer",
-                        "http://localhost:3000/auth"
+                        "http://localhost:3000/auth",
+                        true,
+                        200
                 ),
                 Arguments.of(
                         List.of("https://localhost:3000"),
                         "Origin",
-                        "https://LOCALHOST:3000"
+                        "https://LOCALHOST:3000",
+                        true,
+                        200
                 ),
                 Arguments.of(
                         List.of("https://localhost:3000"),
                         "Referer",
-                        "https://LOCALHOST:3000/auth?foo=bar"
+                        "https://LOCALHOST:3000/auth?foo=bar",
+                        true,
+                        200
+                ),
+                Arguments.of(
+                        List.of("https://localhost"),
+                        "Referer",
+                        "https://localhost/auth",
+                        true,
+                        200
+                ),
+                Arguments.of(
+                        List.of("https://localhost:3000"),
+                        "Origin",
+                        "javascript://localhost:3000",
+                        false,
+                        403
                 )
         );
+    }
+
+    private Map<String, String> parsePayload(final MockHttpServletResponse response) {
+        try {
+            return new ObjectMapper().readValue(
+                    response.getContentAsString(),
+                    new TypeReference<>() {
+                    }
+            );
+        } catch (final IOException ex) {
+            throw new IllegalStateException("Failed to parse CSRF error payload", ex);
+        }
     }
 }

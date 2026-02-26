@@ -31,7 +31,6 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
     private static final String B3_TRACE_ID_HEADER = "X-B3-TraceId";
     private static final String REQUEST_ID_HEADER = "X-Request-Id";
     private static final String TRACE_ID_ATTRIBUTE = "traceId";
-    private static final String TRACE_ID_FIELD = TRACE_ID_ATTRIBUTE;
     private static final String FORBIDDEN_CODE = "CSRF_ORIGIN";
     private static final String FORBIDDEN_TITLE = "Forbidden";
     private static final String FORBIDDEN_DETAILS = "Invalid request origin";
@@ -158,7 +157,7 @@ public class CsrfOriginGuardInterceptor implements HandlerInterceptor {
         body.put("code", FORBIDDEN_CODE);
         body.put("title", FORBIDDEN_TITLE);
         body.put("details", FORBIDDEN_DETAILS);
-        body.put(TRACE_ID_FIELD, this.resolveTraceId(request));
+        body.put(TRACE_ID_ATTRIBUTE, this.resolveTraceId(request));
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

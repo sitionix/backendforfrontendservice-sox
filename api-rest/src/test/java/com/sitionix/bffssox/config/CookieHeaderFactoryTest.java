@@ -3,8 +3,6 @@ package com.sitionix.bffssox.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CookieHeaderFactoryTest {
@@ -19,11 +17,9 @@ class CookieHeaderFactoryTest {
         final HttpHeaders headers = manager.buildRefreshCookieHeaders("refresh-token");
 
         //then
-        final List<String> cookies = headers.get(HttpHeaders.SET_COOKIE);
-        assertThat(cookies).singleElement();
-        final String setCookie = cookies.getFirst();
-        assertThat(setCookie)
-                .isNotBlank()
+        assertThat(headers.get(HttpHeaders.SET_COOKIE))
+                .singleElement()
+                .asString()
                 .contains("__Host-refresh_token=refresh-token")
                 .contains("Path=/")
                 .contains("Secure")
