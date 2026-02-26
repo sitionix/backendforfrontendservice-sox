@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,5 +54,18 @@ class ClientCallExecutorTest {
                             .containsKey(HttpHeaders.CONTENT_TYPE)
                             .containsKey("X-Trace-Id");
                 });
+    }
+
+    @Test
+    void givenResourceAccessException_whenExecute_thenRethrowResourceAccessException() {
+        //given
+        final ResourceAccessException exception = new ResourceAccessException("Connection refused");
+
+        //when then
+        assertThatThrownBy(() -> this.clientCallExecutor.execute(() -> {
+            throw exception;
+        }))
+                .isInstanceOf(ResourceAccessException.class)
+                .hasMessageContaining("Connection refused");
     }
 }

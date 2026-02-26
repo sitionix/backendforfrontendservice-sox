@@ -19,3 +19,6 @@ forge:
     targets:
       sitionixAuth:
         host: localhost
+sitionix:
+  csrf-origin-guard:
+    enabled: false

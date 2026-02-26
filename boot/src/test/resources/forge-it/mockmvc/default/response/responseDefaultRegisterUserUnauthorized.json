@@ -1,5 +1,5 @@
 {
-  "code": 401,
-  "title": "unauthorized",
-  "details": "Invalid credentials"
+  "code": 503,
+  "title": "Service Unavailable",
+  "details": "Upstream service unavailable"
 }

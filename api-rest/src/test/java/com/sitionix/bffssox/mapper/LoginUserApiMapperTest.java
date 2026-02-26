@@ -72,7 +72,6 @@ class LoginUserApiMapperTest {
 
     private LoginResponseDTO loginResponseDTO() {
         return LoginResponseDTO.builder()
-                .refreshToken("refreshToken")
                 .expiresIn(3600L)
                 .tokenType("tokenType")
                 .accessToken("accessToken")

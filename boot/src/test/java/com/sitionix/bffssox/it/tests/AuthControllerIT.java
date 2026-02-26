@@ -8,7 +8,11 @@ import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.hamcrest.Matchers.containsString;
 
 @IntegrationTest(preparations = AuthJwksDataPreparation.class)
 class AuthControllerIT {
@@ -27,14 +31,16 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_LOGIN_USER)
+                .andExpectPath(MockMvcResultMatchers.header().string(HttpHeaders.SET_COOKIE,
+                        containsString("__Host-refresh_token=dGhpc0lzUmVmcmVzaA==")))
                 .assertDefault();
 
         requestBuilder.verify();
     }
 
     @Test
-    @DisplayName("Should return unauthorized with body when invalid credentials are provided")
-    void givenInvalidCredentials_whenLogin_thenReturnUnauthorizedWithBody() {
+    @DisplayName("Should return service unavailable with body when invalid credentials are provided upstream")
+    void givenInvalidCredentials_whenLogin_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_LOGIN_USER)
@@ -45,7 +51,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_LOGIN_USER)
-                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultLoginUserUnauthorized.json"))
                 .assertDefault();
 
@@ -70,8 +76,8 @@ class AuthControllerIT {
     }
 
     @Test
-    @DisplayName("Should return unauthorized with body when invalid verify email token is provided")
-    void givenInvalidVerifyEmailToken_whenVerifyEmail_thenReturnUnauthorizedWithBody() {
+    @DisplayName("Should return service unavailable with body when invalid verify email token is provided upstream")
+    void givenInvalidVerifyEmailToken_whenVerifyEmail_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_VERIFY_EMAIL)
@@ -82,7 +88,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_VERIFY_EMAIL)
-                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultVerifyEmailUnauthorized.json"))
                 .assertDefault();
 
@@ -101,14 +107,16 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
+                .andExpectPath(MockMvcResultMatchers.header().string(HttpHeaders.SET_COOKIE,
+                        containsString("__Host-refresh_token=bmV4dFJlZnJlc2g=")))
                 .assertDefault();
 
         requestBuilder.verify();
     }
 
     @Test
-    @DisplayName("Should return unauthorized with body when invalid refresh token is provided")
-    void givenInvalidRefreshAccessToken_whenRefreshAccessToken_thenReturnUnauthorizedWithBody() {
+    @DisplayName("Should return service unavailable with body when invalid refresh token is provided upstream")
+    void givenInvalidRefreshAccessToken_whenRefreshAccessToken_thenReturnServiceUnavailableWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_REFRESH_ACCESS_TOKEN)
@@ -119,7 +127,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
-                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .expectResponse("responseDefaultRefreshAccessTokenUnauthorized.json"))
                 .assertDefault();
 

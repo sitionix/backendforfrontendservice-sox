@@ -6,14 +6,14 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @RestControllerAdvice
@@ -52,20 +52,25 @@ public class ClientResponseExceptionHandler {
         return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed");
     }
 
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ErrorDTO> handleMissingRequestCookieException(final MissingRequestCookieException ex) {
+        return this.asErrorResponse(HttpStatus.UNAUTHORIZED, "Missing refresh cookie");
+    }
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<ErrorDTO> handleResourceAccessException(final ResourceAccessException ex) {
+        final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        final String details = "Upstream service unavailable";
+        log.warn("Upstream transport error: statusToClient={}", status.value());
+        return this.asErrorResponse(status, details);
+    }
+
     @ExceptionHandler(ClientResponseException.class)
-    public ResponseEntity<String> handle(final ClientResponseException ex) {
-
-        final int upstreamStatus = ex.getStatusCode();
-        final int statusToClient = upstreamStatus >= 500
-                ? HttpStatus.BAD_GATEWAY.value()
-                : upstreamStatus;
-
-        log.warn("Forwarding upstream error: upstreamStatus={}, statusToClient={}, body={}",
-                upstreamStatus, statusToClient, ex.getResponseBody());
-
-        return ResponseEntity.status(statusToClient)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(ex.getResponseBody());
+    public ResponseEntity<ErrorDTO> handle(final ClientResponseException ex) {
+        final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        log.warn("Upstream error mapped to service unavailable: upstreamStatus={}, statusToClient={}",
+                ex.getStatusCode(), status.value());
+        return this.asErrorResponse(status, "Upstream service unavailable");
     }
 
     private ResponseEntity<ErrorDTO> asErrorResponse(final HttpStatus status, final String message) {
@@ -76,4 +81,5 @@ public class ClientResponseExceptionHandler {
                         .details(message)
                         .build());
     }
+
 }

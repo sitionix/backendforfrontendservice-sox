@@ -8,6 +8,7 @@ import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
+import com.sitionix.bffssox.config.CookieHeaderFactory;
 import com.sitionix.bffssox.domain.EmailVerificationRequest;
 import com.sitionix.bffssox.domain.EmailVerificationResponse;
 import com.sitionix.bffssox.domain.LoginRequest;
@@ -24,10 +25,15 @@ import com.sitionix.bffssox.usecase.RefreshAccessToken;
 import com.sitionix.bffssox.usecase.ResendEmailVerification;
 import com.sitionix.bffssox.usecase.VerifyEmail;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -50,14 +56,21 @@ public class AuthController implements AuthApi {
 
     private final ResendEmailVerification resendEmailVerification;
 
+    private final CookieHeaderFactory cookieHeaderFactory;
+
     @Override
     public ResponseEntity<LoginResponseDTO> login(@Valid final LoginRequestDTO loginRequestDTO) {
         final LoginRequest loginRequest = this.loginUserApiMapper.asLoginRequest(loginRequestDTO);
 
         final LoginResponse response = this.loginUser.execute(loginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.loginUserApiMapper.asLoginResponseDTO(response));
+        final HttpHeaders headers = this.cookieHeaderFactory.buildRefreshCookieHeaders(response.getRefreshToken());
+
+        return new ResponseEntity<>(
+                this.loginUserApiMapper.asLoginResponseDTO(response),
+                headers,
+                HttpStatus.OK
+        );
     }
 
     @Override
@@ -73,14 +86,23 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<RefreshAccessTokenResponseDTO> refreshAccessToken(
-            @Valid final RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO) {
-        final RefreshAccessTokenRequest request = this.refreshAccessTokenApiMapper
-                .asRefreshAccessTokenRequest(refreshAccessTokenRequestDTO);
+            @NotNull @Size(min = 1) @CookieValue("${security.refresh-cookie.name}") final String refreshToken,
+            @Valid final RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO,
+            @Size(min = 1) @RequestHeader(value = "Origin", required = false) final String origin,
+            @Size(min = 1) @RequestHeader(value = "Referer", required = false) final String referer) {
+        final RefreshAccessTokenRequest request =
+                this.refreshAccessTokenApiMapper
+                        .asRefreshAccessTokenRequest(refreshToken, refreshAccessTokenRequestDTO);
 
         final RefreshAccessTokenResponse response = this.refreshAccessToken.execute(request);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response));
+        final HttpHeaders headers = this.cookieHeaderFactory.buildRefreshCookieHeaders(response.getRefreshToken());
+
+        return new ResponseEntity<>(
+                this.refreshAccessTokenApiMapper.asRefreshAccessTokenResponseDTO(response),
+                headers,
+                HttpStatus.OK
+        );
     }
 
     @Override

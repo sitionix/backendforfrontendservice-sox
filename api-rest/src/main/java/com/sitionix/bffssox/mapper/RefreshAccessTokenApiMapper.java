@@ -5,11 +5,14 @@ import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.sitionix.bffssox.domain.RefreshAccessTokenRequest;
 import com.sitionix.bffssox.domain.RefreshAccessTokenResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RefreshAccessTokenApiMapper {
 
-    RefreshAccessTokenRequest asRefreshAccessTokenRequest(final RefreshAccessTokenRequestDTO src);
+    @Mapping(target = "refreshToken", source = "refreshToken")
+    @Mapping(target = "sessionSourceId", source = "src.sessionSourceId")
+    RefreshAccessTokenRequest asRefreshAccessTokenRequest(final String refreshToken, final RefreshAccessTokenRequestDTO src);
 
     RefreshAccessTokenResponseDTO asRefreshAccessTokenResponseDTO(final RefreshAccessTokenResponse src);
 

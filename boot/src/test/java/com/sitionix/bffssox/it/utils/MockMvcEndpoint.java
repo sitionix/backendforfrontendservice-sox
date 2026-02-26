@@ -43,6 +43,7 @@ public class MockMvcEndpoint {
                     RefreshAccessTokenRequestDTO.class,
                     RefreshAccessTokenResponseDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .cookie("__Host-refresh_token", "dGhpc0lzUmVmcmVzaA==")
                             .withRequest("requestDefaultRefreshAccessTokenWithHappyPath.json")
                             .expectResponse("responseDefaultRefreshAccessTokenWithHappyPath.json"));
 
