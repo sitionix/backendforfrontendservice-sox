@@ -39,8 +39,8 @@ class AuthControllerIT {
     }
 
     @Test
-    @DisplayName("Should return service unavailable with body when invalid credentials are provided upstream")
-    void givenInvalidCredentials_whenLogin_thenReturnServiceUnavailableWithBody() {
+    @DisplayName("Should return unauthorized with body when invalid credentials are provided upstream")
+    void givenInvalidCredentials_whenLogin_thenReturnUnauthorizedWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_LOGIN_USER)
@@ -51,7 +51,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_LOGIN_USER)
-                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultLoginUserUnauthorized.json"))
                 .assertDefault();
 
@@ -76,8 +76,8 @@ class AuthControllerIT {
     }
 
     @Test
-    @DisplayName("Should return service unavailable with body when invalid verify email token is provided upstream")
-    void givenInvalidVerifyEmailToken_whenVerifyEmail_thenReturnServiceUnavailableWithBody() {
+    @DisplayName("Should return unauthorized with body when invalid verify email token is provided upstream")
+    void givenInvalidVerifyEmailToken_whenVerifyEmail_thenReturnUnauthorizedWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_VERIFY_EMAIL)
@@ -88,7 +88,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_VERIFY_EMAIL)
-                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultVerifyEmailUnauthorized.json"))
                 .assertDefault();
 
@@ -115,8 +115,8 @@ class AuthControllerIT {
     }
 
     @Test
-    @DisplayName("Should return service unavailable with body when invalid refresh token is provided upstream")
-    void givenInvalidRefreshAccessToken_whenRefreshAccessToken_thenReturnServiceUnavailableWithBody() {
+    @DisplayName("Should return unauthorized with body when invalid refresh token is provided upstream")
+    void givenInvalidRefreshAccessToken_whenRefreshAccessToken_thenReturnUnauthorizedWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_REFRESH_ACCESS_TOKEN)
@@ -127,7 +127,7 @@ class AuthControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_REFRESH_ACCESS_TOKEN)
-                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultRefreshAccessTokenUnauthorized.json"))
                 .assertDefault();
 

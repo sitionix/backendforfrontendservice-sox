@@ -1,13 +1,16 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +20,10 @@ import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ClientResponseExceptionHandler {
+
+    private final ObjectMapper objectMapper;
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDTO> handleBadRequest(final IllegalArgumentException ex) {
@@ -67,10 +73,31 @@ public class ClientResponseExceptionHandler {
 
     @ExceptionHandler(ClientResponseException.class)
     public ResponseEntity<ErrorDTO> handle(final ClientResponseException ex) {
-        final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
-        log.warn("Upstream error mapped to service unavailable: upstreamStatus={}, statusToClient={}",
-                ex.getStatusCode(), status.value());
-        return this.asErrorResponse(status, "Upstream service unavailable");
+        final HttpStatus status = HttpStatus.resolve(ex.getStatusCode());
+        if (status == null) {
+            log.warn("Unknown upstream status code: {}", ex.getStatusCode());
+            return this.asErrorResponse(HttpStatus.BAD_GATEWAY, "Invalid upstream response status");
+        }
+
+        final ErrorDTO upstreamError = this.parseError(ex.getResponseBody());
+        if (upstreamError != null) {
+            return ResponseEntity.status(status).body(upstreamError);
+        }
+
+        return this.asErrorResponse(status, status.getReasonPhrase());
+    }
+
+    private ErrorDTO parseError(final String responseBody) {
+        if (!StringUtils.hasText(responseBody)) {
+            return null;
+        }
+
+        try {
+            return this.objectMapper.readValue(responseBody, ErrorDTO.class);
+        } catch (Exception ex) {
+            log.warn("Failed to parse upstream error body", ex);
+            return null;
+        }
     }
 
     private ResponseEntity<ErrorDTO> asErrorResponse(final HttpStatus status, final String message) {

@@ -1,5 +1,5 @@
 {
-  "code": 503,
-  "title": "Service Unavailable",
-  "details": "Upstream service unavailable"
+  "code": 401,
+  "title": "unauthorized",
+  "details": "Invalid refresh token"
 }
