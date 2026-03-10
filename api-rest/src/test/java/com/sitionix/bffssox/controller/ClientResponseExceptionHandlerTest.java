@@ -1,6 +1,7 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ class ClientResponseExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        this.clientResponseExceptionHandler = new ClientResponseExceptionHandler();
+        this.clientResponseExceptionHandler = new ClientResponseExceptionHandler(new ObjectMapper());
     }
 
     @Test
@@ -43,7 +44,7 @@ class ClientResponseExceptionHandlerTest {
     }
 
     @Test
-    void givenResourceAccessExceptionWithoutTimeoutCause_whenHandleResourceAccessException_thenReturnsServiceUnavailable() {
+    void givenResourceAccessException_whenHandleResourceAccessException_thenReturnsServiceUnavailable() {
         //given
         final ResourceAccessException exception = new ResourceAccessException("Connection refused");
 
@@ -62,29 +63,34 @@ class ClientResponseExceptionHandlerTest {
     }
 
     @Test
-    void givenResourceAccessExceptionWithTimeoutCause_whenHandleResourceAccessException_thenReturnsServiceUnavailable() {
+    void givenClientResponseExceptionWithUnauthorizedAndJsonBody_whenHandle_thenReturnsUnauthorizedWithUpstreamBody() {
         //given
-        final ResourceAccessException exception = new ResourceAccessException("Read timed out");
+        final ClientResponseException exception = new ClientResponseException(
+                HttpStatus.UNAUTHORIZED.value(),
+                "{\"code\":401,\"title\":\"unauthorized\",\"details\":\"Invalid credentials\"}",
+                Collections.emptyMap(),
+                new RuntimeException("Unauthorized")
+        );
 
         //when
-        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleResourceAccessException(exception);
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(actual.getBody()).isEqualTo(
                 ErrorDTO.builder()
-                        .code(HttpStatus.SERVICE_UNAVAILABLE.value())
-                        .title(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
-                        .details("Upstream service unavailable")
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .title("unauthorized")
+                        .details("Invalid credentials")
                         .build()
         );
     }
 
     @Test
-    void givenClientResponseExceptionWithServerError_whenHandle_thenReturnsServiceUnavailable() {
+    void givenClientResponseExceptionWithServerErrorAndJsonBody_whenHandle_thenReturnsServerErrorWithUpstreamBody() {
         //given
         final ClientResponseException exception = new ClientResponseException(
-                HttpStatus.BAD_GATEWAY.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "{\"code\":502,\"title\":\"upstream_error\",\"details\":\"AuthSox service failed\"}",
                 Collections.emptyMap(),
                 new RuntimeException("Upstream failed")
@@ -94,22 +100,22 @@ class ClientResponseExceptionHandlerTest {
         final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(actual.getBody()).isEqualTo(
                 ErrorDTO.builder()
-                        .code(HttpStatus.SERVICE_UNAVAILABLE.value())
-                        .title(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
-                        .details("Upstream service unavailable")
+                        .code(502)
+                        .title("upstream_error")
+                        .details("AuthSox service failed")
                         .build()
         );
     }
 
     @Test
-    void givenClientResponseExceptionWithClientError_whenHandle_thenReturnsServiceUnavailable() {
+    void givenClientResponseExceptionWithInvalidJsonBody_whenHandle_thenReturnsFallbackError() {
         //given
         final ClientResponseException exception = new ClientResponseException(
                 HttpStatus.UNAUTHORIZED.value(),
-                "{\"code\":401,\"title\":\"Unauthorized\",\"details\":\"Bad token\"}",
+                "not-json",
                 Collections.emptyMap(),
                 new RuntimeException("Unauthorized")
         );
@@ -118,13 +124,38 @@ class ClientResponseExceptionHandlerTest {
         final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
 
         //then
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(actual.getBody()).isEqualTo(
                 ErrorDTO.builder()
-                        .code(HttpStatus.SERVICE_UNAVAILABLE.value())
-                        .title(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
-                        .details("Upstream service unavailable")
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .title(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                        .details(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                         .build()
         );
     }
+
+    @Test
+    void givenClientResponseExceptionWithUnknownStatusCode_whenHandle_thenReturnsBadGatewayError() {
+        //given
+        final ClientResponseException exception = new ClientResponseException(
+                599,
+                "{\"code\":599,\"title\":\"unknown\",\"details\":\"Unknown status\"}",
+                Collections.emptyMap(),
+                new RuntimeException("Unknown")
+        );
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handle(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_GATEWAY);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_GATEWAY.value())
+                        .title(HttpStatus.BAD_GATEWAY.getReasonPhrase())
+                        .details("Invalid upstream response status")
+                        .build()
+        );
+    }
+
 }

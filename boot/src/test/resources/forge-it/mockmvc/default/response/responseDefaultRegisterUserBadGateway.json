@@ -1,5 +1,5 @@
 {
-  "code": 503,
-  "title": "Service Unavailable",
-  "details": "Upstream service unavailable"
+  "code": 502,
+  "title": "upstream_error",
+  "details": "AuthSox service failed"
 }

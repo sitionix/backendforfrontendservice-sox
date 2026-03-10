@@ -47,8 +47,8 @@ class SiteControllerIT {
     }
 
     @Test
-    @DisplayName("Should return service unavailable with body when create site request is rejected upstream")
-    void givenUnauthorizedCreateSiteRequest_whenCreateSite_thenReturnServiceUnavailableWithBody() {
+    @DisplayName("Should return unauthorized with body when create site request is rejected upstream")
+    void givenUnauthorizedCreateSiteRequest_whenCreateSite_thenReturnUnauthorizedWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_CREATE_SITE)
@@ -59,7 +59,7 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultCreateSiteUnauthorizedUpstream.json"))
                 .assertDefault();
 
@@ -67,8 +67,8 @@ class SiteControllerIT {
     }
 
     @Test
-    @DisplayName("Should return service unavailable with body when site service fails")
-    void givenUpstreamServerError_whenCreateSite_thenReturnServiceUnavailableWithBody() {
+    @DisplayName("Should return internal server error with body when site service fails")
+    void givenUpstreamServerError_whenCreateSite_thenReturnInternalServerErrorWithBody() {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_CREATE_SITE)
@@ -79,7 +79,7 @@ class SiteControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_SITE)
-                .applyDefault(context -> context.expectStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .applyDefault(context -> context.expectStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .expectResponse("responseDefaultCreateSiteBadGateway.json"))
                 .assertDefault();
 
