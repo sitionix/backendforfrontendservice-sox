@@ -3,7 +3,7 @@
   "name": "Agency Portfolio",
   "status": "DRAFT",
   "type": "PORTFOLIO",
-  "description": null,
+  "description": "Agency portfolio description",
   "createdAt": "2026-01-10T12:00:00Z",
   "updatedAt": "2026-01-29T08:30:00Z"
 }
