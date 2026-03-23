@@ -4,11 +4,13 @@ import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sitionix.bffssox.domain.ClientResponseException;
 import java.util.Collections;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestCookieException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.client.ResourceAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,6 +60,31 @@ class ClientResponseExceptionHandlerTest {
                         .code(HttpStatus.SERVICE_UNAVAILABLE.value())
                         .title(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
                         .details("Upstream service unavailable")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenInvalidSiteId_whenHandleMethodArgumentTypeMismatchException_thenReturnsBadRequest() {
+        //given
+        final MethodArgumentTypeMismatchException exception = new MethodArgumentTypeMismatchException(
+                "not-a-valid-id",
+                UUID.class,
+                "siteId",
+                null,
+                new IllegalArgumentException("Invalid siteId")
+        );
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleMethodArgumentTypeMismatchException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("Invalid siteId")
                         .build()
         );
     }

@@ -2,14 +2,19 @@ package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.bffssox.domain.CreateSiteRequest;
 import com.sitionix.bffssox.domain.CreateSiteResponse;
+import com.sitionix.bffssox.domain.SiteOverview;
 import com.sitionix.bffssox.domain.WorkspaceSitesPage;
 import com.sitionix.bffssox.mapper.CreateSiteApiMapper;
+import com.sitionix.bffssox.mapper.SiteOverviewApiMapper;
 import com.sitionix.bffssox.mapper.WorkspaceApiMapper;
 import com.sitionix.bffssox.usecase.CreateSite;
+import com.sitionix.bffssox.usecase.GetSiteOverview;
 import com.sitionix.bffssox.usecase.GetWorkspaceSites;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,19 +47,34 @@ class SiteControllerTest {
     @Mock
     private GetWorkspaceSites getWorkspaceSites;
 
+    @Mock
+    private SiteOverviewApiMapper siteOverviewApiMapper;
+
+    @Mock
+    private GetSiteOverview getSiteOverview;
+
     @BeforeEach
     void setUp() {
         this.siteController = new SiteController(
                 this.createSiteApiMapper,
                 this.createSite,
                 this.workspaceApiMapper,
-                this.getWorkspaceSites
+                this.getWorkspaceSites,
+                this.siteOverviewApiMapper,
+                this.getSiteOverview
         );
     }
 
     @AfterEach
     void tearDown() {
-        verifyNoMoreInteractions(this.createSiteApiMapper, this.createSite, this.workspaceApiMapper, this.getWorkspaceSites);
+        verifyNoMoreInteractions(
+                this.createSiteApiMapper,
+                this.createSite,
+                this.workspaceApiMapper,
+                this.getWorkspaceSites,
+                this.siteOverviewApiMapper,
+                this.getSiteOverview
+        );
     }
 
     @Test
@@ -97,5 +117,23 @@ class SiteControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
         verify(this.getWorkspaceSites).execute(page, size);
         verify(this.workspaceApiMapper).asWorkspaceSitesResponseDto(response);
+    }
+
+    @Test
+    void givenSiteId_whenGetSiteOverview_thenReturnOkResponse() {
+        //given
+        final UUID siteId = UUID.fromString("c9b1f3f4-12c7-11ec-82a8-0242ac130003");
+        final SiteOverview response = mock(SiteOverview.class);
+        final SiteOverviewDTO responseDTO = mock(SiteOverviewDTO.class);
+        when(this.getSiteOverview.execute(siteId)).thenReturn(response);
+        when(this.siteOverviewApiMapper.asSiteOverviewDto(response)).thenReturn(responseDTO);
+
+        //when
+        final ResponseEntity<SiteOverviewDTO> actual = this.siteController.getSiteOverview(siteId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
+        verify(this.getSiteOverview).execute(siteId);
+        verify(this.siteOverviewApiMapper).asSiteOverviewDto(response);
     }
 }
