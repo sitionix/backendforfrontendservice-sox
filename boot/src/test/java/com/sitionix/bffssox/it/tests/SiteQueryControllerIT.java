@@ -102,7 +102,7 @@ class SiteQueryControllerIT {
                 .withQueryParameters(QueryParams.create()
                         .add("page", 0)
                         .add("size", 0))
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()))
+                .expectStatus(HttpStatus.BAD_REQUEST)
                 .assertDefault();
     }
 
@@ -117,7 +117,7 @@ class SiteQueryControllerIT {
                 .withQueryParameters(QueryParams.create()
                         .add("page", -1)
                         .add("size", 20))
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()))
+                .expectStatus(HttpStatus.BAD_REQUEST)
                 .assertDefault();
     }
 
@@ -169,7 +169,7 @@ class SiteQueryControllerIT {
                 .ping(MockMvcEndpoint.GET_SITE_OVERVIEW)
                 .withPathParameters(PathParams.create()
                         .add("siteId", "not-a-valid-id"))
-                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value()))
+                .expectStatus(HttpStatus.BAD_REQUEST)
                 .assertDefault();
     }
 
