@@ -13,7 +13,7 @@
     <artifactId>client-wagssox</artifactId>
 
     <properties>
-        <wagssox.api.version>0.0.1</wagssox.api.version>
+        <wagssox.api.version>0.0.2</wagssox.api.version>
     </properties>
 
     <dependencies>

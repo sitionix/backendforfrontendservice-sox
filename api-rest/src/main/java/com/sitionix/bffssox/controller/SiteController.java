@@ -3,14 +3,19 @@ package com.sitionix.bffssox.controller;
 import com.app_afesox.bffssox.api_first.api.SiteApi;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.bffssox.domain.CreateSiteRequest;
 import com.sitionix.bffssox.domain.CreateSiteResponse;
+import com.sitionix.bffssox.domain.SiteOverview;
 import com.sitionix.bffssox.domain.WorkspaceSitesPage;
 import com.sitionix.bffssox.mapper.CreateSiteApiMapper;
+import com.sitionix.bffssox.mapper.SiteOverviewApiMapper;
 import com.sitionix.bffssox.mapper.WorkspaceApiMapper;
 import com.sitionix.bffssox.usecase.CreateSite;
+import com.sitionix.bffssox.usecase.GetSiteOverview;
 import com.sitionix.bffssox.usecase.GetWorkspaceSites;
+import java.util.UUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +35,10 @@ public class SiteController implements SiteApi {
 
     private final GetWorkspaceSites getWorkspaceSites;
 
+    private final SiteOverviewApiMapper siteOverviewApiMapper;
+
+    private final GetSiteOverview getSiteOverview;
+
     @Override
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CreateSiteResponseDTO> createSite(@Valid final CreateSiteRequestDTO createSiteRequestDTO) {
@@ -48,5 +57,12 @@ public class SiteController implements SiteApi {
     ) {
         final WorkspaceSitesPage response = this.getWorkspaceSites.execute(page, size);
         return ResponseEntity.ok(this.workspaceApiMapper.asWorkspaceSitesResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SiteOverviewDTO> getSiteOverview(final UUID siteId) {
+        final SiteOverview response = this.getSiteOverview.execute(siteId);
+        return ResponseEntity.ok(this.siteOverviewApiMapper.asSiteOverviewDto(response));
     }
 }

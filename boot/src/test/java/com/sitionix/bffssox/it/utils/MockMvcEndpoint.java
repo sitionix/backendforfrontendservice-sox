@@ -6,6 +6,7 @@ import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
@@ -81,6 +82,14 @@ public class MockMvcEndpoint {
                     HttpMethod.GET,
                     Void.class,
                     WorkspaceSitesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, SiteOverviewDTO> GET_SITE_OVERVIEW =
+            Endpoint.createContract("/api/v1/sites/{siteId}/overview",
+                    HttpMethod.GET,
+                    Void.class,
+                    SiteOverviewDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
                     ItUserTokens.USER_JWT);
 }

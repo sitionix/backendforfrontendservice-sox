@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.client.ResourceAccessException;
 
 @Slf4j
@@ -27,6 +28,14 @@ public class ClientResponseExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDTO> handleBadRequest(final IllegalArgumentException ex) {
+        return this.asErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDTO> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+        if ("siteId".equals(ex.getName())) {
+            return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Invalid siteId");
+        }
         return this.asErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
