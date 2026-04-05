@@ -163,7 +163,7 @@ jobs:
             });
 
       - name: Execute deployment
-        uses: ./.github/actions/bff-dev-deploy-run
+        uses: ./.github/actions/dev-deploy-run
         with:
           github_environment: ${{ needs.resolve-service.outputs.environment_id }}
         env:

@@ -107,11 +107,11 @@ Committed non-secret internal auth values still stay in service config:
 
 ## Workflow flow
 
-Workflow: [bff-dev-deploy-on-push.yml](/Users/vladvinskevitch/Documents/Java/sitionix/backendforfrontendservice-sox/.github/workflows/bff-dev-deploy-on-push.yml)
+Workflow: [dev-deploy-on-push.yml](/Users/vladvinskevitch/Documents/Java/sitionix/backendforfrontendservice-sox/.github/workflows/dev-deploy-on-push.yml)
 
 Comment workflow: [deploy-on-comment.yml](/Users/vladvinskevitch/Documents/Java/sitionix/backendforfrontendservice-sox/.github/workflows/deploy-on-comment.yml)
 
-Composite action: [bff-dev-deploy-run](/Users/vladvinskevitch/Documents/Java/sitionix/backendforfrontendservice-sox/.github/actions/bff-dev-deploy-run/action.yml)
+Composite action: [dev-deploy-run](/Users/vladvinskevitch/Documents/Java/sitionix/backendforfrontendservice-sox/.github/actions/dev-deploy-run/action.yml)
 
 Flow:
 

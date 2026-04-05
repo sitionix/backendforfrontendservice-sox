@@ -5,8 +5,8 @@ on:
     branches:
       - develop
     paths:
-      - ".github/workflows/bff-dev-deploy-on-push.yml"
-      - ".github/actions/bff-dev-deploy-run/**"
+      - ".github/workflows/dev-deploy-on-push.yml"
+      - ".github/actions/dev-deploy-run/**"
       - ".github/actions/materialize-maven-settings/**"
       - "deploy/backend/**"
       - "boot/**"
@@ -38,7 +38,7 @@ jobs:
           ref: ${{ github.sha }}
 
       - name: Execute dev deployment
-        uses: ./.github/actions/bff-dev-deploy-run
+        uses: ./.github/actions/dev-deploy-run
         with:
           github_environment: dev
         env:

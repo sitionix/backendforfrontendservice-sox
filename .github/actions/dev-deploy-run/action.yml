@@ -95,8 +95,8 @@ runs:
         IMAGE_REF: ${{ steps.release.outputs.image_ref }}
       run: |
         mkdir -p .deploy/release/payload/bin
-        cp deploy/backend/vm/deploy-bff.sh .deploy/release/payload/bin/deploy-bff.sh
-        chmod +x .deploy/release/payload/bin/deploy-bff.sh
+        cp deploy/backend/vm/deploy-service.sh .deploy/release/payload/bin/deploy-service.sh
+        chmod +x .deploy/release/payload/bin/deploy-service.sh
 
         cat <<EOF > .deploy/release/payload/release.env
         SITIONIX_RELEASE_ID=${RELEASE_ID}
@@ -196,11 +196,11 @@ runs:
           rm -rf '${remote_root}'
           mkdir -p '${remote_root}'
           tar -xzf '${remote_tarball}' -C '${remote_root}'
-          chmod +x '${remote_root}/bin/deploy-bff.sh'
+          chmod +x '${remote_root}/bin/deploy-service.sh'
           set -a
           . '${remote_secret_env}'
           set +a
-          '${remote_root}/bin/deploy-bff.sh'
+          '${remote_root}/bin/deploy-service.sh'
         "
 
     - name: Verify public deployment
