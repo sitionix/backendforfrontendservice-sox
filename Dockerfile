@@ -20,7 +20,7 @@ COPY clients/client-stsssox/src clients/client-stsssox/src
 COPY clients/client-wagssox/src clients/client-wagssox/src
 
 RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
-    mvn -pl boot -am -DskipTests package
+    mvn -B -ntp -e -pl boot -am -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
