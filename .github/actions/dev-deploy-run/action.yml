@@ -204,4 +204,4 @@ runs:
       shell: bash
       env:
         SITIONIX_RELEASE_ID: ${{ steps.release.outputs.release_id }}
-      run: deploy/backend/ci/verify-private-deploy.sh
+      run: bash deploy/backend/ci/verify-private-deploy.sh
