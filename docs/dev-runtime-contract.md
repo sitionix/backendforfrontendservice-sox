@@ -66,17 +66,14 @@ Readiness is intentionally shallow for the first deploy.
 
 This keeps deployment health stable while the dev environment contract is still being proven.
 
-## Post-deploy smoke check
+## Post-deploy verification
 
 Use:
 
-- `GET /bffssox/actuator/health` for a shallow smoke that confirms the deployed BFF is booted and serving actuator traffic
+- `GET /bffssox/actuator/health/readiness`
+- `GET /bffssox/actuator/health`
 
-The first dev deploy now also expects a stable smoke fixture and runs:
-
-- `POST /bffssox/api/v1/auth/login`
-- `GET /bffssox/api/v1/sites?page=0&size=1`
-- `POST /bffssox/api/v1/sites`
+for a shallow public verification that confirms the deployed BFF is booted and serving actuator traffic.
 
 ## Downstream client timeout contract
 

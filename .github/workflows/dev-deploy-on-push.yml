@@ -30,7 +30,6 @@ jobs:
     environment: dev
     env:
       DEPLOY_VM_PORT: ${{ vars.DEPLOY_VM_PORT }}
-      DEV_SMOKE_SITE_ID: ${{ vars.DEV_SMOKE_SITE_ID }}
       BFF_PUBLIC_BASE_URL: ${{ vars.BFF_PUBLIC_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +42,6 @@ jobs:
           github_environment: dev
         env:
           DEPLOY_VM_PORT: ${{ vars.DEPLOY_VM_PORT }}
-          DEV_SMOKE_SITE_ID: ${{ vars.DEV_SMOKE_SITE_ID }}
           BFF_PUBLIC_BASE_URL: ${{ vars.BFF_PUBLIC_BASE_URL }}
           DEPLOY_VM_HOST: ${{ secrets.DEPLOY_VM_HOST }}
           DEPLOY_VM_USER: ${{ secrets.DEPLOY_VM_USER }}
@@ -51,7 +49,5 @@ jobs:
           FORGE_SECURITY_DEV_JWT_SECRET: ${{ secrets.FORGE_SECURITY_DEV_JWT_SECRET }}
           GHCR_PULL_USERNAME: ${{ secrets.GHCR_PULL_USERNAME }}
           GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
-          DEV_SMOKE_USER_EMAIL: ${{ secrets.DEV_SMOKE_USER_EMAIL }}
-          DEV_SMOKE_USER_PASSWORD: ${{ secrets.DEV_SMOKE_USER_PASSWORD }}
           MAVEN_REPOSITORY_USERNAME: ${{ vars.MAVEN_REPOSITORY_USERNAME }}
           MAVEN_REPOSITORY_TOKEN: ${{ secrets.MAVEN_REPOSITORY_TOKEN }}
