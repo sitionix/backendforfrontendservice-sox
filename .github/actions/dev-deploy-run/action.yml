@@ -108,7 +108,7 @@ runs:
         SITIONIX_BACKUP_ROOT=/opt/sitionix/backups/backendforfrontendservice-sox
         SITIONIX_SHARED_SECRET_ENV_PATH=/opt/sitionix/runtime/shared/dev-internal-auth.env
         SITIONIX_SERVICE_ENV_PATH=/opt/sitionix/runtime/backendforfrontendservice-sox/shared/backendforfrontendservice-sox.dev.env
-        SITIONIX_LOCAL_READINESS_URL=http://127.0.0.1:8080/bffssox/actuator/health/readiness
+        SITIONIX_LOCAL_READINESS_URL=http://127.0.0.1:8080/actuator/health/readiness
         EOF
 
         cat <<EOF > .deploy/release/payload/release-manifest.json

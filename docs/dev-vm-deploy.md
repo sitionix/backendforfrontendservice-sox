@@ -111,16 +111,17 @@ The pull request comment deploy flow uses the same deploy action against the PR 
 
 ## Verification
 
-The deploy uses private verification through an SSH tunnel, by analogy with auth-service:
+The deploy uses private verification through an SSH tunnel, by analogy with auth-service.
+After rollout it checks:
 
-1. private readiness on `http://127.0.0.1:8080/bffssox/actuator/health/readiness`
-2. private health on `http://127.0.0.1:8080/bffssox/actuator/health`
+1. `GET /actuator/health/readiness`
+2. `GET /actuator/health`
 
 This proves:
 
 - the container booted under `dev`
 - the deployed BFF is reachable on the VM loopback bind
-- actuator health endpoints are serving correctly
+- Spring actuator health endpoints are serving correctly
 
 ## GitHub Environment contract
 
