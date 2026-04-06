@@ -114,8 +114,8 @@ The pull request comment deploy flow uses the same deploy action against the PR 
 The deploy uses private verification through an SSH tunnel, by analogy with auth-service.
 After rollout it checks:
 
-1. `GET /actuator/health/readiness`
-2. `GET /actuator/health`
+1. `GET /bffssox/actuator/health/readiness`
+2. `GET /bffssox/actuator/health`
 
 This proves:
 

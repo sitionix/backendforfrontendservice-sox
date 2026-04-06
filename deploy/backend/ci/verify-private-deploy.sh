@@ -93,8 +93,8 @@ if ! bash -c ">/dev/tcp/127.0.0.1/${local_port}" 2>/dev/null; then
   exit 1
 fi
 
-readiness_url="http://127.0.0.1:${local_port}/actuator/health/readiness"
-health_url="http://127.0.0.1:${local_port}/actuator/health"
+readiness_url="http://127.0.0.1:${local_port}/bffssox/actuator/health/readiness"
+health_url="http://127.0.0.1:${local_port}/bffssox/actuator/health"
 
 wait_for_up_status "${readiness_url}" "BFF private readiness"
 wait_for_up_status "${health_url}" "BFF private health"
