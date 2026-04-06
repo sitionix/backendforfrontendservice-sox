@@ -12,7 +12,6 @@ No workflow or shell step should assemble dev runtime config.
 
 The BFF currently expects these non-secret dev values:
 
-- browser origin: `https://app.dev.sitionix.com`
 - auth service base path: `http://authorisationservice-sox:9090/authsox`
 - site service base path: `http://siteservice-sox:9080/stsssox`
 - workspace service base path: `http://workspaceaggregationservice-sox:9082/wagssox`
@@ -58,6 +57,7 @@ The first dev deployment should use:
 
 - liveness: `GET /bffssox/actuator/health/liveness`
 - readiness: `GET /bffssox/actuator/health/readiness`
+- health: `GET /bffssox/actuator/health`
 
 Readiness is intentionally shallow for the first deploy.
 
@@ -66,14 +66,7 @@ Readiness is intentionally shallow for the first deploy.
 
 This keeps deployment health stable while the dev environment contract is still being proven.
 
-## Post-deploy verification
-
-Use:
-
-- `GET /bffssox/actuator/health/readiness`
-- `GET /bffssox/actuator/health`
-
-for a shallow public verification that confirms the deployed BFF is booted and serving actuator traffic.
+Post-deploy verification now uses a private SSH tunnel to the VM loopback bind, by analogy with auth-service.
 
 ## Downstream client timeout contract
 
