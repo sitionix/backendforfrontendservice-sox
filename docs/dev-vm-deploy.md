@@ -124,8 +124,7 @@ Flow:
 3. upload the payload to the VM over SSH
 4. run the VM deploy script
 5. wait for local actuator readiness on `127.0.0.1:8080`
-6. verify public readiness through `https://app.dev.sitionix.com/bffssox/actuator/health/readiness`
-7. run a public functional smoke through the shell host
+6. verify private readiness and health through an SSH tunnel
 
 The pull request comment deploy flow uses the same deploy action against the PR head branch:
 
@@ -135,23 +134,13 @@ The pull request comment deploy flow uses the same deploy action against the PR 
 
 ## Functional smoke
 
-The deploy does not stop at shallow readiness.
-After rollout it runs:
+The deploy verification is private and shallow by design.
+After rollout it checks:
 
-1. `POST /bffssox/api/v1/auth/login`
-2. `GET /bffssox/api/v1/sites?page=0&size=1`
-3. `POST /bffssox/api/v1/sites`
+1. `GET /actuator/health/readiness`
+2. `GET /actuator/health`
 
-This proves:
-
-- shell Nginx forwards `/bffssox` correctly
-- BFF is serving under `dev`
-- BFF can authenticate to auth-service
-- BFF can reach workspace-service
-- BFF can reach site-service
-
-Because `createSite` is the only authenticated BFF path that exercises site-service directly, the smoke intentionally creates a draft site under a dedicated smoke user.
-That is acceptable for the first dev deployment.
+through an SSH tunnel to the VM-local BFF port.
 
 ## GitHub Environment contract
 
@@ -159,10 +148,6 @@ Expected GitHub Environment `dev` values for this repo:
 
 Variables:
 
-- `BFF_PUBLIC_BASE_URL`
-  - expected value: `https://app.dev.sitionix.com`
-- `DEV_SMOKE_SITE_ID`
-  - site id associated with the dedicated smoke user
 - `DEPLOY_VM_PORT`
   - optional
   - default SSH port: `22`
@@ -179,8 +164,6 @@ Secrets:
 - `FORGE_SECURITY_DEV_JWT_SECRET`
 - `GHCR_PULL_USERNAME`
 - `GHCR_PULL_TOKEN`
-- `DEV_SMOKE_USER_EMAIL`
-- `DEV_SMOKE_USER_PASSWORD`
 
 Repository secrets:
 
