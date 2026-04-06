@@ -27,10 +27,6 @@ runs:
           FORGE_SECURITY_DEV_JWT_SECRET \
           GHCR_PULL_USERNAME \
           GHCR_PULL_TOKEN \
-          DEV_SMOKE_USER_EMAIL \
-          DEV_SMOKE_USER_PASSWORD \
-          DEV_SMOKE_SITE_ID \
-          BFF_PUBLIC_BASE_URL \
           MAVEN_REPOSITORY_USERNAME \
           MAVEN_REPOSITORY_TOKEN; do
           if [[ -z "${!required_name:-}" ]]; then
@@ -121,9 +117,10 @@ runs:
           "imageRef": "${IMAGE_REF}",
           "githubSha": "${GITHUB_SHA}",
           "githubEnvironment": "${GITHUB_ENVIRONMENT_NAME}",
-          "publicBaseUrl": "${BFF_PUBLIC_BASE_URL}",
           "dockerNetwork": "sitionix-dev",
-          "publicRoute": "/bffssox"
+          "containerName": "bffssox-service",
+          "privateHostPort": "127.0.0.1:8080",
+          "privateBaseUrl": "http://backendforfrontendservice-sox:8080/bffssox"
         }
         EOF
 
@@ -203,12 +200,8 @@ runs:
           '${remote_root}/bin/deploy-service.sh'
         "
 
-    - name: Verify public deployment
+    - name: Verify private deployment
       shell: bash
       env:
-        SITIONIX_BFF_PUBLIC_BASE_URL: ${{ env.BFF_PUBLIC_BASE_URL }}
-        SITIONIX_SMOKE_USER_EMAIL: ${{ env.DEV_SMOKE_USER_EMAIL }}
-        SITIONIX_SMOKE_USER_PASSWORD: ${{ env.DEV_SMOKE_USER_PASSWORD }}
-        SITIONIX_SMOKE_SITE_ID: ${{ env.DEV_SMOKE_SITE_ID }}
         SITIONIX_RELEASE_ID: ${{ steps.release.outputs.release_id }}
-      run: deploy/backend/ci/verify-public-deploy.sh
+      run: deploy/backend/ci/verify-private-deploy.sh
