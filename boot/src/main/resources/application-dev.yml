@@ -1,0 +1,27 @@
+sitionix:
+  cors:
+    allowed-origins:
+      - "https://app.dev.sitionix.com"
+      - "https://auth.dev.sitionix.com"
+      - "https://workspace.dev.sitionix.com"
+      - "https://builder.dev.sitionix.com"
+api:
+  rest:
+    client:
+      athssox:
+        base-path: http://authorisationservice-sox:9090/authsox
+      stsssox:
+        base-path: http://siteservice-sox:9080/stsssox
+      wagssox:
+        base-path: http://workspaceaggregationservice-sox:9082/wagssox
+forge:
+  user-jwt:
+    auth-base-url: http://authorisationservice-sox:9090/authsox
+  security:
+    targets:
+      sitionixAuth:
+        host: authorisationservice-sox
+      sitionixSite:
+        host: siteservice-sox
+      sitionixWorkspace:
+        host: workspaceaggregationservice-sox
