@@ -1,7 +1,10 @@
 sitionix:
   cors:
     allowed-origins:
-      - "https://app.dev.sitionix.com"
+      - "https://localhost:3000"
+      - "https://localhost:3001"
+      - "https://localhost:3002"
+      - "https://localhost:3003"
 api:
   rest:
     client:
