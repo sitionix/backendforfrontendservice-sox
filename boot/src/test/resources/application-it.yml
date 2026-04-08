@@ -20,5 +20,8 @@ forge:
       sitionixAuth:
         host: localhost
 sitionix:
+  cors:
+    allowed-origins:
+      - "http://localhost"
   csrf-origin-guard:
     enabled: false

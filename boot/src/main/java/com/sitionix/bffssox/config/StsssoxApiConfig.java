@@ -2,23 +2,25 @@ package com.sitionix.bffssox.config;
 
 import com.app_afesox.stsssox.client.api.SiteApi;
 import com.app_afesox.stsssox.client.invoker.ApiClient;
-import lombok.Data;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-@Data
+@Getter
+@Setter
 @Configuration
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "api.rest.client.stsssox")
 public class StsssoxApiConfig {
 
+    private final DownstreamRestTemplateFactory downstreamRestTemplateFactory;
     private String basePath;
 
     @Bean("stsssoxClient")
@@ -34,9 +36,7 @@ public class StsssoxApiConfig {
 
     @Bean("stsssoxRestTemplate")
     public RestTemplate stsssoxRestTemplate() {
-        final HttpComponentsClientHttpRequestFactory requestFactory =
-                new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        return new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+        return this.downstreamRestTemplateFactory.create();
     }
 
     @Bean

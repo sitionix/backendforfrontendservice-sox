@@ -76,7 +76,12 @@ public class ClientResponseExceptionHandler {
     public ResponseEntity<ErrorDTO> handleResourceAccessException(final ResourceAccessException ex) {
         final HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
         final String details = "Upstream service unavailable";
-        log.warn("Upstream transport error: statusToClient={}", status.value());
+        log.warn(
+                "Upstream transport error: statusToClient={}, causeType={}, causeMessage={}",
+                status.value(),
+                ex.getClass().getSimpleName(),
+                ex.getMostSpecificCause().getMessage()
+        );
         return this.asErrorResponse(status, details);
     }
 
@@ -89,6 +94,7 @@ public class ClientResponseExceptionHandler {
         }
 
         final ErrorDTO upstreamError = this.parseError(ex.getResponseBody());
+        this.logUpstreamFailure(ex.getStatusCode(), upstreamError);
         if (upstreamError != null) {
             return ResponseEntity.status(status).body(upstreamError);
         }
@@ -116,6 +122,21 @@ public class ClientResponseExceptionHandler {
                         .title(status.getReasonPhrase())
                         .details(message)
                         .build());
+    }
+
+    private void logUpstreamFailure(final int statusCode, final ErrorDTO upstreamError) {
+        if (upstreamError == null || !StringUtils.hasText(upstreamError.getDetails())) {
+            return;
+        }
+        if (!upstreamError.getDetails().toLowerCase().contains("internal authorization token")) {
+            return;
+        }
+        log.warn(
+                "Upstream internal auth failure: statusCode={}, title={}, details={}",
+                statusCode,
+                upstreamError.getTitle(),
+                upstreamError.getDetails()
+        );
     }
 
 }
