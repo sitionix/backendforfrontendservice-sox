@@ -75,6 +75,10 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>client-atmssox</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>client-stsssox</artifactId>
             </dependency>
             <dependency>

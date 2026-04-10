@@ -3,6 +3,8 @@ api:
     client:
       athssox:
         base-path: ${forgeit.wiremock.base-url}/authsox
+      atmssox:
+        base-path: ${forgeit.wiremock.base-url}/atmssox
       stsssox:
         base-path: ${forgeit.wiremock.base-url}/stsssox
       wagssox:
@@ -19,6 +21,8 @@ forge:
     targets:
       sitionixAuth:
         host: localhost
+      sitionixAutomation:
+        host: automationservice-sox
 sitionix:
   cors:
     allowed-origins:
