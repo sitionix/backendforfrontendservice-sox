@@ -36,6 +36,9 @@ public class ClientResponseExceptionHandler {
         if ("siteId".equals(ex.getName())) {
             return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Invalid siteId");
         }
+        if ("agentId".equals(ex.getName())) {
+            return this.asErrorResponse(HttpStatus.BAD_REQUEST, "Invalid agentId");
+        }
         return this.asErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

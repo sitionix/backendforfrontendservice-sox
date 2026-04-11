@@ -90,6 +90,31 @@ class ClientResponseExceptionHandlerTest {
     }
 
     @Test
+    void givenInvalidAgentId_whenHandleMethodArgumentTypeMismatchException_thenReturnsBadRequest() {
+        //given
+        final MethodArgumentTypeMismatchException exception = new MethodArgumentTypeMismatchException(
+                "not-a-valid-id",
+                UUID.class,
+                "agentId",
+                null,
+                new IllegalArgumentException("Invalid agentId")
+        );
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleMethodArgumentTypeMismatchException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("Invalid agentId")
+                        .build()
+        );
+    }
+
+    @Test
     void givenClientResponseExceptionWithUnauthorizedAndJsonBody_whenHandle_thenReturnsUnauthorizedWithUpstreamBody() {
         //given
         final ClientResponseException exception = new ClientResponseException(

@@ -17,6 +17,7 @@ public class RuntimeStartupDiagnostics {
     private final Environment environment;
     private final CorsProps corsProps;
     private final AthssoxApiConfig athssoxApiConfig;
+    private final AtmssoxApiConfig atmssoxApiConfig;
     private final StsssoxApiConfig stsssoxApiConfig;
     private final WagssoxApiConfig wagssoxApiConfig;
     private final ApiRestClientDefaultsProps clientDefaultsProps;
@@ -38,9 +39,10 @@ public class RuntimeStartupDiagnostics {
                 this.corsProps.allowedOrigins()
         );
         log.info(
-                "BFF downstream contract: authBasePath={}, siteBasePath={}, workspaceBasePath={}, connectTimeout={}, "
-                        + "readTimeout={}",
+                "BFF downstream contract: authBasePath={}, automationBasePath={}, siteBasePath={}, workspaceBasePath={}, "
+                        + "connectTimeout={}, readTimeout={}",
                 this.athssoxApiConfig.getBasePath(),
+                this.atmssoxApiConfig.getBasePath(),
                 this.stsssoxApiConfig.getBasePath(),
                 this.wagssoxApiConfig.getBasePath(),
                 this.clientDefaultsProps.connectTimeout(),

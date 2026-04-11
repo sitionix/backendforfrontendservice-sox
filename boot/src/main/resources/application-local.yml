@@ -10,6 +10,8 @@ api:
     client:
       athssox:
         base-path: http://authorisationservice-sox:9090/authsox
+      atmssox:
+        base-path: http://automationservice-sox:9083/atmssox
       stsssox:
         base-path: http://siteservice-sox:9080/stsssox
       wagssox:
@@ -21,6 +23,8 @@ forge:
     targets:
       sitionixAuth:
         host: authorisationservice-sox
+      sitionixAutomation:
+        host: automationservice-sox
       sitionixSite:
         host: siteservice-sox
       sitionixWorkspace:
