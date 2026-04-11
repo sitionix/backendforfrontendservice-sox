@@ -8,7 +8,7 @@ on:
       - ".github/workflows/dev-deploy-on-push.yml"
       - ".github/actions/dev-deploy-run/**"
       - ".github/actions/materialize-maven-settings/**"
-      - "deploy/backend/**"
+      - ".github/deploy/backend/**"
       - "boot/**"
       - "api-rest/**"
       - "application/**"
