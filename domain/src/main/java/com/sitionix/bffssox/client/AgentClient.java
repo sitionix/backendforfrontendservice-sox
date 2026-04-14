@@ -3,6 +3,7 @@ package com.sitionix.bffssox.client;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.PatchAgentRequest;
 import java.util.UUID;
 
 /**
@@ -32,4 +33,13 @@ public interface AgentClient {
      * @return persisted agent.
      */
     Agent getAgent(UUID agentId);
+
+    /**
+     * Applies partial identity update for one automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @param request partial update payload.
+     * @return updated agent.
+     */
+    Agent patchAgent(UUID agentId, PatchAgentRequest request);
 }
