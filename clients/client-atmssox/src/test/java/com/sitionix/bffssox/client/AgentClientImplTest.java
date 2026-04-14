@@ -9,6 +9,7 @@ import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
+import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +41,9 @@ class AgentClientImplTest {
     private AgentClientMapper agentClientMapper;
 
     @Mock
+    private PatchAgentClientMapper patchAgentClientMapper;
+
+    @Mock
     private AtmssoxClientCallExecutor atmssoxClientCallExecutor;
 
     @BeforeEach
@@ -48,6 +52,7 @@ class AgentClientImplTest {
                 this.agentApi,
                 this.createAgentClientMapper,
                 this.agentClientMapper,
+                this.patchAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -58,6 +63,7 @@ class AgentClientImplTest {
                 this.agentApi,
                 this.createAgentClientMapper,
                 this.agentClientMapper,
+                this.patchAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
