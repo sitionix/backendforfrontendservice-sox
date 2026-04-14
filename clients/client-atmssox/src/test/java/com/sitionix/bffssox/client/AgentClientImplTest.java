@@ -4,9 +4,11 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
@@ -139,6 +141,34 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(response);
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentApi).getAgent(agentId);
+        verify(this.agentClientMapper).asAgent(responseDTO);
+    }
+
+    @Test
+    void givenPatchAgentRequest_whenPatchAgent_thenReturnAgent() {
+        //given
+        final UUID givenAgentId = UUID.fromString("3064ed14-b2ab-4c37-a264-94574beb8dd2");
+        final PatchAgentRequest request = mock(PatchAgentRequest.class);
+        final PatchAgentRequestDTO requestDTO = mock(PatchAgentRequestDTO.class);
+        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final Agent expected = mock(Agent.class);
+
+        when(this.patchAgentClientMapper.asPatchAgentRequestDto(request)).thenReturn(requestDTO);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.patchAgent(givenAgentId, requestDTO)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final Agent actual = this.agentClient.patchAgent(givenAgentId, request);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.patchAgentClientMapper).asPatchAgentRequestDto(request);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).patchAgent(givenAgentId, requestDTO);
         verify(this.agentClientMapper).asAgent(responseDTO);
     }
 }
