@@ -52,6 +52,75 @@ class RegisterUserApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullInputs_whenMap_thenReturnNull() {
+        //given
+        final RegisterUserDTO registerUserDTO = null;
+        final RegisterUserResponse registerUserResponse = null;
+
+        //when
+        final RegisterUserRequest actualRequest = this.mapper.asRegisterUserRequest(registerUserDTO);
+        final ResponseRegisterUserDTO actualResponse = this.mapper.asResponseRegisterUserDto(registerUserResponse);
+
+        //then
+        assertThat(actualRequest).isNull();
+        assertThat(actualResponse).isNull();
+    }
+
+    @Test
+    void givenAllRoleAndStatusVariants_whenMap_thenReturnMappedVariants() {
+        //given
+        final RegisterUserDTO request = RegisterUserDTO.builder()
+                .email("e")
+                .password("p")
+                .siteId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .role(RegisterUserDTO.RoleEnum.ECOSYSTEM_OWNER)
+                .build();
+        final RegisterUserResponse response = RegisterUserResponse.builder()
+                .message("m")
+                .status(RegisterUserStatus.BANNED)
+                .userId(1L)
+                .build();
+
+        //when
+        final RegisterUserRequest actualRequest = this.mapper.asRegisterUserRequest(request);
+        final ResponseRegisterUserDTO actualResponse = this.mapper.asResponseRegisterUserDto(response);
+
+        //then
+        assertThat(actualRequest.getRole()).isEqualTo(RegisterUserRole.ECOSYSTEM_OWNER);
+        assertThat(actualResponse.getStatus()).isEqualTo(ResponseRegisterUserDTO.StatusEnum.BANNED);
+    }
+
+    @Test
+    void givenAllEnums_whenMap_thenReturnMappedEnums() {
+        //given
+        final UUID siteId = UUID.fromString("00000000-0000-0000-0000-000000000005");
+
+        //when
+        for (final RegisterUserDTO.RoleEnum roleEnum : RegisterUserDTO.RoleEnum.values()) {
+            final RegisterUserDTO request = RegisterUserDTO.builder()
+                    .email("e")
+                    .password("p")
+                    .siteId(siteId)
+                    .role(roleEnum)
+                    .build();
+            final RegisterUserRequest actualRequest = this.mapper.asRegisterUserRequest(request);
+            assertThat(actualRequest.getRole().name()).isEqualTo(roleEnum.name());
+        }
+        for (final RegisterUserStatus status : RegisterUserStatus.values()) {
+            final RegisterUserResponse response = RegisterUserResponse.builder()
+                    .message("m")
+                    .status(status)
+                    .userId(1L)
+                    .build();
+            final ResponseRegisterUserDTO actualResponse = this.mapper.asResponseRegisterUserDto(response);
+            assertThat(actualResponse.getStatus().name()).isEqualTo(status.name());
+        }
+
+        //then
+        assertThat(RegisterUserStatus.values().length).isGreaterThan(0);
+    }
+
     private RegisterUserDTO registerUserDTO(final UUID uuid) {
         return RegisterUserDTO.builder()
                 .email("email")

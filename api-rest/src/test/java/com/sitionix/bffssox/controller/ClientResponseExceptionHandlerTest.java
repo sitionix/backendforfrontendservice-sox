@@ -3,18 +3,26 @@ package com.sitionix.bffssox.controller;
 import com.app_afesox.bffssox.api_first.dto.ErrorDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sitionix.bffssox.domain.ClientResponseException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.client.ResourceAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ClientResponseExceptionHandlerTest {
 
@@ -208,6 +216,110 @@ class ClientResponseExceptionHandlerTest {
                         .details("Invalid upstream response status")
                         .build()
         );
+    }
+
+    @Test
+    void givenIllegalArgumentException_whenHandleBadRequest_thenReturnsBadRequestError() {
+        //given
+        final IllegalArgumentException exception = new IllegalArgumentException("invalid payload");
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleBadRequest(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("invalid payload")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenConstraintViolationException_whenHandleConstraintViolationException_thenReturnsFirstViolationMessage() {
+        //given
+        final ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("must not be blank");
+        final ConstraintViolationException exception = new ConstraintViolationException("invalid", Set.of(violation));
+
+        //when
+        final ResponseEntity<ErrorDTO> actual =
+                this.clientResponseExceptionHandler.handleConstraintViolationException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("must not be blank")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenMethodArgumentNotValidException_whenHandleValidationException_thenReturnsBindingMessage() {
+        //given
+        final BindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "request");
+        bindingResult.reject("invalid", "payload validation failed");
+        final MethodArgumentNotValidException exception =
+                new MethodArgumentNotValidException(mock(MethodParameter.class), bindingResult);
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleValidationException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("payload validation failed")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenUnknownValidationException_whenHandleValidationException_thenReturnsFallbackMessage() {
+        //given
+        final Exception exception = new RuntimeException("unknown");
+
+        //when
+        final ResponseEntity<ErrorDTO> actual = this.clientResponseExceptionHandler.handleValidationException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody()).isEqualTo(
+                ErrorDTO.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .details("Validation failed")
+                        .build()
+        );
+    }
+
+    @Test
+    void givenInvalidUnknownParameter_whenHandleMethodArgumentTypeMismatchException_thenReturnsBadRequestWithExceptionMessage() {
+        //given
+        final MethodArgumentTypeMismatchException exception = new MethodArgumentTypeMismatchException(
+                "abc",
+                UUID.class,
+                "otherParam",
+                null,
+                new IllegalArgumentException("Type mismatch details")
+        );
+
+        //when
+        final ResponseEntity<ErrorDTO> actual =
+                this.clientResponseExceptionHandler.handleMethodArgumentTypeMismatchException(exception);
+
+        //then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody().getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(actual.getBody().getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        assertThat(actual.getBody().getDetails()).contains("Type mismatch details");
     }
 
 }

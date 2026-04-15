@@ -33,6 +33,19 @@ class ResendEmailVerificationApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullResponse_whenAsResendEmailVerificationResponseDto_thenReturnNull() {
+        //given
+        final ResendEmailVerificationResponse given = null;
+
+        //when
+        final ResendEmailVerificationResponseDTO actual =
+                this.mapper.asResendEmailVerificationResponseDTO(given);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
     private ResendEmailVerificationResponse resendEmailVerificationResponse() {
         return ResendEmailVerificationResponse.builder()
                 .message("message")

@@ -47,6 +47,21 @@ class RefreshAccessTokenClientMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullInputs_whenMap_thenReturnNull() {
+        //given
+        final RefreshAccessTokenRequest request = null;
+        final RefreshAccessTokenResponseDTO responseDTO = null;
+
+        //when
+        final RefreshAccessTokenRequestDTO actualRequest = this.mapper.asRefreshAccessTokenRequestDto(request);
+        final RefreshAccessTokenResponse actualResponse = this.mapper.asRefreshAccessTokenResponse(responseDTO);
+
+        //then
+        assertThat(actualRequest).isNull();
+        assertThat(actualResponse).isNull();
+    }
+
     private RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO() {
         return new RefreshAccessTokenRequestDTO()
                 .refreshToken("refreshToken")

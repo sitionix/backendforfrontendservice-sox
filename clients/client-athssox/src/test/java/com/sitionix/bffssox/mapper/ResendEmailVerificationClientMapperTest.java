@@ -32,6 +32,18 @@ class ResendEmailVerificationClientMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullResponseDto_whenAsResendEmailVerificationResponse_thenReturnNull() {
+        //given
+        final ResendEmailVerificationResponseDTO given = null;
+
+        //when
+        final ResendEmailVerificationResponse actual = this.mapper.asResendEmailVerificationResponse(given);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
     private ResendEmailVerificationResponseDTO resendEmailVerificationResponseDTO() {
         return new ResendEmailVerificationResponseDTO()
                 .message("message");

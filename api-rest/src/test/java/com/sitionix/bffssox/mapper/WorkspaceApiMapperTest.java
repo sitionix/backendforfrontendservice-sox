@@ -39,6 +39,48 @@ class WorkspaceApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullWorkspaceSitesPage_whenAsWorkspaceSitesResponseDto_thenReturnNull() {
+        //given
+        final WorkspaceSitesPage workspaceSitesPage = null;
+
+        //when
+        final WorkspaceSitesResponseDTO actual = this.mapper.asWorkspaceSitesResponseDto(workspaceSitesPage);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenWorkspaceSitesPageWithAllStatusAndTypeVariants_whenAsWorkspaceSitesResponseDto_thenReturnMappedVariants() {
+        //given
+        final WorkspaceSitesPage workspaceSitesPage = WorkspaceSitesPage.builder()
+                .items(List.of(
+                        this.workspaceSiteCard(UUID.fromString("00000000-0000-0000-0000-000000000001"), SiteStatus.DRAFT, SiteType.PORTFOLIO),
+                        this.workspaceSiteCard(UUID.fromString("00000000-0000-0000-0000-000000000002"), SiteStatus.PUBLISHED, SiteType.BUSINESS),
+                        this.workspaceSiteCard(UUID.fromString("00000000-0000-0000-0000-000000000003"), SiteStatus.ARCHIVED, SiteType.OTHER),
+                        this.workspaceSiteCard(UUID.fromString("00000000-0000-0000-0000-000000000004"), null, null)
+                ))
+                .page(1)
+                .size(10)
+                .hasNext(false)
+                .build();
+
+        //when
+        final WorkspaceSitesResponseDTO actual = this.mapper.asWorkspaceSitesResponseDto(workspaceSitesPage);
+
+        //then
+        assertThat(actual.getItems()).hasSize(4);
+        assertThat(actual.getItems().get(0).getStatus()).isEqualTo(WorkspaceSiteCardResponseDTO.StatusEnum.DRAFT);
+        assertThat(actual.getItems().get(1).getStatus()).isEqualTo(WorkspaceSiteCardResponseDTO.StatusEnum.PUBLISHED);
+        assertThat(actual.getItems().get(2).getStatus()).isEqualTo(WorkspaceSiteCardResponseDTO.StatusEnum.ARCHIVED);
+        assertThat(actual.getItems().get(3).getStatus()).isNull();
+        assertThat(actual.getItems().get(0).getType()).isEqualTo(WorkspaceSiteCardResponseDTO.TypeEnum.PORTFOLIO);
+        assertThat(actual.getItems().get(1).getType()).isEqualTo(WorkspaceSiteCardResponseDTO.TypeEnum.BUSINESS);
+        assertThat(actual.getItems().get(2).getType()).isEqualTo(WorkspaceSiteCardResponseDTO.TypeEnum.OTHER);
+        assertThat(actual.getItems().get(3).getType()).isNull();
+    }
+
     private WorkspaceSitesPage getWorkspaceSitesPage() {
         return WorkspaceSitesPage.builder()
                 .items(List.of(WorkspaceSiteCard.builder()
@@ -69,5 +111,17 @@ class WorkspaceApiMapperTest {
                 .page(0)
                 .size(20)
                 .hasNext(true);
+    }
+
+    private WorkspaceSiteCard workspaceSiteCard(final UUID siteId, final SiteStatus status, final SiteType type) {
+        return WorkspaceSiteCard.builder()
+                .siteId(siteId)
+                .name("Agency Portfolio")
+                .status(status)
+                .type(type)
+                .description(null)
+                .createdAt(OffsetDateTime.parse("2026-01-10T12:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-01-29T08:30:00Z"))
+                .build();
     }
 }
