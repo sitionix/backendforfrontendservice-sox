@@ -7,6 +7,7 @@ import com.sitionix.bffssox.domain.SiteType;
 import com.sitionix.bffssox.domain.WorkspaceSiteCard;
 import com.sitionix.bffssox.domain.WorkspaceSitesPage;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,6 +131,29 @@ class WorkspaceSiteClientMapperTest {
 
         //then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenWorkspaceSitesPageDtoWithNullItem_whenAsWorkspaceSitesPage_thenKeepNullItem() {
+        //given
+        final WorkspaceSitesPageDTO responseDTO = this.workspaceSitesPageDto(
+                Arrays.asList(this.workspaceSiteCardDto(
+                        "00000000-0000-0000-0000-000000000001",
+                        WorkspaceSiteCardDTO.StatusEnum.DRAFT,
+                        WorkspaceSiteCardDTO.TypeEnum.PORTFOLIO,
+                        null
+                ), null),
+                0,
+                20,
+                true
+        );
+
+        //when
+        final WorkspaceSitesPage actual = this.mapper.asWorkspaceSitesPage(responseDTO);
+
+        //then
+        assertThat(actual.getItems()).hasSize(2);
+        assertThat(actual.getItems().get(1)).isNull();
     }
 
     @Test

@@ -48,6 +48,73 @@ class RefreshAccessTokenApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullInputs_whenMap_thenReturnNull() {
+        //given
+        final RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO = null;
+        final RefreshAccessTokenResponse refreshAccessTokenResponse = null;
+
+        //when
+        final RefreshAccessTokenRequest actualRequest =
+                this.mapper.asRefreshAccessTokenRequest("refreshToken", refreshAccessTokenRequestDTO);
+        final RefreshAccessTokenResponseDTO actualResponse = this.mapper.asRefreshAccessTokenResponseDTO(refreshAccessTokenResponse);
+
+        //then
+        assertThat(actualRequest).isEqualTo(RefreshAccessTokenRequest.builder()
+                .refreshToken("refreshToken")
+                .sessionSourceId(null)
+                .build());
+        assertThat(actualResponse).isNull();
+    }
+
+    @Test
+    void givenTokenType_whenAsTokenTypeEnum_thenReturnEnum() {
+        //given
+        final String given = "Bearer";
+
+        //when
+        final RefreshAccessTokenResponseDTO.TokenTypeEnum actual = this.mapper.asTokenTypeEnum(given);
+
+        //then
+        assertThat(actual).isEqualTo(RefreshAccessTokenResponseDTO.TokenTypeEnum.BEARER);
+    }
+
+    @Test
+    void givenNullTokenType_whenAsTokenTypeEnum_thenReturnNull() {
+        //given
+        final String given = null;
+
+        //when
+        final RefreshAccessTokenResponseDTO.TokenTypeEnum actual = this.mapper.asTokenTypeEnum(given);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenTokenTypeEnum_whenAsTokenTypeValue_thenReturnValue() {
+        //given
+        final RefreshAccessTokenResponseDTO.TokenTypeEnum given = RefreshAccessTokenResponseDTO.TokenTypeEnum.BEARER;
+
+        //when
+        final String actual = this.mapper.asTokenTypeValue(given);
+
+        //then
+        assertThat(actual).isEqualTo("Bearer");
+    }
+
+    @Test
+    void givenNullTokenTypeEnum_whenAsTokenTypeValue_thenReturnNull() {
+        //given
+        final RefreshAccessTokenResponseDTO.TokenTypeEnum given = null;
+
+        //when
+        final String actual = this.mapper.asTokenTypeValue(given);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
     private RefreshAccessTokenRequestDTO refreshAccessTokenRequestDTO() {
         return RefreshAccessTokenRequestDTO.builder()
                 .sessionSourceId("sessionSourceId")

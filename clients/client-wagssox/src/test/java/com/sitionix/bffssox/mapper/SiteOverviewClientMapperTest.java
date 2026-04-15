@@ -36,6 +36,75 @@ class SiteOverviewClientMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenSiteOverviewDtoWithArchivedStatusAndOtherType_whenAsSiteOverview_thenReturnMappedEnums() {
+        //given
+        final SiteOverviewDTO responseDTO = new SiteOverviewDTO()
+                .siteId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
+                .name("n")
+                .status(SiteOverviewDTO.StatusEnum.ARCHIVED)
+                .type(SiteOverviewDTO.TypeEnum.OTHER)
+                .description("d")
+                .createdAt(OffsetDateTime.parse("2026-01-10T12:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-01-29T08:30:00Z"));
+
+        //when
+        final SiteOverview actual = this.mapper.asSiteOverview(responseDTO);
+
+        //then
+        assertThat(actual.getStatus()).isEqualTo(SiteStatus.ARCHIVED);
+        assertThat(actual.getType()).isEqualTo(SiteType.OTHER);
+    }
+
+    @Test
+    void givenNullSiteOverviewDto_whenAsSiteOverview_thenReturnNull() {
+        //given
+        final SiteOverviewDTO responseDTO = null;
+
+        //when
+        final SiteOverview actual = this.mapper.asSiteOverview(responseDTO);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenAllEnums_whenAsSiteOverview_thenReturnMappedEnums() {
+        //given
+        final UUID siteId = UUID.fromString("00000000-0000-0000-0000-000000000004");
+        final OffsetDateTime createdAt = OffsetDateTime.parse("2026-01-10T12:00:00Z");
+        final OffsetDateTime updatedAt = OffsetDateTime.parse("2026-01-29T08:30:00Z");
+
+        //when
+        for (final SiteOverviewDTO.StatusEnum statusEnum : SiteOverviewDTO.StatusEnum.values()) {
+            final SiteOverviewDTO siteOverviewDTO = new SiteOverviewDTO()
+                    .siteId(siteId)
+                    .name("n")
+                    .status(statusEnum)
+                    .type(SiteOverviewDTO.TypeEnum.PORTFOLIO)
+                    .description("d")
+                    .createdAt(createdAt)
+                    .updatedAt(updatedAt);
+            final SiteOverview actual = this.mapper.asSiteOverview(siteOverviewDTO);
+            assertThat(actual.getStatus().name()).isEqualTo(statusEnum.name());
+        }
+        for (final SiteOverviewDTO.TypeEnum typeEnum : SiteOverviewDTO.TypeEnum.values()) {
+            final SiteOverviewDTO siteOverviewDTO = new SiteOverviewDTO()
+                    .siteId(siteId)
+                    .name("n")
+                    .status(SiteOverviewDTO.StatusEnum.DRAFT)
+                    .type(typeEnum)
+                    .description("d")
+                    .createdAt(createdAt)
+                    .updatedAt(updatedAt);
+            final SiteOverview actual = this.mapper.asSiteOverview(siteOverviewDTO);
+            assertThat(actual.getType().name()).isEqualTo(typeEnum.name());
+        }
+
+        //then
+        assertThat(SiteOverviewDTO.TypeEnum.values().length).isGreaterThan(0);
+    }
+
     private SiteOverviewDTO getSiteOverviewDto() {
         return new SiteOverviewDTO()
                 .siteId(UUID.fromString("c9b1f3f4-12c7-11ec-82a8-0242ac130003"))

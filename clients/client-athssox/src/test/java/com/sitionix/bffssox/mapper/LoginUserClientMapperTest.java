@@ -50,6 +50,21 @@ class LoginUserClientMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenNullInputs_whenMap_thenReturnNull() {
+        //given
+        final LoginRequest loginRequest = null;
+        final LoginResponseDTO loginResponseDTO = null;
+
+        //when
+        final LoginRequestDTO actualRequest = this.mapper.asLoginRequestDto(loginRequest);
+        final LoginResponse actualResponse = this.mapper.asLoginResponse(loginResponseDTO);
+
+        //then
+        assertThat(actualRequest).isNull();
+        assertThat(actualResponse).isNull();
+    }
+
     private LoginRequestDTO loginRequestDTO(final UUID uuid) {
         return new LoginRequestDTO()
                 .email("email")

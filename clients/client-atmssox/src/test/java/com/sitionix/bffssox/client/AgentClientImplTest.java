@@ -171,4 +171,52 @@ class AgentClientImplTest {
         verify(this.agentApi).patchAgent(givenAgentId, requestDTO);
         verify(this.agentClientMapper).asAgent(responseDTO);
     }
+
+    @Test
+    void givenAgentId_whenActivateAgent_thenReturnAgent() {
+        //given
+        final UUID givenAgentId = UUID.fromString("88e2673a-273a-4cf4-a94f-96f4df311ea9");
+        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final Agent expected = mock(Agent.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.activateAgent(givenAgentId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final Agent actual = this.agentClient.activateAgent(givenAgentId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).activateAgent(givenAgentId);
+        verify(this.agentClientMapper).asAgent(responseDTO);
+    }
+
+    @Test
+    void givenAgentId_whenArchiveAgent_thenReturnAgent() {
+        //given
+        final UUID givenAgentId = UUID.fromString("f8f58985-8fa8-4412-8f1e-7955f0f8f85e");
+        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final Agent expected = mock(Agent.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.archiveAgent(givenAgentId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final Agent actual = this.agentClient.archiveAgent(givenAgentId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).archiveAgent(givenAgentId);
+        verify(this.agentClientMapper).asAgent(responseDTO);
+    }
 }
