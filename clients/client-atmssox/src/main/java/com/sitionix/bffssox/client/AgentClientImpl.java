@@ -54,6 +54,22 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
+    public Agent activateAgent(final UUID agentId) {
+        final AgentDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.activateAgent(agentId)
+        );
+        return this.agentClientMapper.asAgent(responseDTO);
+    }
+
+    @Override
+    public Agent archiveAgent(final UUID agentId) {
+        final AgentDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.archiveAgent(agentId)
+        );
+        return this.agentClientMapper.asAgent(responseDTO);
+    }
+
+    @Override
     public Agent patchAgent(final UUID agentId, final PatchAgentRequest request) {
         final PatchAgentRequestDTO requestDTO = this.patchAgentClientMapper.asPatchAgentRequestDto(request);
         final AgentDTO responseDTO = this.atmssoxClientCallExecutor.execute(

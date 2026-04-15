@@ -35,6 +35,22 @@ public interface AgentClient {
     Agent getAgent(UUID agentId);
 
     /**
+     * Activates one automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @return updated agent.
+     */
+    Agent activateAgent(UUID agentId);
+
+    /**
+     * Archives one automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @return updated agent.
+     */
+    Agent archiveAgent(UUID agentId);
+
+    /**
      * Applies partial identity update for one automation agent.
      *
      * @param agentId unique agent identifier.

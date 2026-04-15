@@ -11,6 +11,8 @@ import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
+import com.sitionix.bffssox.usecase.ActivateAgent;
+import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgents;
@@ -41,6 +43,10 @@ public class AgentController implements AgentApi {
 
     private final GetAgent getAgent;
 
+    private final ActivateAgent activateAgent;
+
+    private final ArchiveAgent archiveAgent;
+
     @Override
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgentDTO> createAgent(@Valid final CreateAgentRequestDTO createAgentRequestDTO) {
@@ -61,6 +67,20 @@ public class AgentController implements AgentApi {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgentDTO> getAgent(final UUID agentId) {
         final Agent response = this.getAgent.execute(agentId);
+        return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentDTO> activateAgent(final UUID agentId) {
+        final Agent response = this.activateAgent.execute(agentId);
+        return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentDTO> archiveAgent(final UUID agentId) {
+        final Agent response = this.archiveAgent.execute(agentId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
     }
 
