@@ -1,0 +1,5 @@
+{
+  "code": 409,
+  "title": "Conflict",
+  "details": "Agent transition ARCHIVED -> ARCHIVED is not allowed"
+}

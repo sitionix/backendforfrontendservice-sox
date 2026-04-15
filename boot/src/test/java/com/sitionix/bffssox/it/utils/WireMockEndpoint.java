@@ -4,6 +4,7 @@ import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
 import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
@@ -129,6 +130,30 @@ public class WireMockEndpoint {
                         context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseBody("responseDefaultMappingGetSiteOverviewWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentDTO> POST_ACTIVATE_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/activate",
+                    HttpMethod.POST,
+                    Void.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingActivateAgentWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentDTO> POST_ARCHIVE_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/archive",
+                    HttpMethod.POST,
+                    Void.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingArchiveAgentWithHappyPath.json")
                                 .responseStatus(200);
                     });
 }
