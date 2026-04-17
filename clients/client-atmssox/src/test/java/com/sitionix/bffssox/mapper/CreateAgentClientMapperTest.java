@@ -50,4 +50,19 @@ class CreateAgentClientMapperTest {
         //then
         assertThat(actual).isNull();
     }
+
+    @Test
+    void givenCreateAgentRequestWithoutDescription_whenAsCreateAgentRequestDto_thenReturnUndefinedDescription() {
+        //given
+        final CreateAgentRequest given = CreateAgentRequest.builder()
+                .name("Architecture Reviewer")
+                .description(null)
+                .build();
+
+        //when
+        final CreateAgentRequestDTO actual = this.mapper.asCreateAgentRequestDto(given);
+
+        //then
+        assertThat(actual.getDescription_JsonNullable()).isEqualTo(JsonNullable.undefined());
+    }
 }

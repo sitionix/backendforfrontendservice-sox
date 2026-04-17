@@ -11,6 +11,6 @@ public interface CreateAgentClientMapper {
     CreateAgentRequestDTO asCreateAgentRequestDto(CreateAgentRequest src);
 
     default JsonNullable<String> map(final String value) {
-        return JsonNullable.of(value);
+        return value == null ? JsonNullable.undefined() : JsonNullable.of(value);
     }
 }

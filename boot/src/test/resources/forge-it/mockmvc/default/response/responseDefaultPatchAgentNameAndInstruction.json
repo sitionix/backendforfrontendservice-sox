@@ -1,0 +1,9 @@
+{
+  "id": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
+  "name": "Agent Definition Reviewer v2",
+  "description": "Updated optional description from BFF",
+  "instruction": "Prioritize instruction consistency across BFF and upstream",
+  "status": "ACTIVE",
+  "createdAt": "2026-03-10T12:30:00Z",
+  "updatedAt": "2026-03-10T12:38:00Z"
+}

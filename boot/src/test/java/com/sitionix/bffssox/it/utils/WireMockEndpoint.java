@@ -5,6 +5,8 @@ import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
@@ -154,6 +156,37 @@ public class WireMockEndpoint {
                         context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseBody("responseDefaultMappingArchiveAgentWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<CreateAgentRequestDTO, AgentDTO> POST_CREATE_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents",
+                    HttpMethod.POST,
+                    CreateAgentRequestDTO.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingCreateAgentWithNameOnly.json")
+                                .plainUrl()
+                                .responseStatus(201);
+                    });
+
+    public static final Endpoint<Void, AgentDTO> GET_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingGetAgentWithInstruction.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}",
+                    HttpMethod.PATCH,
+                    PatchAgentRequestDTO.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingPatchAgentInstructionOnly.json")
                                 .responseStatus(200);
                     });
 }

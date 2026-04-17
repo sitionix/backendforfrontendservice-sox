@@ -52,4 +52,21 @@ class PatchAgentClientMapperTest {
         //then
         assertThat(actual).isNull();
     }
+
+    @Test
+    void givenPatchAgentRequestWithOnlyName_whenAsPatchAgentRequestDto_thenReturnUndefinedOptionalFields() {
+        //given
+        final PatchAgentRequest given = PatchAgentRequest.builder()
+                .name("Updated Architecture Reviewer")
+                .description(null)
+                .instruction(null)
+                .build();
+
+        //when
+        final PatchAgentRequestDTO actual = this.mapper.asPatchAgentRequestDto(given);
+
+        //then
+        assertThat(actual.getDescription_JsonNullable()).isEqualTo(JsonNullable.undefined());
+        assertThat(actual.getInstruction_JsonNullable()).isEqualTo(JsonNullable.undefined());
+    }
 }
