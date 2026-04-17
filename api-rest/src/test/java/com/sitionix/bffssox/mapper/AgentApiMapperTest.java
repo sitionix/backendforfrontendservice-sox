@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,6 +87,7 @@ class AgentApiMapperTest {
                 .id(null)
                 .name("A")
                 .description("D")
+                .instruction("I")
                 .status(AgentStatus.ARCHIVED)
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
@@ -104,6 +106,7 @@ class AgentApiMapperTest {
                 .id("f2f2b8c4-5039-4095-b5ec-d584bd429ca3")
                 .name("Architecture Reviewer")
                 .description("Checks architecture decisions")
+                .instruction("Check boundaries first")
                 .status(AgentStatus.ACTIVE)
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
@@ -114,7 +117,8 @@ class AgentApiMapperTest {
         return AgentDTO.builder()
                 .id(UUID.fromString("f2f2b8c4-5039-4095-b5ec-d584bd429ca3"))
                 .name("Architecture Reviewer")
-                .description("Checks architecture decisions")
+                .description(JsonNullable.of("Checks architecture decisions"))
+                .instruction(JsonNullable.of("Check boundaries first"))
                 .status(AgentDTO.StatusEnum.ACTIVE)
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))

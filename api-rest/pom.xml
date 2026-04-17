@@ -12,7 +12,7 @@
     <artifactId>api-rest</artifactId>
 
     <properties>
-        <bffssox.api.version>0.0.23</bffssox.api.version>
+        <bffssox.api.version>0.0.24</bffssox.api.version>
     </properties>
 
     <dependencies>
@@ -44,13 +44,18 @@
         </dependency>
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-bffssox-api-first-sitionix-113-unstable</artifactId>
+            <artifactId>app-afesox-bffssox-api-first-sitionix-114-unstable</artifactId>
             <version>${bffssox.api.version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger.annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

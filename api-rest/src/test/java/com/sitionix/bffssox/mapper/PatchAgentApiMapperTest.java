@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,11 +25,13 @@ class PatchAgentApiMapperTest {
         //given
         final PatchAgentRequestDTO given = PatchAgentRequestDTO.builder()
                 .name("Updated Architecture Reviewer")
-                .description("Updated description")
+                .description(JsonNullable.of("Updated description"))
+                .instruction(JsonNullable.of("Updated instruction"))
                 .build();
         final PatchAgentRequest expected = PatchAgentRequest.builder()
                 .name("Updated Architecture Reviewer")
                 .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
 
         //when
