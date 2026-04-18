@@ -41,11 +41,6 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
-        </dependency>
-        <dependency>
             <groupId>com.afesox</groupId>
             <artifactId>app-afesox-atmssox-client-sitionix-114-unstable</artifactId>
             <version>${atmssox.api.version}</version>

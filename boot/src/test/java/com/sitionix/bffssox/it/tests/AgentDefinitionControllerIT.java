@@ -82,17 +82,20 @@ class AgentDefinitionControllerIT {
                 .createMapping(WireMockEndpoint.PATCH_AGENT)
                 .pathPattern(WireMockPathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .applyDefault(context -> context.responseBody("responseDefaultMappingPatchAgentDescriptionOnly.json"))
-                .createDefault();
+                .createDefault(context -> context.mutateRequest(request -> {
+                    request.setInstruction(null);
+                    request.setDescription("Updated architecture-focused description");
+                }));
 
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.PATCH_AGENT)
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .applyDefault(context -> context.withRequest("requestDefaultPatchAgentDescriptionOnly.json")
-                        .expectResponse("responseDefaultPatchAgentDescriptionOnly.json"))
-                .assertDefault();
+                .assertDefault(context -> context.mutateRequest(request -> {
+                    request.setInstruction(null);
+                    request.setDescription("Updated architecture-focused description");
+                }));
 
         requestBuilder.verify();
     }
@@ -105,17 +108,20 @@ class AgentDefinitionControllerIT {
                 .createMapping(WireMockEndpoint.PATCH_AGENT)
                 .pathPattern(WireMockPathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .applyDefault(context -> context.responseBody("responseDefaultMappingPatchAgentNameAndInstruction.json"))
-                .createDefault();
+                .createDefault(context -> context.mutateRequest(request -> {
+                    request.setName("Principal Architecture Reviewer");
+                    request.setInstruction("Prioritize instruction consistency across BFF and upstream");
+                }));
 
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.PATCH_AGENT)
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .applyDefault(context -> context.withRequest("requestDefaultPatchAgentNameAndInstruction.json")
-                        .expectResponse("responseDefaultPatchAgentNameAndInstruction.json"))
-                .assertDefault();
+                .assertDefault(context -> context.mutateRequest(request -> {
+                    request.setName("Principal Architecture Reviewer");
+                    request.setInstruction("Prioritize instruction consistency across BFF and upstream");
+                }));
 
         requestBuilder.verify();
     }
