@@ -51,6 +51,22 @@ public interface AgentClient {
     Agent archiveAgent(UUID agentId);
 
     /**
+     * Restores one archived automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @return updated agent.
+     */
+    Agent restoreAgent(UUID agentId);
+
+    /**
+     * Soft deletes one automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @return updated agent.
+     */
+    Agent deleteAgent(UUID agentId);
+
+    /**
      * Applies partial identity update for one automation agent.
      *
      * @param agentId unique agent identifier.
