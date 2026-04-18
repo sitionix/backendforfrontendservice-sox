@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,8 +29,8 @@ class PatchAgentClientMapperTest {
                 .build();
         final PatchAgentRequestDTO expected = PatchAgentRequestDTO.builder()
                 .name("Updated Architecture Reviewer")
-                .description(JsonNullable.of("Updated description"))
-                .instruction(JsonNullable.of("Updated instruction"))
+                .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
 
         //when
@@ -54,7 +53,7 @@ class PatchAgentClientMapperTest {
     }
 
     @Test
-    void givenPatchAgentRequestWithOnlyName_whenAsPatchAgentRequestDto_thenReturnUndefinedOptionalFields() {
+    void givenPatchAgentRequestWithOnlyName_whenAsPatchAgentRequestDto_thenReturnNullOptionalFields() {
         //given
         final PatchAgentRequest given = PatchAgentRequest.builder()
                 .name("Updated Architecture Reviewer")
@@ -66,7 +65,7 @@ class PatchAgentClientMapperTest {
         final PatchAgentRequestDTO actual = this.mapper.asPatchAgentRequestDto(given);
 
         //then
-        assertThat(actual.getDescription_JsonNullable()).isEqualTo(JsonNullable.undefined());
-        assertThat(actual.getInstruction_JsonNullable()).isEqualTo(JsonNullable.undefined());
+        assertThat(actual.getDescription()).isNull();
+        assertThat(actual.getInstruction()).isNull();
     }
 }

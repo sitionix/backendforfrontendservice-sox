@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -187,8 +186,8 @@ class AgentControllerTest {
         final UUID givenAgentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
         final PatchAgentRequestDTO givenRequestDTO = PatchAgentRequestDTO.builder()
                 .name(null)
-                .description(JsonNullable.undefined())
-                .instruction(JsonNullable.undefined())
+                .description(null)
+                .instruction(null)
                 .build();
 
         //when then

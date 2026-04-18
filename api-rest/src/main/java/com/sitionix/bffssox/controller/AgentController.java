@@ -96,7 +96,7 @@ public class AgentController implements AgentApi {
 
     private boolean hasAnyPatchField(final PatchAgentRequestDTO patchAgentRequestDTO) {
         return patchAgentRequestDTO.getName() != null
-                || (patchAgentRequestDTO.getDescription() != null && patchAgentRequestDTO.getDescription().isPresent())
-                || (patchAgentRequestDTO.getInstruction() != null && patchAgentRequestDTO.getInstruction().isPresent());
+                || patchAgentRequestDTO.getDescription() != null
+                || patchAgentRequestDTO.getInstruction() != null;
     }
 }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +24,7 @@ class CreateAgentApiMapperTest {
         //given
         final CreateAgentRequestDTO given = CreateAgentRequestDTO.builder()
                 .name("Architecture Reviewer")
-                .description(JsonNullable.of("Checks architecture decisions"))
+                .description("Checks architecture decisions")
                 .build();
         final CreateAgentRequest expected = CreateAgentRequest.builder()
                 .name("Architecture Reviewer")
