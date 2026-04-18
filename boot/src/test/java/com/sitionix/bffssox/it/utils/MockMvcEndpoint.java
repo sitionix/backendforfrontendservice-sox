@@ -142,12 +142,4 @@ public class MockMvcEndpoint {
                             .withRequest("requestDefaultPatchAgentInstructionOnly.json")
                             .expectResponse("responseDefaultPatchAgentInstructionOnly.json"),
                     ItUserTokens.USER_JWT);
-
-    public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT_RAW =
-            Endpoint.createContract("/api/v1/agents/{agentId}",
-                    HttpMethod.PATCH,
-                    PatchAgentRequestDTO.class,
-                    AgentDTO.class,
-                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
-                    ItUserTokens.USER_JWT);
 }

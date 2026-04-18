@@ -24,12 +24,12 @@ class AgentDefinitionControllerIT {
         //given
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.POST_CREATE_AGENT)
-                .createDefault();
+                .createDefault(context -> context.mutateRequest(request -> request.setDescription(null)));
 
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_CREATE_AGENT)
-                .assertDefault();
+                .assertDefault(context -> context.mutateRequest(request -> request.setDescription(null)));
 
         requestBuilder.verify();
     }
@@ -62,14 +62,20 @@ class AgentDefinitionControllerIT {
                 .createMapping(WireMockEndpoint.PATCH_AGENT)
                 .pathPattern(WireMockPathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .createDefault();
+                .createDefault(context -> context.mutateRequest(request -> {
+                    request.setName(null);
+                    request.setDescription(null);
+                }));
 
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.PATCH_AGENT)
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
-                .assertDefault();
+                .assertDefault(context -> context.mutateRequest(request -> {
+                    request.setName(null);
+                    request.setDescription(null);
+                }));
 
         requestBuilder.verify();
     }
@@ -83,6 +89,7 @@ class AgentDefinitionControllerIT {
                 .pathPattern(WireMockPathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .createDefault(context -> context.mutateRequest(request -> {
+                    request.setName(null);
                     request.setInstruction(null);
                     request.setDescription("Updated architecture-focused description");
                 }));
@@ -93,6 +100,7 @@ class AgentDefinitionControllerIT {
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .assertDefault(context -> context.mutateRequest(request -> {
+                    request.setName(null);
                     request.setInstruction(null);
                     request.setDescription("Updated architecture-focused description");
                 }));
@@ -110,6 +118,7 @@ class AgentDefinitionControllerIT {
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .createDefault(context -> context.mutateRequest(request -> {
                     request.setName("Principal Architecture Reviewer");
+                    request.setDescription(null);
                     request.setInstruction("Prioritize instruction consistency across BFF and upstream");
                 }));
 
@@ -120,6 +129,7 @@ class AgentDefinitionControllerIT {
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .assertDefault(context -> context.mutateRequest(request -> {
                     request.setName("Principal Architecture Reviewer");
+                    request.setDescription(null);
                     request.setInstruction("Prioritize instruction consistency across BFF and upstream");
                 }));
 
@@ -133,11 +143,12 @@ class AgentDefinitionControllerIT {
 
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.PATCH_AGENT_RAW)
+                .ping(MockMvcEndpoint.PATCH_AGENT)
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .applyDefault(context -> context.withRequest("requestDefaultPatchAgentEmptyBody.json")
-                        .expectStatus(HttpStatus.BAD_REQUEST.value()))
+                        .expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultPatchAgentEmptyBody.json"))
                 .assertDefault();
     }
 

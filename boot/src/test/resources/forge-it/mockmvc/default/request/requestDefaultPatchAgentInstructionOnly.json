@@ -1,3 +1,5 @@
 {
+  "name": "Agent Definition Reviewer",
+  "description": "Ensures architecture decisions stay explicit and consistent",
   "instruction": "Validate boundaries, then patch only changed fields"
 }
