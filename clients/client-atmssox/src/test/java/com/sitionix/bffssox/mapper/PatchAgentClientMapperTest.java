@@ -25,10 +25,12 @@ class PatchAgentClientMapperTest {
         final PatchAgentRequest given = PatchAgentRequest.builder()
                 .name("Updated Architecture Reviewer")
                 .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
         final PatchAgentRequestDTO expected = PatchAgentRequestDTO.builder()
                 .name("Updated Architecture Reviewer")
                 .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
 
         //when
@@ -48,5 +50,22 @@ class PatchAgentClientMapperTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenPatchAgentRequestWithOnlyName_whenAsPatchAgentRequestDto_thenReturnNullOptionalFields() {
+        //given
+        final PatchAgentRequest given = PatchAgentRequest.builder()
+                .name("Updated Architecture Reviewer")
+                .description(null)
+                .instruction(null)
+                .build();
+
+        //when
+        final PatchAgentRequestDTO actual = this.mapper.asPatchAgentRequestDto(given);
+
+        //then
+        assertThat(actual.getDescription()).isNull();
+        assertThat(actual.getInstruction()).isNull();
     }
 }

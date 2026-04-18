@@ -87,7 +87,16 @@ public class AgentController implements AgentApi {
     @Override
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgentDTO> patchAgent(final UUID agentId, @Valid final PatchAgentRequestDTO patchAgentRequestDTO) {
+        if (!this.hasAnyPatchField(patchAgentRequestDTO)) {
+            throw new IllegalArgumentException("Patch payload cannot be empty");
+        }
         final Agent response = this.patchAgent.execute(agentId, this.patchAgentApiMapper.asPatchAgentRequest(patchAgentRequestDTO));
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    private boolean hasAnyPatchField(final PatchAgentRequestDTO patchAgentRequestDTO) {
+        return patchAgentRequestDTO.getName() != null
+                || patchAgentRequestDTO.getDescription() != null
+                || patchAgentRequestDTO.getInstruction() != null;
     }
 }

@@ -2,6 +2,7 @@
   "id": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
   "name": "Agent lifecycle",
   "description": "Lifecycle forwarding happy path",
+  "instruction": "Maintain explicit lifecycle state transitions and clear status semantics",
   "status": "ACTIVE",
   "createdAt": "2026-03-10T12:30:00Z",
   "updatedAt": "2026-03-10T12:35:00Z"

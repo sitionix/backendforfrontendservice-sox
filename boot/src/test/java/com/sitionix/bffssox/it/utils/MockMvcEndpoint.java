@@ -2,11 +2,13 @@ package com.sitionix.bffssox.it.utils;
 
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
@@ -110,5 +112,34 @@ public class MockMvcEndpoint {
                     AgentDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .expectResponse("responseDefaultArchiveAgentWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<CreateAgentRequestDTO, AgentDTO> POST_CREATE_AGENT =
+            Endpoint.createContract("/api/v1/agents",
+                    HttpMethod.POST,
+                    CreateAgentRequestDTO.class,
+                    AgentDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
+                            .withRequest("requestDefaultCreateAgentWithNameOnly.json")
+                            .expectResponse("responseDefaultCreateAgentWithNameOnly.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentDTO> GET_AGENT =
+            Endpoint.createContract("/api/v1/agents/{agentId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentWithInstruction.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT =
+            Endpoint.createContract("/api/v1/agents/{agentId}",
+                    HttpMethod.PATCH,
+                    PatchAgentRequestDTO.class,
+                    AgentDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultPatchAgentInstructionOnly.json")
+                            .expectResponse("responseDefaultPatchAgentInstructionOnly.json"),
                     ItUserTokens.USER_JWT);
 }

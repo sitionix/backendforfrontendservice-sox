@@ -14,6 +14,8 @@ public class Agent {
 
     private String description;
 
+    private String instruction;
+
     private AgentStatus status;
 
     private OffsetDateTime createdAt;

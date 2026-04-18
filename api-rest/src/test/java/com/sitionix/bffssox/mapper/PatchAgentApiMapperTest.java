@@ -25,10 +25,12 @@ class PatchAgentApiMapperTest {
         final PatchAgentRequestDTO given = PatchAgentRequestDTO.builder()
                 .name("Updated Architecture Reviewer")
                 .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
         final PatchAgentRequest expected = PatchAgentRequest.builder()
                 .name("Updated Architecture Reviewer")
                 .description("Updated description")
+                .instruction("Updated instruction")
                 .build();
 
         //when

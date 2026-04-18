@@ -1,0 +1,5 @@
+{
+  "code": 400,
+  "title": "Bad Request",
+  "details": "Patch payload cannot be empty"
+}

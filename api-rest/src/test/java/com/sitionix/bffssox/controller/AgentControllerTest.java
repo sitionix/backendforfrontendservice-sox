@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -158,7 +159,9 @@ class AgentControllerTest {
     void givenPatchAgentRequestDto_whenPatchAgent_thenReturnOkResponse() {
         //given
         final UUID givenAgentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final PatchAgentRequestDTO givenRequestDTO = mock(PatchAgentRequestDTO.class);
+        final PatchAgentRequestDTO givenRequestDTO = PatchAgentRequestDTO.builder()
+                .name("Updated Architecture Reviewer")
+                .build();
         final PatchAgentRequest request = mock(PatchAgentRequest.class);
         final Agent response = mock(Agent.class);
         final AgentDTO responseDTO = mock(AgentDTO.class);
@@ -175,6 +178,22 @@ class AgentControllerTest {
         verify(this.patchAgentApiMapper).asPatchAgentRequest(givenRequestDTO);
         verify(this.patchAgent).execute(givenAgentId, request);
         verify(this.agentApiMapper).asAgentDto(response);
+    }
+
+    @Test
+    void givenEmptyPatchAgentRequestDto_whenPatchAgent_thenThrowIllegalArgumentException() {
+        //given
+        final UUID givenAgentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
+        final PatchAgentRequestDTO givenRequestDTO = PatchAgentRequestDTO.builder()
+                .name(null)
+                .description(null)
+                .instruction(null)
+                .build();
+
+        //when then
+        assertThatThrownBy(() -> this.agentController.patchAgent(givenAgentId, givenRequestDTO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Patch payload cannot be empty");
     }
 
     @Test
