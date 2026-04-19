@@ -59,6 +59,71 @@ class AgentLifecycleControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when restore agent then return restored agent")
+    void givenValidUserToken_whenRestoreAgent_thenReturnRestoredAgent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_RESTORE_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_RESTORE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when delete agent then return deleted agent")
+    void givenValidUserToken_whenDeleteAgent_thenReturnDeletedAgent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when delete agent twice then return deleted agent and forward twice")
+    void givenValidUserToken_whenDeleteAgentTwice_thenReturnDeletedAgentAndForwardTwice() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.atLeastTimes(2).verify();
+    }
+
+    @Test
     @DisplayName("given invalid agent id when activate agent then return bad request")
     void givenInvalidAgentId_whenActivateAgent_thenReturnBadRequest() {
         //given
@@ -74,6 +139,21 @@ class AgentLifecycleControllerIT {
     }
 
     @Test
+    @DisplayName("given invalid agent id when delete agent then return bad request")
+    void givenInvalidAgentId_whenDeleteAgent_thenReturnBadRequest() {
+        //given
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "not-a-valid-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultActivateAgentInvalidAgentId.json"))
+                .assertDefault();
+    }
+
+    @Test
     @DisplayName("given missing token when activate agent then return unauthorized and do not call upstream")
     void givenMissingToken_whenActivateAgent_thenReturnUnauthorizedAndDoNotCallUpstream() {
         //given
@@ -81,6 +161,22 @@ class AgentLifecycleControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.POST_ACTIVATE_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when delete agent then return unauthorized and do not call upstream")
+    void givenMissingToken_whenDeleteAgent_thenReturnUnauthorizedAndDoNotCallUpstream() {
+        //given
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT)
                 .withPathParameters(PathParams.create()
                         .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .token(null)

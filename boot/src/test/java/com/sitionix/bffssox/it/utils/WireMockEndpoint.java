@@ -159,6 +159,30 @@ public class WireMockEndpoint {
                                 .responseStatus(200);
                     });
 
+    public static final Endpoint<Void, AgentDTO> POST_RESTORE_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/restore",
+                    HttpMethod.POST,
+                    Void.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingRestoreAgentWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentDTO> DELETE_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    AgentDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingDeleteAgentWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
     public static final Endpoint<CreateAgentRequestDTO, AgentDTO> POST_CREATE_AGENT =
             Endpoint.createContract("/atmssox/api/v1/agents",
                     HttpMethod.POST,
