@@ -114,6 +114,24 @@ public class MockMvcEndpoint {
                             .expectResponse("responseDefaultArchiveAgentWithHappyPath.json"),
                     ItUserTokens.USER_JWT);
 
+    public static final Endpoint<Void, AgentDTO> POST_RESTORE_AGENT =
+            Endpoint.createContract("/api/v1/agents/{agentId}/restore",
+                    HttpMethod.POST,
+                    Void.class,
+                    AgentDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultRestoreAgentWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentDTO> DELETE_AGENT =
+            Endpoint.createContract("/api/v1/agents/{agentId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    AgentDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultDeleteAgentWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
     public static final Endpoint<CreateAgentRequestDTO, AgentDTO> POST_CREATE_AGENT =
             Endpoint.createContract("/api/v1/agents",
                     HttpMethod.POST,
