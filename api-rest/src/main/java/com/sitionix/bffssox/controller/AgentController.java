@@ -3,16 +3,21 @@ package com.sitionix.bffssox.controller;
 import com.app_afesox.bffssox.api_first.api.AgentApi;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
+import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
+import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
+import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
@@ -40,6 +45,10 @@ public class AgentController implements AgentApi {
     private final PatchAgentApiMapper patchAgentApiMapper;
 
     private final PatchAgent patchAgent;
+
+    private final ChatAgentApiMapper chatAgentApiMapper;
+
+    private final ChatAgent chatAgent;
 
     private final GetAgents getAgents;
 
@@ -102,6 +111,13 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentDTO> deleteAgent(final UUID agentId) {
         final Agent response = this.deleteAgent.execute(agentId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ChatAgentResponseDTO> chatAgent(final UUID agentId, @Valid final ChatAgentRequestDTO chatAgentRequestDTO) {
+        final ChatAgentResponse response = this.chatAgent.execute(agentId, this.chatAgentApiMapper.asChatAgentRequest(chatAgentRequestDTO));
+        return ResponseEntity.ok(this.chatAgentApiMapper.asChatAgentResponseDto(response));
     }
 
     @Override
