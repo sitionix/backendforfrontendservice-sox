@@ -2,23 +2,17 @@ package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
-import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
-import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
-import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
@@ -63,12 +57,6 @@ class AgentControllerTest {
     private PatchAgent patchAgent;
 
     @Mock
-    private ChatAgentApiMapper chatAgentApiMapper;
-
-    @Mock
-    private ChatAgent chatAgent;
-
-    @Mock
     private GetAgents getAgents;
 
     @Mock
@@ -94,8 +82,6 @@ class AgentControllerTest {
                 this.createAgent,
                 this.patchAgentApiMapper,
                 this.patchAgent,
-                this.chatAgentApiMapper,
-                this.chatAgent,
                 this.getAgents,
                 this.getAgent,
                 this.activateAgent,
@@ -113,8 +99,6 @@ class AgentControllerTest {
                 this.createAgent,
                 this.patchAgentApiMapper,
                 this.patchAgent,
-                this.chatAgentApiMapper,
-                this.chatAgent,
                 this.getAgents,
                 this.getAgent,
                 this.activateAgent,
@@ -260,28 +244,5 @@ class AgentControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
         verify(this.archiveAgent).execute(givenAgentId);
         verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenChatAgentRequestDto_whenChatAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc");
-        final ChatAgentRequestDTO givenRequestDTO = mock(ChatAgentRequestDTO.class);
-        final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentResponse response = mock(ChatAgentResponse.class);
-        final ChatAgentResponseDTO responseDTO = mock(ChatAgentResponseDTO.class);
-
-        when(this.chatAgentApiMapper.asChatAgentRequest(givenRequestDTO)).thenReturn(request);
-        when(this.chatAgent.execute(givenAgentId, request)).thenReturn(response);
-        when(this.chatAgentApiMapper.asChatAgentResponseDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<ChatAgentResponseDTO> actual = this.agentController.chatAgent(givenAgentId, givenRequestDTO);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.chatAgentApiMapper).asChatAgentRequest(givenRequestDTO);
-        verify(this.chatAgent).execute(givenAgentId, request);
-        verify(this.chatAgentApiMapper).asChatAgentResponseDto(response);
     }
 }

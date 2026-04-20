@@ -3,18 +3,13 @@ package com.sitionix.bffssox.client;
 import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
-import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
-import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
@@ -51,9 +46,6 @@ class AgentClientImplTest {
     private PatchAgentClientMapper patchAgentClientMapper;
 
     @Mock
-    private ChatAgentClientMapper chatAgentClientMapper;
-
-    @Mock
     private AtmssoxClientCallExecutor atmssoxClientCallExecutor;
 
     @BeforeEach
@@ -63,7 +55,6 @@ class AgentClientImplTest {
                 this.createAgentClientMapper,
                 this.agentClientMapper,
                 this.patchAgentClientMapper,
-                this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -75,7 +66,6 @@ class AgentClientImplTest {
                 this.createAgentClientMapper,
                 this.agentClientMapper,
                 this.patchAgentClientMapper,
-                this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -276,33 +266,5 @@ class AgentClientImplTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentApi).deleteAgent(givenAgentId);
         verify(this.agentClientMapper).asAgent(responseDTO);
-    }
-
-    @Test
-    void givenChatAgentRequest_whenChatAgent_thenReturnChatAgentResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
-        final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentRequestDTO requestDTO = mock(ChatAgentRequestDTO.class);
-        final ChatAgentResponseDTO responseDTO = mock(ChatAgentResponseDTO.class);
-        final ChatAgentResponse expected = mock(ChatAgentResponse.class);
-
-        when(this.chatAgentClientMapper.asChatAgentRequestDto(request)).thenReturn(requestDTO);
-        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
-            final Supplier<ChatAgentResponseDTO> supplier = invocation.getArgument(0);
-            return supplier.get();
-        });
-        when(this.agentApi.chatAgent(givenAgentId, requestDTO)).thenReturn(responseDTO);
-        when(this.chatAgentClientMapper.asChatAgentResponse(responseDTO)).thenReturn(expected);
-
-        //when
-        final ChatAgentResponse actual = this.agentClient.chatAgent(givenAgentId, request);
-
-        //then
-        assertThat(actual).isEqualTo(expected);
-        verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
-        verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).chatAgent(givenAgentId, requestDTO);
-        verify(this.chatAgentClientMapper).asChatAgentResponse(responseDTO);
     }
 }
