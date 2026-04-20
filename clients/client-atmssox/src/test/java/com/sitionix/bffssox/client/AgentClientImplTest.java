@@ -10,6 +10,7 @@ import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
+import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
@@ -46,6 +47,9 @@ class AgentClientImplTest {
     private PatchAgentClientMapper patchAgentClientMapper;
 
     @Mock
+    private ChatAgentClientMapper chatAgentClientMapper;
+
+    @Mock
     private AtmssoxClientCallExecutor atmssoxClientCallExecutor;
 
     @BeforeEach
@@ -55,6 +59,7 @@ class AgentClientImplTest {
                 this.createAgentClientMapper,
                 this.agentClientMapper,
                 this.patchAgentClientMapper,
+                this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -66,6 +71,7 @@ class AgentClientImplTest {
                 this.createAgentClientMapper,
                 this.agentClientMapper,
                 this.patchAgentClientMapper,
+                this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor
         );
     }
