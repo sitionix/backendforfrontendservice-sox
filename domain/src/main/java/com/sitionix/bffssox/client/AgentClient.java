@@ -2,8 +2,6 @@ package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentsResponse;
-import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import java.util.UUID;
@@ -67,15 +65,6 @@ public interface AgentClient {
      * @return updated agent.
      */
     Agent deleteAgent(UUID agentId);
-
-    /**
-     * Executes one chat request for one automation agent.
-     *
-     * @param agentId unique agent identifier.
-     * @param request chat request payload.
-     * @return assistant reply payload.
-     */
-    ChatAgentResponse chatAgent(UUID agentId, ChatAgentRequest request);
 
     /**
      * Applies partial identity update for one automation agent.
