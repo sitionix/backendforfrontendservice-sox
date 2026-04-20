@@ -219,4 +219,52 @@ class AgentClientImplTest {
         verify(this.agentApi).archiveAgent(givenAgentId);
         verify(this.agentClientMapper).asAgent(responseDTO);
     }
+
+    @Test
+    void givenAgentId_whenRestoreAgent_thenReturnAgent() {
+        //given
+        final UUID givenAgentId = UUID.fromString("c1db6b3a-2ee2-4f59-889b-ec3e8e343973");
+        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final Agent expected = mock(Agent.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.restoreAgent(givenAgentId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final Agent actual = this.agentClient.restoreAgent(givenAgentId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).restoreAgent(givenAgentId);
+        verify(this.agentClientMapper).asAgent(responseDTO);
+    }
+
+    @Test
+    void givenAgentId_whenDeleteAgent_thenReturnAgent() {
+        //given
+        final UUID givenAgentId = UUID.fromString("78ad5fab-af5a-4667-a150-33970a9f72b0");
+        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final Agent expected = mock(Agent.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.deleteAgent(givenAgentId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final Agent actual = this.agentClient.deleteAgent(givenAgentId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).deleteAgent(givenAgentId);
+        verify(this.agentClientMapper).asAgent(responseDTO);
+    }
 }
