@@ -1,12 +1,19 @@
 package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.atmssox.client.dto.AgentConversationMessageDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.sitionix.bffssox.domain.AgentConversation;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,5 +104,68 @@ class ChatAgentClientMapperTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenAgentConversationsResponseDto_whenAsAgentConversationsResponse_thenReturnMappedItems() {
+        //given
+        final AgentConversationDTO conversationDto = AgentConversationDTO.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type(AgentConversationDTO.TypeEnum.DIRECT)
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        final AgentConversationsResponseDTO given = AgentConversationsResponseDTO.builder()
+                .items(List.of(conversationDto))
+                .build();
+        final AgentConversation conversation = AgentConversation.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        final AgentConversationsResponse expected = AgentConversationsResponse.builder()
+                .items(List.of(conversation))
+                .build();
+
+        //when
+        final AgentConversationsResponse actual = this.mapper.asAgentConversationsResponse(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenAgentConversationDetailsDto_whenAsAgentConversationDetails_thenReturnMappedDetails() {
+        //given
+        final AgentConversationMessageDTO messageDto = AgentConversationMessageDTO.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
+                .authorId("agent-1")
+                .content("Clean architecture separates business logic.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        final AgentConversationDetailsDTO given = AgentConversationDetailsDTO.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type(AgentConversationDetailsDTO.TypeEnum.DIRECT)
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .messages(List.of(messageDto))
+                .build();
+
+        //when
+        final AgentConversationDetails actual = this.mapper.asAgentConversationDetails(given);
+
+        //then
+        assertThat(actual.getId()).isEqualTo(given.getId());
+        assertThat(actual.getType()).isEqualTo("DIRECT");
+        assertThat(actual.getMessages()).hasSize(1);
+        assertThat(actual.getMessages().get(0).getAuthorType()).isEqualTo("AGENT");
     }
 }

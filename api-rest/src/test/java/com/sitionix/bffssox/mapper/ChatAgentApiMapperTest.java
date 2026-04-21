@@ -1,12 +1,17 @@
 package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.bffssox.api_first.dto.AgentConversationMessageDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.sitionix.bffssox.domain.AgentConversation;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,5 +102,61 @@ class ChatAgentApiMapperTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenAgentConversationsResponse_whenAsAgentConversationsResponseDto_thenReturnMappedItems() {
+        //given
+        final AgentConversation conversation = AgentConversation.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        final AgentConversationsResponse given = AgentConversationsResponse.builder()
+                .items(List.of(conversation))
+                .build();
+        final AgentConversationsResponseDTO expected = AgentConversationsResponseDTO.builder()
+                .items(List.of(this.mapper.asAgentConversationDto(conversation)))
+                .build();
+
+        //when
+        final AgentConversationsResponseDTO actual = this.mapper.asAgentConversationsResponseDto(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenAgentConversationDetails_whenAsAgentConversationDetailsDto_thenReturnMappedDetails() {
+        //given
+        final ChatAgentMessage message = ChatAgentMessage.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType("AGENT")
+                .authorId("agent-1")
+                .content("Clean architecture separates business logic.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        final AgentConversationDetails given = AgentConversationDetails.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .messages(List.of(message))
+                .build();
+
+        //when
+        final var actual = this.mapper.asAgentConversationDetailsDto(given);
+
+        //then
+        assertThat(actual.getId()).isEqualTo(given.getId());
+        assertThat(actual.getTitle()).isEqualTo(given.getTitle());
+        assertThat(actual.getType()).isEqualTo(com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO.TypeEnum.DIRECT);
+        assertThat(actual.getMessages()).hasSize(1);
+        assertThat(actual.getMessages().get(0).getContent()).isEqualTo("Clean architecture separates business logic.");
     }
 }
