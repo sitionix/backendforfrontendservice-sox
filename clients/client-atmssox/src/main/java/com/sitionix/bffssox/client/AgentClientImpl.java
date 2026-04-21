@@ -1,6 +1,8 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
@@ -8,16 +10,18 @@ import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
-import java.util.UUID;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +62,22 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 () -> this.agentApi.getAgent(agentId)
         );
         return this.agentClientMapper.asAgent(responseDTO);
+    }
+
+    @Override
+    public AgentConversationsResponse getAgentConversations(final UUID agentId) {
+        final AgentConversationsResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getAgentConversations(agentId)
+        );
+        return this.chatAgentClientMapper.asAgentConversationsResponse(responseDTO);
+    }
+
+    @Override
+    public AgentConversationDetails getAgentConversation(final UUID agentId, final UUID conversationId) {
+        final AgentConversationDetailsDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getAgentConversation(agentId, conversationId)
+        );
+        return this.chatAgentClientMapper.asAgentConversationDetails(responseDTO);
     }
 
     @Override

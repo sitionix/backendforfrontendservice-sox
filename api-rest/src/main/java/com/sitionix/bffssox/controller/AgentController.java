@@ -1,6 +1,8 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.api.AgentApi;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
@@ -8,6 +10,8 @@ import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
@@ -21,6 +25,8 @@ import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
+import com.sitionix.bffssox.usecase.GetAgentConversation;
+import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
@@ -54,6 +60,10 @@ public class AgentController implements AgentApi {
 
     private final GetAgent getAgent;
 
+    private final GetAgentConversations getAgentConversations;
+
+    private final GetAgentConversation getAgentConversation;
+
     private final ActivateAgent activateAgent;
 
     private final ArchiveAgent archiveAgent;
@@ -83,6 +93,20 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentDTO> getAgent(final UUID agentId) {
         final Agent response = this.getAgent.execute(agentId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentConversationsResponseDTO> getAgentConversations(final UUID agentId) {
+        final AgentConversationsResponse response = this.getAgentConversations.execute(agentId);
+        return ResponseEntity.ok(this.chatAgentApiMapper.asAgentConversationsResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentConversationDetailsDTO> getAgentConversation(final UUID agentId, final UUID conversationId) {
+        final AgentConversationDetails response = this.getAgentConversation.execute(agentId, conversationId);
+        return ResponseEntity.ok(this.chatAgentApiMapper.asAgentConversationDetailsDto(response));
     }
 
     @Override
