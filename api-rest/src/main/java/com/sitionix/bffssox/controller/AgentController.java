@@ -104,8 +104,8 @@ public class AgentController implements AgentApi {
 
     @Override
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<AgentConversationDetailsDTO> getAgentConversation(final UUID agentId, final UUID conversationId) {
-        final AgentConversationDetails response = this.getAgentConversation.execute(agentId, conversationId);
+    public ResponseEntity<AgentConversationDetailsDTO> getAgentConversation(final UUID conversationId) {
+        final AgentConversationDetails response = this.getAgentConversation.execute(conversationId);
         return ResponseEntity.ok(this.chatAgentApiMapper.asAgentConversationDetailsDto(response));
     }
 

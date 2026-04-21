@@ -73,9 +73,9 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
-    public AgentConversationDetails getAgentConversation(final UUID agentId, final UUID conversationId) {
+    public AgentConversationDetails getAgentConversation(final UUID conversationId) {
         final AgentConversationDetailsDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentConversation(agentId, conversationId)
+                () -> this.agentApi.getAgentConversation(conversationId)
         );
         return this.chatAgentClientMapper.asAgentConversationDetails(responseDTO);
     }

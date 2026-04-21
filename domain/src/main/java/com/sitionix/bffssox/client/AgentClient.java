@@ -49,11 +49,10 @@ public interface AgentClient {
     /**
      * Returns one direct conversation with ordered message history.
      *
-     * @param agentId unique agent identifier.
      * @param conversationId unique conversation identifier.
      * @return conversation details response.
      */
-    AgentConversationDetails getAgentConversation(UUID agentId, UUID conversationId);
+    AgentConversationDetails getAgentConversation(UUID conversationId);
 
     /**
      * Activates one automation agent.

@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-bffssox-api-first-sitionix-117-2-unstable</artifactId>
+            <artifactId>app-afesox-bffssox-api-first-sitionix-117-1-unstable</artifactId>
             <version>${bffssox.api.version}</version>
         </dependency>
         <dependency>

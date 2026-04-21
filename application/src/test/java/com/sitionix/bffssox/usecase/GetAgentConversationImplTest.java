@@ -35,18 +35,17 @@ class GetAgentConversationImplTest {
     }
 
     @Test
-    void givenAgentIdAndConversationId_whenExecute_thenReturnAgentConversationDetails() {
+    void givenConversationId_whenExecute_thenReturnAgentConversationDetails() {
         //given
-        final UUID agentId = UUID.fromString("21111111-1111-1111-1111-111111111111");
         final UUID conversationId = UUID.fromString("31111111-1111-1111-1111-111111111111");
         final AgentConversationDetails response = mock(AgentConversationDetails.class);
-        when(this.agentClient.getAgentConversation(agentId, conversationId)).thenReturn(response);
+        when(this.agentClient.getAgentConversation(conversationId)).thenReturn(response);
 
         //when
-        final AgentConversationDetails actual = this.getAgentConversation.execute(agentId, conversationId);
+        final AgentConversationDetails actual = this.getAgentConversation.execute(conversationId);
 
         //then
         assertThat(actual).isEqualTo(response);
-        verify(this.agentClient).getAgentConversation(agentId, conversationId);
+        verify(this.agentClient).getAgentConversation(conversationId);
     }
 }

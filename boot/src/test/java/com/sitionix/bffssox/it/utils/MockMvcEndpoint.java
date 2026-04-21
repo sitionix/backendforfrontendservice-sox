@@ -165,7 +165,7 @@ public class MockMvcEndpoint {
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<Void, AgentConversationDetailsDTO> GET_AGENT_CONVERSATION =
-            Endpoint.createContract("/api/v1/agents/{agentId}/conversations/{conversationId}",
+            Endpoint.createContract("/api/v1/conversations/{conversationId}",
                     HttpMethod.GET,
                     Void.class,
                     AgentConversationDetailsDTO.class,

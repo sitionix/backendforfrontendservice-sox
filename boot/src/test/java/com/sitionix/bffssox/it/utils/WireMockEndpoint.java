@@ -221,7 +221,7 @@ public class WireMockEndpoint {
                     });
 
     public static final Endpoint<Void, AgentConversationDetailsDTO> GET_AGENT_CONVERSATION =
-            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/conversations/{conversationId}",
+            Endpoint.createContract("/atmssox/api/v1/conversations/{conversationId}",
                     HttpMethod.GET,
                     Void.class,
                     AgentConversationDetailsDTO.class,

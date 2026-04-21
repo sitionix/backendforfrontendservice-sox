@@ -98,7 +98,6 @@ class AgentConversationControllerIT {
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.GET_AGENT_CONVERSATION)
                 .pathPattern(WireMockPathParams.create()
-                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
                         .add("conversationId", "11111111-1111-1111-1111-111111111111"))
                 .createDefault();
 
@@ -106,7 +105,6 @@ class AgentConversationControllerIT {
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.GET_AGENT_CONVERSATION)
                 .withPathParameters(PathParams.create()
-                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
                         .add("conversationId", "11111111-1111-1111-1111-111111111111"))
                 .assertDefault();
 
@@ -122,7 +120,6 @@ class AgentConversationControllerIT {
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.GET_AGENT_CONVERSATION)
                 .withPathParameters(PathParams.create()
-                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
                         .add("conversationId", "not-a-valid-id"))
                 .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
                         .expectResponse("responseDefaultInvalidConversationId.json"))
@@ -136,7 +133,6 @@ class AgentConversationControllerIT {
         final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
                 .createMapping(WireMockEndpoint.GET_AGENT_CONVERSATION)
                 .pathPattern(WireMockPathParams.create()
-                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
                         .add("conversationId", "11111111-1111-1111-1111-111111111111"))
                 .responseStatus(HttpStatus.NOT_FOUND)
                 .responseBody("responseDefaultMappingGetAgentConversationNotFound.json")
@@ -146,7 +142,6 @@ class AgentConversationControllerIT {
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.GET_AGENT_CONVERSATION)
                 .withPathParameters(PathParams.create()
-                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
                         .add("conversationId", "11111111-1111-1111-1111-111111111111"))
                 .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
                         .expectResponse("responseDefaultGetAgentConversationNotFound.json"))
