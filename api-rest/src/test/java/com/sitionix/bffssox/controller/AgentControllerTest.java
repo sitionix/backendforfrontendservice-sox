@@ -1,12 +1,16 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
@@ -193,6 +197,46 @@ class AgentControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
         verify(this.getAgent).execute(agentId);
         verify(this.agentApiMapper).asAgentDto(response);
+    }
+
+    @Test
+    void givenAgentId_whenGetAgentConversations_thenReturnOkResponse() {
+        //given
+        final UUID agentId = UUID.fromString("dbac37f0-90a2-4f6b-ab99-73f6ac5cf675");
+        final AgentConversationsResponse response = mock(AgentConversationsResponse.class);
+        final AgentConversationsResponseDTO responseDTO = mock(AgentConversationsResponseDTO.class);
+
+        when(this.getAgentConversations.execute(agentId)).thenReturn(response);
+        when(this.chatAgentApiMapper.asAgentConversationsResponseDto(response)).thenReturn(responseDTO);
+
+        //when
+        final ResponseEntity<AgentConversationsResponseDTO> actual = this.agentController.getAgentConversations(agentId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
+        verify(this.getAgentConversations).execute(agentId);
+        verify(this.chatAgentApiMapper).asAgentConversationsResponseDto(response);
+    }
+
+    @Test
+    void givenAgentIdAndConversationId_whenGetAgentConversation_thenReturnOkResponse() {
+        //given
+        final UUID agentId = UUID.fromString("ebbc37f0-90a2-4f6b-ab99-73f6ac5cf675");
+        final UUID conversationId = UUID.fromString("fbbc37f0-90a2-4f6b-ab99-73f6ac5cf675");
+        final AgentConversationDetails response = mock(AgentConversationDetails.class);
+        final AgentConversationDetailsDTO responseDTO = mock(AgentConversationDetailsDTO.class);
+
+        when(this.getAgentConversation.execute(agentId, conversationId)).thenReturn(response);
+        when(this.chatAgentApiMapper.asAgentConversationDetailsDto(response)).thenReturn(responseDTO);
+
+        //when
+        final ResponseEntity<AgentConversationDetailsDTO> actual =
+                this.agentController.getAgentConversation(agentId, conversationId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
+        verify(this.getAgentConversation).execute(agentId, conversationId);
+        verify(this.chatAgentApiMapper).asAgentConversationDetailsDto(response);
     }
 
     @Test
