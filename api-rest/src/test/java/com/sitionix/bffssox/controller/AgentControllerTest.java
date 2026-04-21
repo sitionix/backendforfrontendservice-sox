@@ -22,6 +22,8 @@ import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
+import com.sitionix.bffssox.usecase.GetAgentConversation;
+import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
@@ -75,6 +77,12 @@ class AgentControllerTest {
     private GetAgent getAgent;
 
     @Mock
+    private GetAgentConversations getAgentConversations;
+
+    @Mock
+    private GetAgentConversation getAgentConversation;
+
+    @Mock
     private ActivateAgent activateAgent;
 
     @Mock
@@ -98,6 +106,8 @@ class AgentControllerTest {
                 this.chatAgent,
                 this.getAgents,
                 this.getAgent,
+                this.getAgentConversations,
+                this.getAgentConversation,
                 this.activateAgent,
                 this.archiveAgent,
                 this.restoreAgent,
@@ -117,6 +127,8 @@ class AgentControllerTest {
                 this.chatAgent,
                 this.getAgents,
                 this.getAgent,
+                this.getAgentConversations,
+                this.getAgentConversation,
                 this.activateAgent,
                 this.archiveAgent,
                 this.restoreAgent,

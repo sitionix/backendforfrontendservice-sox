@@ -2,6 +2,10 @@ package com.sitionix.bffssox.it.utils;
 
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
@@ -149,6 +153,34 @@ public class MockMvcEndpoint {
                     AgentDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .expectResponse("responseDefaultGetAgentWithInstruction.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentConversationsResponseDTO> GET_AGENT_CONVERSATIONS =
+            Endpoint.createContract("/api/v1/agents/{agentId}/conversations",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentConversationsResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentConversationsWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentConversationDetailsDTO> GET_AGENT_CONVERSATION =
+            Endpoint.createContract("/api/v1/agents/{agentId}/conversations/{conversationId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentConversationDetailsDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentConversationWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<ChatAgentRequestDTO, ChatAgentResponseDTO> POST_CHAT_AGENT =
+            Endpoint.createContract("/api/v1/agents/{agentId}/chat",
+                    HttpMethod.POST,
+                    ChatAgentRequestDTO.class,
+                    ChatAgentResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultChatAgentNewConversation.json")
+                            .expectResponse("responseDefaultChatAgentNewConversation.json"),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT =

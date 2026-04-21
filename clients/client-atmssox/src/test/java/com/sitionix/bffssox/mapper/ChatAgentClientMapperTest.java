@@ -1,9 +1,13 @@
 package com.sitionix.bffssox.mapper;
 
+import com.app_afesox.atmssox.client.dto.AgentConversationMessageDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +45,27 @@ class ChatAgentClientMapperTest {
     @Test
     void givenChatAgentResponseDto_whenAsChatAgentResponse_thenReturnChatAgentResponse() {
         //given
+        final AgentConversationMessageDTO replyDto = AgentConversationMessageDTO.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("SOLID is a set of design principles.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
         final ChatAgentResponseDTO given = ChatAgentResponseDTO.builder()
-                .reply("SOLID is a set of design principles.")
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(replyDto)
+                .build();
+        final ChatAgentMessage reply = ChatAgentMessage.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType("AGENT")
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("SOLID is a set of design principles.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .build();
         final ChatAgentResponse expected = ChatAgentResponse.builder()
-                .reply("SOLID is a set of design principles.")
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(reply)
                 .build();
 
         //when

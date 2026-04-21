@@ -1,9 +1,13 @@
 package com.sitionix.bffssox.mapper;
 
+import com.app_afesox.bffssox.api_first.dto.AgentConversationMessageDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +45,27 @@ class ChatAgentApiMapperTest {
     @Test
     void givenChatAgentResponse_whenAsChatAgentResponseDto_thenReturnChatAgentResponseDto() {
         //given
+        final ChatAgentMessage message = ChatAgentMessage.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType("AGENT")
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("Clean architecture separates business rules from frameworks.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
         final ChatAgentResponse given = ChatAgentResponse.builder()
-                .reply("Clean architecture separates business rules from frameworks.")
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(message)
+                .build();
+        final AgentConversationMessageDTO replyDto = AgentConversationMessageDTO.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("Clean architecture separates business rules from frameworks.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .build();
         final ChatAgentResponseDTO expected = ChatAgentResponseDTO.builder()
-                .reply("Clean architecture separates business rules from frameworks.")
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(replyDto)
                 .build();
 
         //when
