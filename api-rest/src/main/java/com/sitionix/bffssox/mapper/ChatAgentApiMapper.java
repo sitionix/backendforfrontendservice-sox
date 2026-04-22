@@ -13,6 +13,7 @@ import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import java.util.List;
+import org.mapstruct.Mapping;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -30,21 +31,21 @@ public interface ChatAgentApiMapper {
 
     List<AgentConversationMessageDTO> asAgentConversationMessageDtos(List<ChatAgentMessage> src);
 
-    default AgentConversationsResponseDTO asAgentConversationsResponseDto(final AgentConversationsResponse src) {
-        return AgentConversationsResponseDTO.builder()
-                .items(this.asAgentConversationDtos(src.getItems()))
-                .build();
+    @Mapping(target = "items", source = "items")
+    AgentConversationsResponseDTO asAgentConversationsResponseDto(AgentConversationsResponse src);
+
+    @Mapping(target = "messages", source = "messages")
+    AgentConversationDetailsDTO asAgentConversationDetailsDto(AgentConversationDetails src);
+
+    default AgentConversationDetailsDTO.TypeEnum map(final String value) {
+        return value == null ? null : AgentConversationDetailsDTO.TypeEnum.fromValue(value);
     }
 
-    default AgentConversationDetailsDTO asAgentConversationDetailsDto(final AgentConversationDetails src) {
-        return AgentConversationDetailsDTO.builder()
-                .id(src.getId())
-                .title(src.getTitle())
-                .type(AgentConversationDetailsDTO.TypeEnum.fromValue(src.getType()))
-                .createdAt(src.getCreatedAt())
-                .updatedAt(src.getUpdatedAt())
-                .lastMessageAt(src.getLastMessageAt())
-                .messages(this.asAgentConversationMessageDtos(src.getMessages()))
-                .build();
+    default AgentConversationDTO.TypeEnum mapConversationType(final String value) {
+        return value == null ? null : AgentConversationDTO.TypeEnum.fromValue(value);
+    }
+
+    default AgentConversationMessageDTO.AuthorTypeEnum mapAuthorType(final String value) {
+        return value == null ? null : AgentConversationMessageDTO.AuthorTypeEnum.fromValue(value);
     }
 }

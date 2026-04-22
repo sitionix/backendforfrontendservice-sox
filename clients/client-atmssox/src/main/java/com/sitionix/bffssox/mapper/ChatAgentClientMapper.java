@@ -13,6 +13,7 @@ import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import java.util.List;
+import org.mapstruct.Mapping;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -30,21 +31,22 @@ public interface ChatAgentClientMapper {
 
     List<ChatAgentMessage> asChatAgentMessages(List<AgentConversationMessageDTO> src);
 
-    default AgentConversationsResponse asAgentConversationsResponse(final AgentConversationsResponseDTO src) {
-        return AgentConversationsResponse.builder()
-                .items(this.asAgentConversations(src.getItems()))
-                .build();
+    @Mapping(target = "items", source = "items")
+    AgentConversationsResponse asAgentConversationsResponse(AgentConversationsResponseDTO src);
+
+    @Mapping(target = "type", source = "type")
+    @Mapping(target = "messages", source = "messages")
+    AgentConversationDetails asAgentConversationDetails(AgentConversationDetailsDTO src);
+
+    default String map(final AgentConversationDetailsDTO.TypeEnum value) {
+        return value == null ? null : value.getValue();
     }
 
-    default AgentConversationDetails asAgentConversationDetails(final AgentConversationDetailsDTO src) {
-        return AgentConversationDetails.builder()
-                .id(src.getId())
-                .title(src.getTitle())
-                .type(src.getType().getValue())
-                .createdAt(src.getCreatedAt())
-                .updatedAt(src.getUpdatedAt())
-                .lastMessageAt(src.getLastMessageAt())
-                .messages(this.asChatAgentMessages(src.getMessages()))
-                .build();
+    default String mapConversationType(final AgentConversationDTO.TypeEnum value) {
+        return value == null ? null : value.getValue();
+    }
+
+    default String mapAuthorType(final AgentConversationMessageDTO.AuthorTypeEnum value) {
+        return value == null ? null : value.getValue();
     }
 }

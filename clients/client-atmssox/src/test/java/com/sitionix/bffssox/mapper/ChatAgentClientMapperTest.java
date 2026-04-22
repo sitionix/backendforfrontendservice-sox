@@ -17,12 +17,9 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class ChatAgentClientMapperTest {
 
     private ChatAgentClientMapper mapper;
@@ -158,14 +155,26 @@ class ChatAgentClientMapperTest {
                 .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .messages(List.of(messageDto))
                 .build();
+        final AgentConversationDetails expected = AgentConversationDetails.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .messages(List.of(ChatAgentMessage.builder()
+                        .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                        .authorType("AGENT")
+                        .authorId("agent-1")
+                        .content("Clean architecture separates business logic.")
+                        .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                        .build()))
+                .build();
 
         //when
         final AgentConversationDetails actual = this.mapper.asAgentConversationDetails(given);
 
         //then
-        assertThat(actual.getId()).isEqualTo(given.getId());
-        assertThat(actual.getType()).isEqualTo("DIRECT");
-        assertThat(actual.getMessages()).hasSize(1);
-        assertThat(actual.getMessages().get(0).getAuthorType()).isEqualTo("AGENT");
+        assertThat(actual).isEqualTo(expected);
     }
 }
