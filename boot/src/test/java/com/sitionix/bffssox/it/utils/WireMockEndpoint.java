@@ -4,7 +4,11 @@ import com.app_afesox.athssox.client.dto.EmailVerificationDTO;
 import com.app_afesox.athssox.client.dto.EmailVerificationResponseDTO;
 import com.app_afesox.athssox.client.dto.LoginRequestDTO;
 import com.app_afesox.athssox.client.dto.LoginResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
+import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
@@ -201,6 +205,42 @@ public class WireMockEndpoint {
                     AgentDTO.class,
                     (WiremockDefault) context -> {
                         context.responseBody("responseDefaultMappingGetAgentWithInstruction.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentConversationsResponseDTO> GET_AGENT_CONVERSATIONS =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/conversations",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentConversationsResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetAgentConversationsWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentConversationDetailsDTO> GET_AGENT_CONVERSATION =
+            Endpoint.createContract("/atmssox/api/v1/conversations/{conversationId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentConversationDetailsDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetAgentConversationWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<ChatAgentRequestDTO, ChatAgentResponseDTO> POST_CHAT_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/chat",
+                    HttpMethod.POST,
+                    ChatAgentRequestDTO.class,
+                    ChatAgentResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingChatAgentNewConversation.json")
                                 .responseStatus(200);
                     });
 

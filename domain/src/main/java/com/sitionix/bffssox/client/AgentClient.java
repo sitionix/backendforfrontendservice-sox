@@ -1,6 +1,8 @@
 package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.Agent;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
+import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
@@ -35,6 +37,22 @@ public interface AgentClient {
      * @return persisted agent.
      */
     Agent getAgent(UUID agentId);
+
+    /**
+     * Returns direct conversations for one automation agent.
+     *
+     * @param agentId unique agent identifier.
+     * @return conversations list response.
+     */
+    AgentConversationsResponse getAgentConversations(UUID agentId);
+
+    /**
+     * Returns one direct conversation with ordered message history.
+     *
+     * @param conversationId unique conversation identifier.
+     * @return conversation details response.
+     */
+    AgentConversationDetails getAgentConversation(UUID conversationId);
 
     /**
      * Activates one automation agent.

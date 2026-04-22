@@ -1,0 +1,5 @@
+{
+  "code": 400,
+  "title": "Bad Request",
+  "details": "Failed to convert value of type 'java.lang.String' to required type 'java.util.UUID'; Invalid UUID string: not-a-valid-id"
+}
