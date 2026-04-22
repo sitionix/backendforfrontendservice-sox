@@ -35,12 +35,8 @@ class ChatAgentClientMapperTest {
     @Test
     void givenChatAgentRequest_whenAsChatAgentRequestDto_thenReturnChatAgentRequestDto() {
         //given
-        final ChatAgentRequest given = ChatAgentRequest.builder()
-                .message("Explain SOLID")
-                .build();
-        final ChatAgentRequestDTO expected = ChatAgentRequestDTO.builder()
-                .message("Explain SOLID")
-                .build();
+        final ChatAgentRequest given = this.getChatAgentRequest();
+        final ChatAgentRequestDTO expected = this.getChatAgentRequestDto();
 
         //when
         final ChatAgentRequestDTO actual = this.mapper.asChatAgentRequestDto(given);
@@ -52,28 +48,8 @@ class ChatAgentClientMapperTest {
     @Test
     void givenChatAgentResponseDto_whenAsChatAgentResponse_thenReturnChatAgentResponse() {
         //given
-        final AgentConversationMessageDTO replyDto = AgentConversationMessageDTO.builder()
-                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
-                .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
-                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
-                .content("SOLID is a set of design principles.")
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .build();
-        final ChatAgentResponseDTO given = ChatAgentResponseDTO.builder()
-                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .reply(replyDto)
-                .build();
-        final ChatAgentMessage reply = ChatAgentMessage.builder()
-                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
-                .authorType("AGENT")
-                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
-                .content("SOLID is a set of design principles.")
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .build();
-        final ChatAgentResponse expected = ChatAgentResponse.builder()
-                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .reply(reply)
-                .build();
+        final ChatAgentResponseDTO given = this.getChatAgentResponseDto();
+        final ChatAgentResponse expected = this.getChatAgentResponse();
 
         //when
         final ChatAgentResponse actual = this.mapper.asChatAgentResponse(given);
@@ -109,28 +85,8 @@ class ChatAgentClientMapperTest {
     @Test
     void givenAgentConversationsResponseDto_whenAsAgentConversationsResponse_thenReturnMappedItems() {
         //given
-        final AgentConversationDTO conversationDto = AgentConversationDTO.builder()
-                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .title("Explain clean architecture")
-                .type(AgentConversationDTO.TypeEnum.DIRECT)
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .build();
-        final AgentConversationsResponseDTO given = AgentConversationsResponseDTO.builder()
-                .items(List.of(conversationDto))
-                .build();
-        final AgentConversation conversation = AgentConversation.builder()
-                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .title("Explain clean architecture")
-                .type("DIRECT")
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .build();
-        final AgentConversationsResponse expected = AgentConversationsResponse.builder()
-                .items(List.of(conversation))
-                .build();
+        final AgentConversationsResponseDTO given = this.getAgentConversationsResponseDto();
+        final AgentConversationsResponse expected = this.getAgentConversationsResponse();
 
         //when
         final AgentConversationsResponse actual = this.mapper.asAgentConversationsResponse(given);
@@ -142,6 +98,85 @@ class ChatAgentClientMapperTest {
     @Test
     void givenAgentConversationDetailsDto_whenAsAgentConversationDetails_thenReturnMappedDetails() {
         //given
+        final AgentConversationDetailsDTO given = this.getAgentConversationDetailsDto();
+        final AgentConversationDetails expected = this.getAgentConversationDetails();
+
+        //when
+        final AgentConversationDetails actual = this.mapper.asAgentConversationDetails(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    private ChatAgentRequest getChatAgentRequest() {
+        return ChatAgentRequest.builder()
+                .message("Explain SOLID")
+                .build();
+    }
+
+    private ChatAgentRequestDTO getChatAgentRequestDto() {
+        return ChatAgentRequestDTO.builder()
+                .message("Explain SOLID")
+                .build();
+    }
+
+    private ChatAgentResponseDTO getChatAgentResponseDto() {
+        final AgentConversationMessageDTO replyDto = AgentConversationMessageDTO.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("SOLID is a set of design principles.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        return ChatAgentResponseDTO.builder()
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(replyDto)
+                .build();
+    }
+
+    private ChatAgentResponse getChatAgentResponse() {
+        final ChatAgentMessage reply = ChatAgentMessage.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType("AGENT")
+                .authorId("4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                .content("SOLID is a set of design principles.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        return ChatAgentResponse.builder()
+                .conversationId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .reply(reply)
+                .build();
+    }
+
+    private AgentConversationsResponseDTO getAgentConversationsResponseDto() {
+        final AgentConversationDTO conversationDto = AgentConversationDTO.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type(AgentConversationDTO.TypeEnum.DIRECT)
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        return AgentConversationsResponseDTO.builder()
+                .items(List.of(conversationDto))
+                .build();
+    }
+
+    private AgentConversationsResponse getAgentConversationsResponse() {
+        final AgentConversation conversation = AgentConversation.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        return AgentConversationsResponse.builder()
+                .items(List.of(conversation))
+                .build();
+    }
+
+    private AgentConversationDetailsDTO getAgentConversationDetailsDto() {
         final AgentConversationMessageDTO messageDto = AgentConversationMessageDTO.builder()
                 .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
                 .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
@@ -149,7 +184,7 @@ class ChatAgentClientMapperTest {
                 .content("Clean architecture separates business logic.")
                 .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .build();
-        final AgentConversationDetailsDTO given = AgentConversationDetailsDTO.builder()
+        return AgentConversationDetailsDTO.builder()
                 .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
                 .title("Explain clean architecture")
                 .type(AgentConversationDetailsDTO.TypeEnum.DIRECT)
@@ -158,14 +193,24 @@ class ChatAgentClientMapperTest {
                 .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .messages(List.of(messageDto))
                 .build();
+    }
 
-        //when
-        final AgentConversationDetails actual = this.mapper.asAgentConversationDetails(given);
-
-        //then
-        assertThat(actual.getId()).isEqualTo(given.getId());
-        assertThat(actual.getType()).isEqualTo("DIRECT");
-        assertThat(actual.getMessages()).hasSize(1);
-        assertThat(actual.getMessages().get(0).getAuthorType()).isEqualTo("AGENT");
+    private AgentConversationDetails getAgentConversationDetails() {
+        final ChatAgentMessage message = ChatAgentMessage.builder()
+                .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+                .authorType("AGENT")
+                .authorId("agent-1")
+                .content("Clean architecture separates business logic.")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .build();
+        return AgentConversationDetails.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .title("Explain clean architecture")
+                .type("DIRECT")
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
+                .messages(List.of(message))
+                .build();
     }
 }
