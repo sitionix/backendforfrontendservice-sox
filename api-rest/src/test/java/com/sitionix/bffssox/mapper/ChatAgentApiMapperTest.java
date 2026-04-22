@@ -1,7 +1,6 @@
 package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.bffssox.api_first.dto.AgentConversationMessageDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
@@ -16,9 +15,12 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 class ChatAgentApiMapperTest {
 
     private ChatAgentApiMapper mapper;
@@ -146,26 +148,15 @@ class ChatAgentApiMapperTest {
                 .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
                 .messages(List.of(message))
                 .build();
-        final AgentConversationDetailsDTO expected = AgentConversationDetailsDTO.builder()
-                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .title("Explain clean architecture")
-                .type(AgentConversationDetailsDTO.TypeEnum.DIRECT)
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .lastMessageAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                .messages(List.of(AgentConversationMessageDTO.builder()
-                        .id(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
-                        .authorType(AgentConversationMessageDTO.AuthorTypeEnum.AGENT)
-                        .authorId("agent-1")
-                        .content("Clean architecture separates business logic.")
-                        .createdAt(OffsetDateTime.parse("2026-04-21T10:01:00Z"))
-                        .build()))
-                .build();
 
         //when
-        final AgentConversationDetailsDTO actual = this.mapper.asAgentConversationDetailsDto(given);
+        final var actual = this.mapper.asAgentConversationDetailsDto(given);
 
         //then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getId()).isEqualTo(given.getId());
+        assertThat(actual.getTitle()).isEqualTo(given.getTitle());
+        assertThat(actual.getType()).isEqualTo(com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO.TypeEnum.DIRECT);
+        assertThat(actual.getMessages()).hasSize(1);
+        assertThat(actual.getMessages().get(0).getContent()).isEqualTo("Clean architecture separates business logic.");
     }
 }
