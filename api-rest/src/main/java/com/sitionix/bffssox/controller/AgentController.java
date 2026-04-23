@@ -4,18 +4,28 @@ import com.app_afesox.bffssox.api_first.api.AgentApi;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentRule;
+import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
+import com.sitionix.bffssox.mapper.AgentRuleApiMapper;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
@@ -23,11 +33,15 @@ import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
+import com.sitionix.bffssox.usecase.CreateAgentRule;
+import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
+import com.sitionix.bffssox.usecase.GetAgentRules;
+import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
 import jakarta.validation.Valid;
@@ -45,6 +59,8 @@ public class AgentController implements AgentApi {
     private final CreateAgentApiMapper createAgentApiMapper;
 
     private final AgentApiMapper agentApiMapper;
+
+    private final AgentRuleApiMapper agentRuleApiMapper;
 
     private final CreateAgent createAgent;
 
@@ -71,6 +87,14 @@ public class AgentController implements AgentApi {
     private final RestoreAgent restoreAgent;
 
     private final DeleteAgent deleteAgent;
+
+    private final GetAgentRules getAgentRules;
+
+    private final CreateAgentRule createAgentRule;
+
+    private final PatchAgentRule patchAgentRule;
+
+    private final DeleteAgentRule deleteAgentRule;
 
     @Override
     @PreAuthorize("isAuthenticated()")
@@ -135,6 +159,42 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentDTO> deleteAgent(final UUID agentId) {
         final Agent response = this.deleteAgent.execute(agentId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentRulesResponseDTO> getAgentRules(final UUID agentId) {
+        final AgentRulesResponse response = this.getAgentRules.execute(agentId);
+        return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRulesResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentRuleDTO> createAgentRule(final UUID agentId, @Valid final CreateAgentRuleRequestDTO createAgentRuleRequestDTO) {
+        final CreateAgentRuleRequest request = this.agentRuleApiMapper.asCreateAgentRuleRequest(createAgentRuleRequestDTO);
+        final AgentRule response = this.createAgentRule.execute(agentId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.agentRuleApiMapper.asAgentRuleDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentRuleDTO> patchAgentRule(final UUID agentId,
+                                                       final UUID ruleId,
+                                                       @Valid final PatchAgentRuleRequestDTO patchAgentRuleRequestDTO) {
+        final AgentRule response = this.patchAgentRule.execute(
+                agentId,
+                ruleId,
+                this.agentRuleApiMapper.asPatchAgentRuleRequest(patchAgentRuleRequestDTO)
+        );
+        return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRuleDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<DeleteAgentRuleResponseDTO> deleteAgentRule(final UUID agentId, final UUID ruleId) {
+        final DeleteAgentRuleResponse response = this.deleteAgentRule.execute(agentId, ruleId);
+        return ResponseEntity.ok(this.agentRuleApiMapper.asDeleteAgentRuleResponseDto(response));
     }
 
     @Override

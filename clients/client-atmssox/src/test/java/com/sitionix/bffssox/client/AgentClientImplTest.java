@@ -18,6 +18,7 @@ import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
+import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
@@ -52,6 +53,9 @@ class AgentClientImplTest {
     private AgentClientMapper agentClientMapper;
 
     @Mock
+    private AgentRuleClientMapper agentRuleClientMapper;
+
+    @Mock
     private PatchAgentClientMapper patchAgentClientMapper;
 
     @Mock
@@ -66,6 +70,7 @@ class AgentClientImplTest {
                 this.agentApi,
                 this.createAgentClientMapper,
                 this.agentClientMapper,
+                this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor
@@ -78,6 +83,7 @@ class AgentClientImplTest {
                 this.agentApi,
                 this.createAgentClientMapper,
                 this.agentClientMapper,
+                this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
                 this.atmssoxClientCallExecutor

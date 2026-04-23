@@ -4,20 +4,31 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
+import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
+import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentRule;
+import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
+import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
+import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
@@ -34,6 +45,8 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     private final CreateAgentClientMapper createAgentClientMapper;
 
     private final AgentClientMapper agentClientMapper;
+
+    private final AgentRuleClientMapper agentRuleClientMapper;
 
     private final PatchAgentClientMapper patchAgentClientMapper;
 
@@ -110,6 +123,40 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 () -> this.agentApi.deleteAgent(agentId)
         );
         return this.agentClientMapper.asAgent(responseDTO);
+    }
+
+    @Override
+    public AgentRulesResponse getAgentRules(final UUID agentId) {
+        final AgentRulesResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getAgentRules(agentId)
+        );
+        return this.agentRuleClientMapper.asAgentRulesResponse(responseDTO);
+    }
+
+    @Override
+    public AgentRule createAgentRule(final UUID agentId, final CreateAgentRuleRequest request) {
+        final CreateAgentRuleRequestDTO requestDTO = this.agentRuleClientMapper.asCreateAgentRuleRequestDto(request);
+        final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.createAgentRule(agentId, requestDTO)
+        );
+        return this.agentRuleClientMapper.asAgentRule(responseDTO);
+    }
+
+    @Override
+    public AgentRule patchAgentRule(final UUID agentId, final UUID ruleId, final PatchAgentRuleRequest request) {
+        final PatchAgentRuleRequestDTO requestDTO = this.agentRuleClientMapper.asPatchAgentRuleRequestDto(request);
+        final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.patchAgentRule(agentId, ruleId, requestDTO)
+        );
+        return this.agentRuleClientMapper.asAgentRule(responseDTO);
+    }
+
+    @Override
+    public DeleteAgentRuleResponse deleteAgentRule(final UUID agentId, final UUID ruleId) {
+        final DeleteAgentRuleResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.deleteAgentRule(agentId, ruleId)
+        );
+        return this.agentRuleClientMapper.asDeleteAgentRuleResponse(responseDTO);
     }
 
     @Override

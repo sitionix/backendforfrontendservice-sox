@@ -17,6 +17,7 @@ import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
+import com.sitionix.bffssox.mapper.AgentRuleApiMapper;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
@@ -24,11 +25,15 @@ import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
+import com.sitionix.bffssox.usecase.CreateAgentRule;
+import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
+import com.sitionix.bffssox.usecase.GetAgentRules;
+import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
 import java.util.UUID;
@@ -58,6 +63,9 @@ class AgentControllerTest {
 
     @Mock
     private AgentApiMapper agentApiMapper;
+
+    @Mock
+    private AgentRuleApiMapper agentRuleApiMapper;
 
     @Mock
     private CreateAgent createAgent;
@@ -98,11 +106,24 @@ class AgentControllerTest {
     @Mock
     private DeleteAgent deleteAgent;
 
+    @Mock
+    private GetAgentRules getAgentRules;
+
+    @Mock
+    private CreateAgentRule createAgentRule;
+
+    @Mock
+    private PatchAgentRule patchAgentRule;
+
+    @Mock
+    private DeleteAgentRule deleteAgentRule;
+
     @BeforeEach
     void setUp() {
         this.agentController = new AgentController(
                 this.createAgentApiMapper,
                 this.agentApiMapper,
+                this.agentRuleApiMapper,
                 this.createAgent,
                 this.patchAgentApiMapper,
                 this.patchAgent,
@@ -115,7 +136,11 @@ class AgentControllerTest {
                 this.activateAgent,
                 this.archiveAgent,
                 this.restoreAgent,
-                this.deleteAgent
+                this.deleteAgent,
+                this.getAgentRules,
+                this.createAgentRule,
+                this.patchAgentRule,
+                this.deleteAgentRule
         );
     }
 
@@ -124,6 +149,7 @@ class AgentControllerTest {
         verifyNoMoreInteractions(
                 this.createAgentApiMapper,
                 this.agentApiMapper,
+                this.agentRuleApiMapper,
                 this.createAgent,
                 this.patchAgentApiMapper,
                 this.patchAgent,
@@ -136,7 +162,11 @@ class AgentControllerTest {
                 this.activateAgent,
                 this.archiveAgent,
                 this.restoreAgent,
-                this.deleteAgent
+                this.deleteAgent,
+                this.getAgentRules,
+                this.createAgentRule,
+                this.patchAgentRule,
+                this.deleteAgentRule
         );
     }
 
