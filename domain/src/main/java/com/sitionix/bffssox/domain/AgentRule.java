@@ -5,7 +5,11 @@ import java.util.UUID;
 
 public record AgentRule(
         UUID id,
-        String text,
+        UUID agentId,
+        String title,
+        String content,
+        String status,
+        String authorType,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
 ) {

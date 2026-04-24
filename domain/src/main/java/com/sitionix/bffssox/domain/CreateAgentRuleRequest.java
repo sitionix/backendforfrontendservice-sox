@@ -1,6 +1,7 @@
 package com.sitionix.bffssox.domain;
 
 public record CreateAgentRuleRequest(
-        String text
+        String title,
+        String content
 ) {
 }
