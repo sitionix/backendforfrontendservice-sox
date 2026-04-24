@@ -4,7 +4,9 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
@@ -25,6 +27,7 @@ import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
+import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
@@ -378,6 +381,7 @@ class AgentClientImplTest {
     void givenAgentId_whenGetAgentRules_thenReturnAgentRulesResponse() {
         //given
         final UUID givenAgentId = UUID.fromString("d9ac51e6-9711-40b8-b5bc-fbafdb9f8c08");
+        final GetAgentRulesQuery query = new GetAgentRulesQuery("ACTIVE", "AI");
         final AgentRulesResponseDTO responseDTO = mock(AgentRulesResponseDTO.class);
         final AgentRulesResponse expected = mock(AgentRulesResponse.class);
 
@@ -385,16 +389,16 @@ class AgentClientImplTest {
             final Supplier<AgentRulesResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentRules(givenAgentId)).thenReturn(responseDTO);
+        when(this.agentApi.getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRulesResponse(responseDTO)).thenReturn(expected);
 
         //when
-        final AgentRulesResponse actual = this.agentClient.getAgentRules(givenAgentId);
+        final AgentRulesResponse actual = this.agentClient.getAgentRules(givenAgentId, query);
 
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentRules(givenAgentId);
+        verify(this.agentApi).getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI);
         verify(this.agentRuleClientMapper).asAgentRulesResponse(responseDTO);
     }
 
