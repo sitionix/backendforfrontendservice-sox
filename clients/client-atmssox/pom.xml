@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-atmssox-client-sitionix-118-unstable</artifactId>
+            <artifactId>app-afesox-atmssox-client-stable</artifactId>
             <version>${atmssox.api.version}</version>
         </dependency>
         <dependency>
