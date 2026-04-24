@@ -5,13 +5,16 @@ import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO1;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
+import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
+import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -103,6 +106,37 @@ class AgentRuleApiMapperTest {
 
         //when
         final DeleteAgentRuleResponseDTO actual = this.mapper.asDeleteAgentRuleResponseDto(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenAcceptAgentRuleRequestDto_whenAsAcceptAgentRuleRequest_thenReturnDomainRequest() {
+        //given
+        final AcceptAgentRuleRequestDTO given = AcceptAgentRuleRequestDTO.builder()
+                .title("Language preference")
+                .content("Always answer in Ukrainian unless requested otherwise.")
+                .build();
+        final AcceptAgentRuleRequest expected = new AcceptAgentRuleRequest(
+                "Language preference",
+                "Always answer in Ukrainian unless requested otherwise."
+        );
+
+        //when
+        final AcceptAgentRuleRequest actual = this.mapper.asAcceptAgentRuleRequest(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenNullStatusAndAuthorType_whenAsGetAgentRulesQuery_thenReturnDefaultQuery() {
+        //given
+        final GetAgentRulesQuery expected = new GetAgentRulesQuery("ACTIVE", null);
+
+        //when
+        final GetAgentRulesQuery actual = this.mapper.asGetAgentRulesQuery(null, null);
 
         //then
         assertThat(actual).isEqualTo(expected);
