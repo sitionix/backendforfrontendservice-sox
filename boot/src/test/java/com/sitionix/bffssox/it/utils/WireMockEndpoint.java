@@ -7,9 +7,14 @@ import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
+import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
+import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
@@ -251,6 +256,48 @@ public class WireMockEndpoint {
                     AgentDTO.class,
                     (WiremockDefault) context -> {
                         context.responseBody("responseDefaultMappingPatchAgentInstructionOnly.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, AgentRulesResponseDTO> GET_AGENT_RULES =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/rules",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentRulesResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingGetAgentRulesWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<CreateAgentRuleRequestDTO, AgentRuleDTO> POST_CREATE_AGENT_RULE =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/rules",
+                    HttpMethod.POST,
+                    CreateAgentRuleRequestDTO.class,
+                    AgentRuleDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingCreateAgentRuleWithHappyPath.json")
+                                .responseBody("responseDefaultMappingCreateAgentRuleWithHappyPath.json")
+                                .responseStatus(201);
+                    });
+
+    public static final Endpoint<PatchAgentRuleRequestDTO, AgentRuleDTO> PATCH_AGENT_RULE =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/rules/{ruleId}",
+                    HttpMethod.PATCH,
+                    PatchAgentRuleRequestDTO.class,
+                    AgentRuleDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingPatchAgentRuleWithHappyPath.json")
+                                .responseBody("responseDefaultMappingPatchAgentRuleWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, DeleteAgentRuleResponseDTO> DELETE_AGENT_RULE =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/rules/{ruleId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    DeleteAgentRuleResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingDeleteAgentRuleWithHappyPath.json")
                                 .responseStatus(200);
                     });
 }
