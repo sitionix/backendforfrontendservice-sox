@@ -13,7 +13,7 @@
     <artifactId>client-atmssox</artifactId>
 
     <properties>
-        <atmssox.api.version>0.0.10</atmssox.api.version>
+        <atmssox.api.version>0.0.11</atmssox.api.version>
     </properties>
 
     <dependencies>

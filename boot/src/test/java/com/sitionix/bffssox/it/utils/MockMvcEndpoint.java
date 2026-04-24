@@ -6,13 +6,18 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateSiteResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.LoginResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
@@ -191,5 +196,43 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .withRequest("requestDefaultPatchAgentInstructionOnly.json")
                             .expectResponse("responseDefaultPatchAgentInstructionOnly.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentRulesResponseDTO> GET_AGENT_RULES =
+            Endpoint.createContract("/api/v1/agents/{agentId}/rules",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentRulesResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentRulesWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<CreateAgentRuleRequestDTO, AgentRuleDTO> POST_CREATE_AGENT_RULE =
+            Endpoint.createContract("/api/v1/agents/{agentId}/rules",
+                    HttpMethod.POST,
+                    CreateAgentRuleRequestDTO.class,
+                    AgentRuleDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
+                            .withRequest("requestDefaultCreateAgentRuleWithHappyPath.json")
+                            .expectResponse("responseDefaultCreateAgentRuleWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<PatchAgentRuleRequestDTO, AgentRuleDTO> PATCH_AGENT_RULE =
+            Endpoint.createContract("/api/v1/agents/{agentId}/rules/{ruleId}",
+                    HttpMethod.PATCH,
+                    PatchAgentRuleRequestDTO.class,
+                    AgentRuleDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultPatchAgentRuleWithHappyPath.json")
+                            .expectResponse("responseDefaultPatchAgentRuleWithHappyPath.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, DeleteAgentRuleResponseDTO> DELETE_AGENT_RULE =
+            Endpoint.createContract("/api/v1/agents/{agentId}/rules/{ruleId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    DeleteAgentRuleResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultDeleteAgentRuleWithHappyPath.json"),
                     ItUserTokens.USER_JWT);
 }
