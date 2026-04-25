@@ -1,10 +1,12 @@
 package com.sitionix.bffssox.mapper;
 
+import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
+import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
@@ -22,6 +24,8 @@ public interface AgentRuleClientMapper {
     CreateAgentRuleRequestDTO asCreateAgentRuleRequestDto(CreateAgentRuleRequest src);
 
     PatchAgentRuleRequestDTO asPatchAgentRuleRequestDto(PatchAgentRuleRequest src);
+
+    AcceptAgentRuleRequestDTO asAcceptAgentRuleRequestDto(AcceptAgentRuleRequest src);
 
     DeleteAgentRuleResponse asDeleteAgentRuleResponse(DeleteAgentRuleResponseDTO src);
 }

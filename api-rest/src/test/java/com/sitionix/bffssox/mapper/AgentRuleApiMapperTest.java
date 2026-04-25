@@ -1,14 +1,20 @@
 package com.sitionix.bffssox.mapper;
 
+import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO1;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
+import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
+import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -48,7 +54,7 @@ class AgentRuleApiMapperTest {
         //given
         final AgentRulesResponse given = new AgentRulesResponse(List.of(this.agentRule()));
         final AgentRulesResponseDTO expected = AgentRulesResponseDTO.builder()
-                .items(List.of(this.agentRuleDto()))
+                .items(List.of(this.agentRuleDto1()))
                 .build();
 
         //when
@@ -62,9 +68,10 @@ class AgentRuleApiMapperTest {
     void givenCreateAgentRuleRequestDto_whenAsCreateAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final CreateAgentRuleRequestDTO given = CreateAgentRuleRequestDTO.builder()
-                .text("Always validate input")
+                .title("Validation")
+                .content("Always validate input")
                 .build();
-        final CreateAgentRuleRequest expected = new CreateAgentRuleRequest("Always validate input");
+        final CreateAgentRuleRequest expected = new CreateAgentRuleRequest("Validation", "Always validate input");
 
         //when
         final CreateAgentRuleRequest actual = this.mapper.asCreateAgentRuleRequest(given);
@@ -77,9 +84,10 @@ class AgentRuleApiMapperTest {
     void givenPatchAgentRuleRequestDto_whenAsPatchAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final PatchAgentRuleRequestDTO given = PatchAgentRuleRequestDTO.builder()
-                .text("Keep structure explicit")
+                .title("Structure")
+                .content("Keep structure explicit")
                 .build();
-        final PatchAgentRuleRequest expected = new PatchAgentRuleRequest("Keep structure explicit");
+        final PatchAgentRuleRequest expected = new PatchAgentRuleRequest("Structure", "Keep structure explicit");
 
         //when
         final PatchAgentRuleRequest actual = this.mapper.asPatchAgentRuleRequest(given);
@@ -103,10 +111,45 @@ class AgentRuleApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenAcceptAgentRuleRequestDto_whenAsAcceptAgentRuleRequest_thenReturnDomainRequest() {
+        //given
+        final AcceptAgentRuleRequestDTO given = AcceptAgentRuleRequestDTO.builder()
+                .title("Language preference")
+                .content("Always answer in Ukrainian unless requested otherwise.")
+                .build();
+        final AcceptAgentRuleRequest expected = new AcceptAgentRuleRequest(
+                "Language preference",
+                "Always answer in Ukrainian unless requested otherwise."
+        );
+
+        //when
+        final AcceptAgentRuleRequest actual = this.mapper.asAcceptAgentRuleRequest(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenNullStatusAndAuthorType_whenAsGetAgentRulesQuery_thenReturnDefaultQuery() {
+        //given
+        final GetAgentRulesQuery expected = new GetAgentRulesQuery("ACTIVE", null);
+
+        //when
+        final GetAgentRulesQuery actual = this.mapper.asGetAgentRulesQuery(null, null);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
     private AgentRule agentRule() {
         return new AgentRule(
                 UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"),
+                UUID.fromString("2a79f65b-ff40-4f39-acfe-a58f089c86f7"),
+                "Validation",
                 "Always validate input",
+                "ACTIVE",
+                "USER",
                 OffsetDateTime.parse("2026-04-21T10:00:00Z"),
                 OffsetDateTime.parse("2026-04-21T10:00:00Z")
         );
@@ -115,7 +158,24 @@ class AgentRuleApiMapperTest {
     private AgentRuleDTO agentRuleDto() {
         return AgentRuleDTO.builder()
                 .id(UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"))
-                .text("Always validate input")
+                .agentId(UUID.fromString("2a79f65b-ff40-4f39-acfe-a58f089c86f7"))
+                .title("Validation")
+                .content("Always validate input")
+                .status(AgentRuleStatusDTO.ACTIVE)
+                .authorType(AgentRuleAuthorTypeDTO.USER)
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .build();
+    }
+
+    private AgentRuleDTO1 agentRuleDto1() {
+        return AgentRuleDTO1.builder()
+                .id(UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"))
+                .agentId(UUID.fromString("2a79f65b-ff40-4f39-acfe-a58f089c86f7"))
+                .title("Validation")
+                .content("Always validate input")
+                .status(AgentRuleStatusDTO.ACTIVE)
+                .authorType(AgentRuleAuthorTypeDTO.USER)
                 .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .build();

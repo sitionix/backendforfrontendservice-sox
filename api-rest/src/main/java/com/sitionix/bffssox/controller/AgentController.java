@@ -4,7 +4,10 @@ import com.app_afesox.bffssox.api_first.api.AgentApi;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.AcceptAgentRuleRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
@@ -32,6 +35,7 @@ import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.ChatAgent;
+import com.sitionix.bffssox.usecase.AcceptAgentRule;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgentRule;
@@ -42,6 +46,7 @@ import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.GetAgentRules;
 import com.sitionix.bffssox.usecase.PatchAgentRule;
+import com.sitionix.bffssox.usecase.RejectAgentRule;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
 import jakarta.validation.Valid;
@@ -95,6 +100,10 @@ public class AgentController implements AgentApi {
     private final PatchAgentRule patchAgentRule;
 
     private final DeleteAgentRule deleteAgentRule;
+
+    private final AcceptAgentRule acceptAgentRule;
+
+    private final RejectAgentRule rejectAgentRule;
 
     @Override
     @PreAuthorize("isAuthenticated()")
@@ -163,8 +172,13 @@ public class AgentController implements AgentApi {
 
     @Override
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<AgentRulesResponseDTO> getAgentRules(final UUID agentId) {
-        final AgentRulesResponse response = this.getAgentRules.execute(agentId);
+    public ResponseEntity<AgentRulesResponseDTO> getAgentRules(final UUID agentId,
+                                                               final AgentRuleStatusDTO status,
+                                                               final AgentRuleAuthorTypeDTO authorType) {
+        final AgentRulesResponse response = this.getAgentRules.execute(
+                agentId,
+                this.agentRuleApiMapper.asGetAgentRulesQuery(status, authorType)
+        );
         return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRulesResponseDto(response));
     }
 
@@ -195,6 +209,26 @@ public class AgentController implements AgentApi {
     public ResponseEntity<DeleteAgentRuleResponseDTO> deleteAgentRule(final UUID agentId, final UUID ruleId) {
         final DeleteAgentRuleResponse response = this.deleteAgentRule.execute(agentId, ruleId);
         return ResponseEntity.ok(this.agentRuleApiMapper.asDeleteAgentRuleResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentRuleDTO> acceptAgentRule(final UUID agentId,
+                                                        final UUID ruleId,
+                                                        @Valid final AcceptAgentRuleRequestDTO acceptAgentRuleRequestDTO) {
+        final AgentRule response = this.acceptAgentRule.execute(
+                agentId,
+                ruleId,
+                this.agentRuleApiMapper.asAcceptAgentRuleRequest(acceptAgentRuleRequestDTO)
+        );
+        return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRuleDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentRuleDTO> rejectAgentRule(final UUID agentId, final UUID ruleId) {
+        final AgentRule response = this.rejectAgentRule.execute(agentId, ruleId);
+        return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRuleDto(response));
     }
 
     @Override

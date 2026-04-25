@@ -1,6 +1,9 @@
 package com.sitionix.bffssox.mapper;
 
+import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleDTO1;
+import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
@@ -47,7 +50,7 @@ class AgentRuleClientMapperTest {
     void givenAgentRulesResponseDto_whenAsAgentRulesResponse_thenReturnDomainResponse() {
         //given
         final AgentRulesResponseDTO given = AgentRulesResponseDTO.builder()
-                .items(List.of(this.agentRuleDto()))
+                .items(List.of(this.agentRuleDto1()))
                 .build();
         final AgentRulesResponse expected = new AgentRulesResponse(List.of(this.agentRule()));
 
@@ -61,9 +64,10 @@ class AgentRuleClientMapperTest {
     @Test
     void givenCreateAgentRuleRequest_whenAsCreateAgentRuleRequestDto_thenReturnClientRequest() {
         //given
-        final CreateAgentRuleRequest given = new CreateAgentRuleRequest("Always validate input");
+        final CreateAgentRuleRequest given = new CreateAgentRuleRequest("Validation", "Always validate input");
         final CreateAgentRuleRequestDTO expected = CreateAgentRuleRequestDTO.builder()
-                .text("Always validate input")
+                .title("Validation")
+                .content("Always validate input")
                 .build();
 
         //when
@@ -76,9 +80,10 @@ class AgentRuleClientMapperTest {
     @Test
     void givenPatchAgentRuleRequest_whenAsPatchAgentRuleRequestDto_thenReturnClientRequest() {
         //given
-        final PatchAgentRuleRequest given = new PatchAgentRuleRequest("Keep output deterministic");
+        final PatchAgentRuleRequest given = new PatchAgentRuleRequest("Determinism", "Keep output deterministic");
         final PatchAgentRuleRequestDTO expected = PatchAgentRuleRequestDTO.builder()
-                .text("Keep output deterministic")
+                .title("Determinism")
+                .content("Keep output deterministic")
                 .build();
 
         //when
@@ -106,7 +111,24 @@ class AgentRuleClientMapperTest {
     private AgentRuleDTO agentRuleDto() {
         return AgentRuleDTO.builder()
                 .id(UUID.fromString("7f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
-                .text("Always validate input")
+                .agentId(UUID.fromString("6f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
+                .title("Validation")
+                .content("Always validate input")
+                .status(AgentRuleStatusDTO.ACTIVE)
+                .authorType(AgentRuleAuthorTypeDTO.USER)
+                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
+                .build();
+    }
+
+    private AgentRuleDTO1 agentRuleDto1() {
+        return AgentRuleDTO1.builder()
+                .id(UUID.fromString("7f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
+                .agentId(UUID.fromString("6f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
+                .title("Validation")
+                .content("Always validate input")
+                .status(AgentRuleStatusDTO.ACTIVE)
+                .authorType(AgentRuleAuthorTypeDTO.USER)
                 .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .build();
@@ -115,7 +137,11 @@ class AgentRuleClientMapperTest {
     private AgentRule agentRule() {
         return new AgentRule(
                 UUID.fromString("7f4ef04a-5365-43cc-8d10-98ef51f35b8d"),
+                UUID.fromString("6f4ef04a-5365-43cc-8d10-98ef51f35b8d"),
+                "Validation",
                 "Always validate input",
+                "ACTIVE",
+                "USER",
                 OffsetDateTime.parse("2026-04-21T10:00:00Z"),
                 OffsetDateTime.parse("2026-04-21T10:00:00Z")
         );

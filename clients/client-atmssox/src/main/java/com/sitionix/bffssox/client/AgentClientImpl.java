@@ -3,8 +3,11 @@ package com.sitionix.bffssox.client;
 import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
+import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
@@ -17,6 +20,7 @@ import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
@@ -25,6 +29,7 @@ import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
+import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
@@ -126,9 +131,13 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
-    public AgentRulesResponse getAgentRules(final UUID agentId) {
+    public AgentRulesResponse getAgentRules(final UUID agentId, final GetAgentRulesQuery query) {
+        final AgentRuleStatusDTO status = query == null || query.status() == null ? null : AgentRuleStatusDTO.fromValue(query.status());
+        final AgentRuleAuthorTypeDTO authorType = query == null || query.authorType() == null
+                ? null
+                : AgentRuleAuthorTypeDTO.fromValue(query.authorType());
         final AgentRulesResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentRules(agentId)
+                () -> this.agentApi.getAgentRules(agentId, status, authorType)
         );
         return this.agentRuleClientMapper.asAgentRulesResponse(responseDTO);
     }
@@ -147,6 +156,23 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
         final PatchAgentRuleRequestDTO requestDTO = this.agentRuleClientMapper.asPatchAgentRuleRequestDto(request);
         final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
                 () -> this.agentApi.patchAgentRule(agentId, ruleId, requestDTO)
+        );
+        return this.agentRuleClientMapper.asAgentRule(responseDTO);
+    }
+
+    @Override
+    public AgentRule acceptAgentRule(final UUID agentId, final UUID ruleId, final AcceptAgentRuleRequest request) {
+        final AcceptAgentRuleRequestDTO requestDTO = request == null ? null : this.agentRuleClientMapper.asAcceptAgentRuleRequestDto(request);
+        final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.acceptAgentRule(agentId, ruleId, requestDTO)
+        );
+        return this.agentRuleClientMapper.asAgentRule(responseDTO);
+    }
+
+    @Override
+    public AgentRule rejectAgentRule(final UUID agentId, final UUID ruleId) {
+        final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.rejectAgentRule(agentId, ruleId)
         );
         return this.agentRuleClientMapper.asAgentRule(responseDTO);
     }
