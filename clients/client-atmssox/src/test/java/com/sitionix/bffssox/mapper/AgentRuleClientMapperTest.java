@@ -2,7 +2,6 @@ package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
-import com.app_afesox.atmssox.client.dto.AgentRuleDTO1;
 import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
@@ -50,7 +49,7 @@ class AgentRuleClientMapperTest {
     void givenAgentRulesResponseDto_whenAsAgentRulesResponse_thenReturnDomainResponse() {
         //given
         final AgentRulesResponseDTO given = AgentRulesResponseDTO.builder()
-                .items(List.of(this.agentRuleDto1()))
+                .items(List.of(this.agentRuleDto()))
                 .build();
         final AgentRulesResponse expected = new AgentRulesResponse(List.of(this.agentRule()));
 
@@ -110,19 +109,6 @@ class AgentRuleClientMapperTest {
 
     private AgentRuleDTO agentRuleDto() {
         return AgentRuleDTO.builder()
-                .id(UUID.fromString("7f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
-                .agentId(UUID.fromString("6f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
-                .title("Validation")
-                .content("Always validate input")
-                .status(AgentRuleStatusDTO.ACTIVE)
-                .authorType(AgentRuleAuthorTypeDTO.USER)
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .build();
-    }
-
-    private AgentRuleDTO1 agentRuleDto1() {
-        return AgentRuleDTO1.builder()
                 .id(UUID.fromString("7f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
                 .agentId(UUID.fromString("6f4ef04a-5365-43cc-8d10-98ef51f35b8d"))
                 .title("Validation")

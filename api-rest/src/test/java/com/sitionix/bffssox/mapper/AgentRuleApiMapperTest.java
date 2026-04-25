@@ -2,7 +2,6 @@ package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO1;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AcceptAgentRuleRequestDTO;
@@ -54,7 +53,7 @@ class AgentRuleApiMapperTest {
         //given
         final AgentRulesResponse given = new AgentRulesResponse(List.of(this.agentRule()));
         final AgentRulesResponseDTO expected = AgentRulesResponseDTO.builder()
-                .items(List.of(this.agentRuleDto1()))
+                .items(List.of(this.agentRuleDto()))
                 .build();
 
         //when
@@ -168,16 +167,4 @@ class AgentRuleApiMapperTest {
                 .build();
     }
 
-    private AgentRuleDTO1 agentRuleDto1() {
-        return AgentRuleDTO1.builder()
-                .id(UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"))
-                .agentId(UUID.fromString("2a79f65b-ff40-4f39-acfe-a58f089c86f7"))
-                .title("Validation")
-                .content("Always validate input")
-                .status(AgentRuleStatusDTO.ACTIVE)
-                .authorType(AgentRuleAuthorTypeDTO.USER)
-                .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
-                .build();
-    }
 }
