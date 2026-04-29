@@ -4,19 +4,21 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.invoker.ApiClient;
+import com.app_afesox.atmssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
+import com.app_afesox.atmssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
@@ -24,30 +26,37 @@ import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
+import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -75,6 +84,8 @@ class AgentClientImplTest {
 
     @Mock
     private ChatAgentClientMapper chatAgentClientMapper;
+    @Mock
+    private ApiClient atmssoxClient;
 
     @Mock
     private AtmssoxClientCallExecutor atmssoxClientCallExecutor;
@@ -88,6 +99,7 @@ class AgentClientImplTest {
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
+                this.atmssoxClient,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -101,6 +113,7 @@ class AgentClientImplTest {
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
+                this.atmssoxClient,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -352,31 +365,124 @@ class AgentClientImplTest {
     }
 
     @Test
-    void givenChatAgentRequest_whenChatAgent_thenReturnChatAgentResponse() {
+    void givenChatAgentRequest_whenChatAgent_thenThrowUnsupportedOperationException() {
+        //given
+        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
+        final ChatAgentRequest request = mock(ChatAgentRequest.class);
+
+        //when
+        //then
+        assertThatThrownBy(() -> this.agentClient.chatAgent(givenAgentId, request))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("Synchronous chatAgent flow is removed; use submitAgentChatExecution");
+    }
+
+    @Test
+    void givenChatAgentRequest_whenSubmitAgentChatExecution_thenReturnExecutionAck() {
         //given
         final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
         final ChatAgentRequestDTO requestDTO = mock(ChatAgentRequestDTO.class);
-        final ChatAgentResponseDTO responseDTO = mock(ChatAgentResponseDTO.class);
-        final ChatAgentResponse expected = mock(ChatAgentResponse.class);
+        final SubmitChatExecutionResponseDTO responseDTO = mock(SubmitChatExecutionResponseDTO.class);
+        final SubmitChatExecutionResponse expected = mock(SubmitChatExecutionResponse.class);
 
         when(this.chatAgentClientMapper.asChatAgentRequestDto(request)).thenReturn(requestDTO);
         when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
-            final Supplier<ChatAgentResponseDTO> supplier = invocation.getArgument(0);
+            final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.chatAgent(givenAgentId, requestDTO)).thenReturn(responseDTO);
-        when(this.chatAgentClientMapper.asChatAgentResponse(responseDTO)).thenReturn(expected);
+        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
 
         //when
-        final ChatAgentResponse actual = this.agentClient.chatAgent(givenAgentId, request);
+        final SubmitChatExecutionResponse actual = this.agentClient.submitAgentChatExecution(givenAgentId, request, "idem-key");
 
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).chatAgent(givenAgentId, requestDTO);
-        verify(this.chatAgentClientMapper).asChatAgentResponse(responseDTO);
+        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
+    }
+
+    @Test
+    void givenChatAgentRequestAndNullIdempotencyKey_whenSubmitAgentChatExecution_thenDoNotSendIdempotencyHeader() {
+        //given
+        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
+        final ChatAgentRequest request = mock(ChatAgentRequest.class);
+        final ChatAgentRequestDTO requestDTO = mock(ChatAgentRequestDTO.class);
+        final SubmitChatExecutionResponseDTO responseDTO = mock(SubmitChatExecutionResponseDTO.class);
+        final SubmitChatExecutionResponse expected = mock(SubmitChatExecutionResponse.class);
+
+        when(this.chatAgentClientMapper.asChatAgentRequestDto(request)).thenReturn(requestDTO);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
+
+        //when
+        this.agentClient.submitAgentChatExecution(givenAgentId, request, null);
+
+        //then
+        final ArgumentCaptor<HttpHeaders> headersCaptor = ArgumentCaptor.forClass(HttpHeaders.class);
+        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), headersCaptor.capture(), any(), any(), any(), any(), any(), any());
+        assertThat(headersCaptor.getValue().containsKey("Idempotency-Key")).isFalse();
+    }
+
+    @Test
+    void givenExecutionIdentifiers_whenGetAgentChatExecution_thenReturnExecution() {
+        //given
+        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
+        final UUID givenExecutionId = UUID.fromString("f2a1e248-e001-486f-90d5-b69281eb2ec2");
+        final UUID givenConversationId = UUID.fromString("b6f2e9b0-1572-4e88-a430-bca8c7e6434f");
+        final ChatExecutionDTO responseDTO = mock(ChatExecutionDTO.class);
+        final ChatExecution expected = mock(ChatExecution.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
+
+        //when
+        final ChatExecution actual = this.agentClient.getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
+    }
+
+    @Test
+    void givenExecutionIdentifiersAndNullConversationId_whenGetAgentChatExecution_thenDoNotSendConversationQueryParam() {
+        //given
+        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
+        final UUID givenExecutionId = UUID.fromString("f2a1e248-e001-486f-90d5-b69281eb2ec2");
+        final ChatExecutionDTO responseDTO = mock(ChatExecutionDTO.class);
+        final ChatExecution expected = mock(ChatExecution.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
+
+        //when
+        this.agentClient.getAgentChatExecution(givenAgentId, givenExecutionId, null);
+
+        //then
+        final ArgumentCaptor<MultiValueMap<String, String>> queryParamsCaptor = ArgumentCaptor.forClass(MultiValueMap.class);
+        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), queryParamsCaptor.capture(), any(), any(), any(), any(), any(), any(), any(), any());
+        assertThat(queryParamsCaptor.getValue().containsKey("conversationId")).isFalse();
     }
 
     @Test
