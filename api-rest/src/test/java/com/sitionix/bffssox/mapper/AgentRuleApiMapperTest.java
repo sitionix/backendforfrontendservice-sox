@@ -62,7 +62,7 @@ class AgentRuleApiMapperTest {
     void givenCreateAgentRuleRequestDto_whenAsCreateAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final CreateAgentRuleRequestDTO given = CreateAgentRuleRequestDTO.builder()
-                .text("Always validate input")
+                .content("Always validate input")
                 .build();
         final CreateAgentRuleRequest expected = new CreateAgentRuleRequest("Always validate input");
 
@@ -77,7 +77,7 @@ class AgentRuleApiMapperTest {
     void givenPatchAgentRuleRequestDto_whenAsPatchAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final PatchAgentRuleRequestDTO given = PatchAgentRuleRequestDTO.builder()
-                .text("Keep structure explicit")
+                .content("Keep structure explicit")
                 .build();
         final PatchAgentRuleRequest expected = new PatchAgentRuleRequest("Keep structure explicit");
 
@@ -115,7 +115,7 @@ class AgentRuleApiMapperTest {
     private AgentRuleDTO agentRuleDto() {
         return AgentRuleDTO.builder()
                 .id(UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"))
-                .text("Always validate input")
+                .content("Always validate input")
                 .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .build();

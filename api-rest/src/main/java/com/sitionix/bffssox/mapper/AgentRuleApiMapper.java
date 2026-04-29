@@ -11,16 +11,20 @@ import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AgentRuleApiMapper {
 
+    @Mapping(target = "content", source = "text")
     AgentRuleDTO asAgentRuleDto(AgentRule src);
 
     AgentRulesResponseDTO asAgentRulesResponseDto(AgentRulesResponse src);
 
+    @Mapping(target = "text", source = "content")
     CreateAgentRuleRequest asCreateAgentRuleRequest(CreateAgentRuleRequestDTO src);
 
+    @Mapping(target = "text", source = "content")
     PatchAgentRuleRequest asPatchAgentRuleRequest(PatchAgentRuleRequestDTO src);
 
     DeleteAgentRuleResponseDTO asDeleteAgentRuleResponseDto(DeleteAgentRuleResponse src);
