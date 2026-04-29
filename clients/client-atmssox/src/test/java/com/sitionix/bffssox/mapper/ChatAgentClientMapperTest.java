@@ -6,12 +6,18 @@ import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.api_first.dto.ChatExecutionDTO;
+import com.app_afesox.atmssox.api_first.dto.ChatExecutionFailureDTO;
+import com.app_afesox.atmssox.api_first.dto.ExecutionStatusDTO;
+import com.app_afesox.atmssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -171,6 +177,50 @@ class ChatAgentClientMapperTest {
 
         //then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenSubmitChatExecutionResponseDto_whenAsSubmitChatExecutionResponse_thenReturnMappedDomain() {
+        //given
+        final SubmitChatExecutionResponseDTO given = SubmitChatExecutionResponseDTO.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .state(ExecutionStatusDTO.QUEUED)
+                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
+                .build();
+
+        //when
+        final SubmitChatExecutionResponse actual = this.mapper.asSubmitChatExecutionResponse(given);
+
+        //then
+        assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
+        assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getState()).isEqualTo("QUEUED");
+    }
+
+    @Test
+    void givenChatExecutionDto_whenAsChatExecution_thenReturnMappedDomain() {
+        //given
+        final ChatExecutionDTO given = ChatExecutionDTO.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .agentId(UUID.fromString("6e4e32f8-2f48-4600-9a73-bb026f98dbf4"))
+                .state(ExecutionStatusDTO.FAILED)
+                .failure(ChatExecutionFailureDTO.builder()
+                        .failureClass(ChatExecutionFailureDTO.FailureClassEnum.EXECUTION_ERROR)
+                        .reason("Execution failed")
+                        .retryable(true)
+                        .build())
+                .build();
+
+        //when
+        final ChatExecution actual = this.mapper.asChatExecution(given);
+
+        //then
+        assertThat(actual.getState()).isEqualTo("FAILED");
+        assertThat(actual.getFailure().getFailureClass()).isEqualTo("EXECUTION_ERROR");
+        assertThat(actual.getFailure().getReason()).isEqualTo("Execution failed");
+        assertThat(actual.getFailure().getRetryable()).isTrue();
     }
 
     private ChatAgentRequest getChatAgentRequest(final String message) {
