@@ -156,7 +156,10 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentRulesResponseDTO> getAgentRules(final UUID agentId,
                                                                final AgentRuleStatusDTO status,
                                                                final AgentRuleAuthorTypeDTO authorType) {
-        final AgentRulesResponse response = this.getAgentRules.execute(agentId);
+        final AgentRulesResponse response = this.getAgentRules.execute(
+                agentId,
+                this.agentRuleApiMapper.asGetAgentRulesQuery(status, authorType)
+        );
         return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRulesResponseDto(response));
     }
 

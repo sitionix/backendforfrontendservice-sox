@@ -14,7 +14,6 @@ import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
@@ -200,14 +199,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
 
     @Override
     public ChatAgentResponse chatAgent(final UUID agentId, final ChatAgentRequest request) {
-        final com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO requestDTO = com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO.builder()
-                .conversationId(request.getConversationId())
-                .message(request.getMessage())
-                .build();
-        final ChatAgentResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.chatAgent(agentId, requestDTO)
-        );
-        return this.chatAgentClientMapper.asChatAgentResponse(responseDTO);
+        throw new UnsupportedOperationException("Synchronous chatAgent flow is removed; use submitAgentChatExecution");
     }
 
     @Override
