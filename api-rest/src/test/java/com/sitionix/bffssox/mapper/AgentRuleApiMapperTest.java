@@ -1,6 +1,8 @@
 package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
@@ -62,9 +64,10 @@ class AgentRuleApiMapperTest {
     void givenCreateAgentRuleRequestDto_whenAsCreateAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final CreateAgentRuleRequestDTO given = CreateAgentRuleRequestDTO.builder()
+                .title("Validation rule")
                 .content("Always validate input")
                 .build();
-        final CreateAgentRuleRequest expected = new CreateAgentRuleRequest("Always validate input");
+        final CreateAgentRuleRequest expected = new CreateAgentRuleRequest("Validation rule", "Always validate input");
 
         //when
         final CreateAgentRuleRequest actual = this.mapper.asCreateAgentRuleRequest(given);
@@ -77,9 +80,10 @@ class AgentRuleApiMapperTest {
     void givenPatchAgentRuleRequestDto_whenAsPatchAgentRuleRequest_thenReturnDomainRequest() {
         //given
         final PatchAgentRuleRequestDTO given = PatchAgentRuleRequestDTO.builder()
+                .title("Structure rule")
                 .content("Keep structure explicit")
                 .build();
-        final PatchAgentRuleRequest expected = new PatchAgentRuleRequest("Keep structure explicit");
+        final PatchAgentRuleRequest expected = new PatchAgentRuleRequest("Structure rule", "Keep structure explicit");
 
         //when
         final PatchAgentRuleRequest actual = this.mapper.asPatchAgentRuleRequest(given);
@@ -106,7 +110,11 @@ class AgentRuleApiMapperTest {
     private AgentRule agentRule() {
         return new AgentRule(
                 UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"),
+                UUID.fromString("2bce0e68-c4a4-4f9e-b925-29cc7c37ab59"),
+                "Validation rule",
                 "Always validate input",
+                "ACTIVE",
+                "USER",
                 OffsetDateTime.parse("2026-04-21T10:00:00Z"),
                 OffsetDateTime.parse("2026-04-21T10:00:00Z")
         );
@@ -115,7 +123,11 @@ class AgentRuleApiMapperTest {
     private AgentRuleDTO agentRuleDto() {
         return AgentRuleDTO.builder()
                 .id(UUID.fromString("9a79f65b-ff40-4f39-acfe-a58f089c86f7"))
+                .agentId(UUID.fromString("2bce0e68-c4a4-4f9e-b925-29cc7c37ab59"))
+                .title("Validation rule")
                 .content("Always validate input")
+                .status(AgentRuleStatusDTO.ACTIVE)
+                .authorType(AgentRuleAuthorTypeDTO.USER)
                 .createdAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-21T10:00:00Z"))
                 .build();
