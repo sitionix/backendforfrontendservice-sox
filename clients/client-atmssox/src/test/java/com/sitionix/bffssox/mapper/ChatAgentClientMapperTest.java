@@ -182,8 +182,8 @@ class ChatAgentClientMapperTest {
         final SubmitChatExecutionResponseDTO given = SubmitChatExecutionResponseDTO.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
-                .state(ExecutionStatusDTO.QUEUED)
-                .createdAt(createdAt)
+                .status(ExecutionStatusDTO.ACCEPTED)
+                .acceptedAt(createdAt)
                 .idempotencyKey("key-1")
                 .idempotencyReplayed(true)
                 .build();
@@ -209,12 +209,11 @@ class ChatAgentClientMapperTest {
         final ChatExecutionDTO given = ChatExecutionDTO.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
-                .agentId(UUID.fromString("6e4e32f8-2f48-4600-9a73-bb026f98dbf4"))
-                .state(ExecutionStatusDTO.FAILED)
-                .failure(ChatExecutionFailureDTO.builder()
-                        .failureClass(ChatExecutionFailureDTO.FailureClassEnum.EXECUTION_ERROR)
-                        .reason("Execution failed")
-                        .retryable(true)
+                .status(ExecutionStatusDTO.FAILED)
+                .error(ChatExecutionFailureDTO.builder()
+                        .code("EXECUTION_ERROR")
+                        .message("Execution failed")
+                        .details(java.util.Map.of("retryable", true))
                         .build())
                 .build();
 
@@ -232,9 +231,9 @@ class ChatAgentClientMapperTest {
     void givenAllLifecycleStatesFromAtms_whenAsChatExecution_thenReturnCanonicalExternalStates() {
         //given
         final List<ExecutionStatusDTO> given = List.of(
-                ExecutionStatusDTO.QUEUED,
+                ExecutionStatusDTO.ACCEPTED,
                 ExecutionStatusDTO.IN_PROGRESS,
-                ExecutionStatusDTO.COMPLETED,
+                ExecutionStatusDTO.SUCCEEDED,
                 ExecutionStatusDTO.FAILED
         );
 

@@ -28,13 +28,18 @@ public interface ChatAgentApiMapper {
 
     ChatAgentRequest asChatAgentRequest(ChatAgentRequestDTO src);
 
+    @Mapping(target = "assistantMessage", source = "reply")
     ChatAgentResponseDTO asChatAgentResponseDto(ChatAgentResponse src);
 
+    @Mapping(target = "status", source = "state")
+    @Mapping(target = "acceptedAt", source = "createdAt")
+    @Mapping(target = "error", ignore = true)
     SubmitChatExecutionResponseDTO asSubmitChatExecutionResponseDto(SubmitChatExecutionResponse src);
 
+    @Mapping(target = "status", source = "state")
+    @Mapping(target = "acceptedAt", source = "createdAt")
+    @Mapping(target = "error", source = "failure")
     ChatExecutionDTO asChatExecutionDto(ChatExecution src);
-
-    ChatExecutionFailureDTO asChatExecutionFailureDto(ChatExecutionFailure src);
 
     AgentConversationDTO asAgentConversationDto(AgentConversation src);
 
@@ -63,10 +68,24 @@ public interface ChatAgentApiMapper {
     }
 
     default ExecutionStatusDTO mapExecutionStatus(final String value) {
-        return value == null ? null : ExecutionStatusDTO.fromValue(value);
+        if (value == null) {
+            return null;
+        }
+        return switch (value) {
+            case "QUEUED" -> ExecutionStatusDTO.ACCEPTED;
+            case "COMPLETED" -> ExecutionStatusDTO.SUCCEEDED;
+            default -> ExecutionStatusDTO.fromValue(value);
+        };
     }
 
-    default ChatExecutionFailureDTO.FailureClassEnum mapFailureClass(final String value) {
-        return value == null ? null : ChatExecutionFailureDTO.FailureClassEnum.fromValue(value);
+    default ChatExecutionFailureDTO asChatExecutionFailureDto(final ChatExecutionFailure src) {
+        if (src == null) {
+            return null;
+        }
+        return ChatExecutionFailureDTO.builder()
+                .code(src.getFailureClass())
+                .message(src.getReason())
+                .details(src.getRetryable() == null ? null : java.util.Map.of("retryable", src.getRetryable()))
+                .build();
     }
 }

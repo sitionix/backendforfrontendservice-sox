@@ -199,8 +199,8 @@ class ChatAgentApiMapperTest {
         //then
         assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
         assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
-        assertThat(actual.getState()).isEqualTo(ExecutionStatusDTO.QUEUED);
-        assertThat(actual.getCreatedAt()).isEqualTo(given.getCreatedAt());
+        assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.ACCEPTED);
+        assertThat(actual.getAcceptedAt()).isEqualTo(given.getCreatedAt());
     }
 
     @Test
@@ -223,11 +223,11 @@ class ChatAgentApiMapperTest {
         final ChatExecutionDTO actual = this.mapper.asChatExecutionDto(given);
 
         //then
-        assertThat(actual.getState()).isEqualTo(ExecutionStatusDTO.FAILED);
-        assertThat(actual.getFailure()).isEqualTo(ChatExecutionFailureDTO.builder()
-                .failureClass(ChatExecutionFailureDTO.FailureClassEnum.EXECUTION_ERROR)
-                .reason("Execution failed")
-                .retryable(true)
+        assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.FAILED);
+        assertThat(actual.getError()).isEqualTo(ChatExecutionFailureDTO.builder()
+                .code("EXECUTION_ERROR")
+                .message("Execution failed")
+                .details(java.util.Map.of("retryable", true))
                 .build());
     }
 
@@ -253,7 +253,7 @@ class ChatAgentApiMapperTest {
     private ChatAgentResponseDTO getChatAgentResponseDto(final UUID conversationId, final AgentConversationMessageDTO reply) {
         return ChatAgentResponseDTO.builder()
                 .conversationId(conversationId)
-                .reply(reply)
+                .assistantMessage(reply)
                 .build();
     }
 

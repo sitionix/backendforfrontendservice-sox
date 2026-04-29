@@ -30,11 +30,26 @@ public interface ChatAgentClientMapper {
 
     ChatAgentResponse asChatAgentResponse(ChatAgentResponseDTO src);
 
+    @Mapping(target = "state", source = "status")
+    @Mapping(target = "createdAt", source = "acceptedAt")
     SubmitChatExecutionResponse asSubmitChatExecutionResponse(SubmitChatExecutionResponseDTO src);
 
+    @Mapping(target = "state", source = "status")
+    @Mapping(target = "createdAt", source = "acceptedAt")
+    @Mapping(target = "failure", source = "error")
     ChatExecution asChatExecution(ChatExecutionDTO src);
 
-    ChatExecutionFailure asChatExecutionFailure(ChatExecutionFailureDTO src);
+    default ChatExecutionFailure asChatExecutionFailure(final ChatExecutionFailureDTO src) {
+        if (src == null) {
+            return null;
+        }
+        final Object retryable = src.getDetails() == null ? null : src.getDetails().get("retryable");
+        return ChatExecutionFailure.builder()
+                .failureClass(src.getCode())
+                .reason(src.getMessage())
+                .retryable(retryable instanceof Boolean value ? value : null)
+                .build();
+    }
 
     AgentConversation asAgentConversation(AgentConversationDTO src);
 
@@ -68,15 +83,11 @@ public interface ChatAgentClientMapper {
             return null;
         }
         return switch (value.getValue()) {
-            case "QUEUED" -> "QUEUED";
+            case "ACCEPTED" -> "QUEUED";
             case "IN_PROGRESS" -> "IN_PROGRESS";
-            case "COMPLETED" -> "COMPLETED";
+            case "SUCCEEDED" -> "COMPLETED";
             case "FAILED" -> "FAILED";
             default -> value.getValue();
         };
-    }
-
-    default String mapFailureClass(final ChatExecutionFailureDTO.FailureClassEnum value) {
-        return value == null ? null : value.getValue();
     }
 }
