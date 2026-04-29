@@ -64,7 +64,16 @@ public interface ChatAgentClientMapper {
     }
 
     default String mapExecutionStatus(final ExecutionStatusDTO value) {
-        return value == null ? null : value.getValue();
+        if (value == null) {
+            return null;
+        }
+        return switch (value.getValue()) {
+            case "QUEUED" -> "QUEUED";
+            case "IN_PROGRESS" -> "IN_PROGRESS";
+            case "COMPLETED" -> "COMPLETED";
+            case "FAILED" -> "FAILED";
+            default -> value.getValue();
+        };
     }
 
     default String mapFailureClass(final ChatExecutionFailureDTO.FailureClassEnum value) {

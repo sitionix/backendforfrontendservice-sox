@@ -223,6 +223,25 @@ class ChatAgentClientMapperTest {
         assertThat(actual.getFailure().getRetryable()).isTrue();
     }
 
+    @Test
+    void givenAllLifecycleStatesFromAtms_whenAsChatExecution_thenReturnCanonicalExternalStates() {
+        //given
+        final List<ExecutionStatusDTO> given = List.of(
+                ExecutionStatusDTO.QUEUED,
+                ExecutionStatusDTO.IN_PROGRESS,
+                ExecutionStatusDTO.COMPLETED,
+                ExecutionStatusDTO.FAILED
+        );
+
+        //when
+        final List<String> actual = given.stream()
+                .map(this.mapper::mapExecutionStatus)
+                .toList();
+
+        //then
+        assertThat(actual).isEqualTo(List.of("QUEUED", "IN_PROGRESS", "COMPLETED", "FAILED"));
+    }
+
     private ChatAgentRequest getChatAgentRequest(final String message) {
         return ChatAgentRequest.builder()
                 .message(message)
