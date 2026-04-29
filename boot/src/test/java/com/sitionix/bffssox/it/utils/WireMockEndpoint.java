@@ -10,7 +10,7 @@ import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
@@ -237,16 +237,16 @@ public class WireMockEndpoint {
                                 .responseStatus(200);
                     });
 
-    public static final Endpoint<ChatAgentRequestDTO, ChatAgentResponseDTO> POST_CHAT_AGENT =
-            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/chat",
+    public static final Endpoint<ChatAgentRequestDTO, SubmitChatExecutionResponseDTO> POST_CHAT_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/chat/executions",
                     HttpMethod.POST,
                     ChatAgentRequestDTO.class,
-                    ChatAgentResponseDTO.class,
+                    SubmitChatExecutionResponseDTO.class,
                     (WiremockDefault) context -> {
                         context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
-                                .responseBody("responseDefaultMappingChatAgentNewConversation.json")
-                                .responseStatus(200);
+                                .responseBody("responseDefaultMappingSubmitChatExecutionNewConversation.json")
+                                .responseStatus(202);
                     });
 
     public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT =
