@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.mapper;
 
-import com.app_afesox.atmssox.api_first.dto.ExecutionStatusDTO;
+import com.app_afesox.atmssox.client.dto.ExecutionStatusDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

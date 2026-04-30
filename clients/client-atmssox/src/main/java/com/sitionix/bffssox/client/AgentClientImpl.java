@@ -2,9 +2,9 @@ package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.invoker.ApiClient;
-import com.app_afesox.atmssox.api_first.dto.ChatExecutionDTO;
-import com.app_afesox.atmssox.api_first.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.api_first.dto.SubmitChatExecutionResponseDTO;
+import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;

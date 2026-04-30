@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.mapper;
 
-import com.app_afesox.atmssox.api_first.dto.ChatExecutionFailureDTO;
+import com.app_afesox.atmssox.client.dto.ChatExecutionFailureDTO;
 import com.sitionix.bffssox.domain.ChatExecutionFailure;
 import org.mapstruct.Mapper;
 
