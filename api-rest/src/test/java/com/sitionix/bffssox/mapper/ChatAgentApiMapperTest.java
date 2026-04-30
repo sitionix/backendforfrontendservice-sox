@@ -187,14 +187,14 @@ class ChatAgentApiMapperTest {
     @Test
     void givenSubmitChatExecutionResponse_whenAsSubmitChatExecutionResponseDto_thenReturnMappedDto() {
         //given
-        final SubmitChatExecutionResponse given = SubmitChatExecutionResponse.builder()
-                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
-                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
-                .state("QUEUED")
-                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
-                .idempotencyKey("idem")
-                .idempotencyReplayed(false)
-                .build();
+        final SubmitChatExecutionResponse given = this.getSubmitChatExecutionResponse(
+                UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"),
+                UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"),
+                "QUEUED",
+                OffsetDateTime.parse("2026-04-29T10:00:00Z"),
+                "idem",
+                false
+        );
 
         //when
         final SubmitChatExecutionResponseDTO actual = this.mapper.asSubmitChatExecutionResponseDto(given);
@@ -209,18 +209,14 @@ class ChatAgentApiMapperTest {
     @Test
     void givenChatExecution_whenAsChatExecutionDto_thenReturnMappedDto() {
         //given
-        final ChatExecution given = ChatExecution.builder()
-                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
-                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
-                .agentId(UUID.fromString("6e4e32f8-2f48-4600-9a73-bb026f98dbf4"))
-                .state("FAILED")
-                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
-                .failure(ChatExecutionFailure.builder()
-                        .failureClass("EXECUTION_ERROR")
-                        .reason("Execution failed")
-                        .retryable(true)
-                        .build())
-                .build();
+        final ChatExecution given = this.getChatExecution(
+                UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"),
+                UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"),
+                UUID.fromString("6e4e32f8-2f48-4600-9a73-bb026f98dbf4"),
+                "FAILED",
+                OffsetDateTime.parse("2026-04-29T10:00:00Z"),
+                this.getChatExecutionFailure("EXECUTION_ERROR", "Execution failed", true)
+        );
 
         //when
         final ChatExecutionDTO actual = this.mapper.asChatExecutionDto(given);
@@ -373,6 +369,50 @@ class ChatAgentApiMapperTest {
                 .authorId(authorId)
                 .content(content)
                 .createdAt(createdAt)
+                .build();
+    }
+
+    private SubmitChatExecutionResponse getSubmitChatExecutionResponse(
+            final UUID executionId,
+            final UUID conversationId,
+            final String state,
+            final OffsetDateTime createdAt,
+            final String idempotencyKey,
+            final Boolean idempotencyReplayed
+    ) {
+        return SubmitChatExecutionResponse.builder()
+                .executionId(executionId)
+                .conversationId(conversationId)
+                .state(state)
+                .createdAt(createdAt)
+                .idempotencyKey(idempotencyKey)
+                .idempotencyReplayed(idempotencyReplayed)
+                .build();
+    }
+
+    private ChatExecution getChatExecution(
+            final UUID executionId,
+            final UUID conversationId,
+            final UUID agentId,
+            final String state,
+            final OffsetDateTime createdAt,
+            final ChatExecutionFailure failure
+    ) {
+        return ChatExecution.builder()
+                .executionId(executionId)
+                .conversationId(conversationId)
+                .agentId(agentId)
+                .state(state)
+                .createdAt(createdAt)
+                .failure(failure)
+                .build();
+    }
+
+    private ChatExecutionFailure getChatExecutionFailure(final String failureClass, final String reason, final Boolean retryable) {
+        return ChatExecutionFailure.builder()
+                .failureClass(failureClass)
+                .reason(reason)
+                .retryable(retryable)
                 .build();
     }
 }
