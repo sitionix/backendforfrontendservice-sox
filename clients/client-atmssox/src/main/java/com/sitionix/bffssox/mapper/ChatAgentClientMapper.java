@@ -7,23 +7,24 @@ import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.api_first.dto.ChatExecutionDTO;
-import com.app_afesox.atmssox.api_first.dto.ChatExecutionFailureDTO;
-import com.app_afesox.atmssox.api_first.dto.ExecutionStatusDTO;
 import com.app_afesox.atmssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
-import com.sitionix.bffssox.domain.ChatExecutionFailure;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.List;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, uses = {
+        ChatExecutionStatusClientMapper.class,
+        ChatExecutionFailureClientMapper.class
+})
 public interface ChatAgentClientMapper {
 
     ChatAgentRequestDTO asChatAgentRequestDto(ChatAgentRequest src);
@@ -38,18 +39,6 @@ public interface ChatAgentClientMapper {
     @Mapping(target = "createdAt", source = "acceptedAt")
     @Mapping(target = "failure", source = "error")
     ChatExecution asChatExecution(ChatExecutionDTO src);
-
-    default ChatExecutionFailure asChatExecutionFailure(final ChatExecutionFailureDTO src) {
-        if (src == null) {
-            return null;
-        }
-        final Object retryable = src.getDetails() == null ? null : src.getDetails().get("retryable");
-        return ChatExecutionFailure.builder()
-                .failureClass(src.getCode())
-                .reason(src.getMessage())
-                .retryable(retryable instanceof Boolean value ? value : null)
-                .build();
-    }
 
     AgentConversation asAgentConversation(AgentConversationDTO src);
 
@@ -78,16 +67,4 @@ public interface ChatAgentClientMapper {
         return value == null ? null : value.getValue();
     }
 
-    default String mapExecutionStatus(final ExecutionStatusDTO value) {
-        if (value == null) {
-            return null;
-        }
-        return switch (value.getValue()) {
-            case "ACCEPTED" -> "QUEUED";
-            case "IN_PROGRESS" -> "IN_PROGRESS";
-            case "SUCCEEDED" -> "COMPLETED";
-            case "FAILED" -> "FAILED";
-            default -> value.getValue();
-        };
-    }
 }

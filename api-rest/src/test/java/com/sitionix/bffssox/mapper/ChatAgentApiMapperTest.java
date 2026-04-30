@@ -37,7 +37,10 @@ class ChatAgentApiMapperTest {
 
     @BeforeEach
     void setUp() {
-        this.mapper = new ChatAgentApiMapperImpl();
+        this.mapper = new ChatAgentApiMapperImpl(
+                new ChatExecutionStatusApiMapperImpl(),
+                new ChatExecutionFailureApiMapperImpl()
+        );
     }
 
     @Test

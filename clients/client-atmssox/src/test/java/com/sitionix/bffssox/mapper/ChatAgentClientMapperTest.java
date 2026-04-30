@@ -33,10 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChatAgentClientMapperTest {
 
     private ChatAgentClientMapper mapper;
+    private ChatExecutionStatusClientMapper chatExecutionStatusMapper;
 
     @BeforeEach
     void setUp() {
-        this.mapper = new ChatAgentClientMapperImpl();
+        this.mapper = new ChatAgentClientMapperImpl(
+                new ChatExecutionStatusClientMapperImpl(),
+                new ChatExecutionFailureClientMapperImpl()
+        );
+        this.chatExecutionStatusMapper = new ChatExecutionStatusClientMapperImpl();
     }
 
     @Test
@@ -239,7 +244,7 @@ class ChatAgentClientMapperTest {
 
         //when
         final List<String> actual = given.stream()
-                .map(this.mapper::mapExecutionStatus)
+                .map(this.chatExecutionStatusMapper::mapExecutionStatus)
                 .toList();
 
         //then
