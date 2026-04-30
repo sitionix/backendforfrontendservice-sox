@@ -183,23 +183,8 @@ class ChatAgentClientMapperTest {
     @Test
     void givenSubmitChatExecutionResponseDto_whenAsSubmitChatExecutionResponse_thenReturnMappedDomain() {
         //given
-        final OffsetDateTime createdAt = OffsetDateTime.parse("2026-04-29T10:00:00Z");
-        final SubmitChatExecutionResponseDTO given = this.getSubmitChatExecutionResponseDto(
-                UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"),
-                UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"),
-                ExecutionStatusDTO.ACCEPTED,
-                createdAt,
-                "key-1",
-                true
-        );
-        final SubmitChatExecutionResponse expected = this.getSubmitChatExecutionResponse(
-                given.getExecutionId(),
-                given.getConversationId(),
-                "QUEUED",
-                createdAt,
-                "key-1",
-                true
-        );
+        final SubmitChatExecutionResponseDTO given = this.getSubmitChatExecutionResponseDto();
+        final SubmitChatExecutionResponse expected = this.getSubmitChatExecutionResponse();
 
         //when
         final SubmitChatExecutionResponse actual = this.mapper.asSubmitChatExecutionResponse(given);
@@ -211,12 +196,7 @@ class ChatAgentClientMapperTest {
     @Test
     void givenChatExecutionDto_whenAsChatExecution_thenReturnMappedDomain() {
         //given
-        final ChatExecutionDTO given = this.getChatExecutionDto(
-                UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"),
-                UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"),
-                ExecutionStatusDTO.FAILED,
-                this.getChatExecutionFailureDto("EXECUTION_ERROR", "Execution failed", true)
-        );
+        final ChatExecutionDTO given = this.getFailedChatExecutionDto();
 
         //when
         final ChatExecution actual = this.mapper.asChatExecution(given);
@@ -388,61 +368,42 @@ class ChatAgentClientMapperTest {
                 .build();
     }
 
-    private SubmitChatExecutionResponseDTO getSubmitChatExecutionResponseDto(
-            final UUID executionId,
-            final UUID conversationId,
-            final ExecutionStatusDTO status,
-            final OffsetDateTime acceptedAt,
-            final String idempotencyKey,
-            final Boolean idempotencyReplayed
-    ) {
+    private SubmitChatExecutionResponseDTO getSubmitChatExecutionResponseDto() {
         return SubmitChatExecutionResponseDTO.builder()
-                .executionId(executionId)
-                .conversationId(conversationId)
-                .status(status)
-                .acceptedAt(acceptedAt)
-                .idempotencyKey(idempotencyKey)
-                .idempotencyReplayed(idempotencyReplayed)
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .status(ExecutionStatusDTO.ACCEPTED)
+                .acceptedAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
+                .idempotencyKey("key-1")
+                .idempotencyReplayed(true)
                 .build();
     }
 
-    private SubmitChatExecutionResponse getSubmitChatExecutionResponse(
-            final UUID executionId,
-            final UUID conversationId,
-            final String state,
-            final OffsetDateTime createdAt,
-            final String idempotencyKey,
-            final Boolean idempotencyReplayed
-    ) {
+    private SubmitChatExecutionResponse getSubmitChatExecutionResponse() {
         return SubmitChatExecutionResponse.builder()
-                .executionId(executionId)
-                .conversationId(conversationId)
-                .state(state)
-                .createdAt(createdAt)
-                .idempotencyKey(idempotencyKey)
-                .idempotencyReplayed(idempotencyReplayed)
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .state("QUEUED")
+                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
+                .idempotencyKey("key-1")
+                .idempotencyReplayed(true)
                 .build();
     }
 
-    private ChatExecutionDTO getChatExecutionDto(
-            final UUID executionId,
-            final UUID conversationId,
-            final ExecutionStatusDTO status,
-            final ChatExecutionFailureDTO error
-    ) {
+    private ChatExecutionDTO getFailedChatExecutionDto() {
         return ChatExecutionDTO.builder()
-                .executionId(executionId)
-                .conversationId(conversationId)
-                .status(status)
-                .error(error)
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .status(ExecutionStatusDTO.FAILED)
+                .error(this.getChatExecutionFailureDto())
                 .build();
     }
 
-    private ChatExecutionFailureDTO getChatExecutionFailureDto(final String code, final String message, final boolean retryable) {
+    private ChatExecutionFailureDTO getChatExecutionFailureDto() {
         return ChatExecutionFailureDTO.builder()
-                .code(code)
-                .message(message)
-                .details(java.util.Map.of("retryable", retryable))
+                .code("EXECUTION_ERROR")
+                .message("Execution failed")
+                .details(java.util.Map.of("retryable", true))
                 .build();
     }
 }
