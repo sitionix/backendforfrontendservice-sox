@@ -65,26 +65,47 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgentController implements AgentApi {
 
     private final CreateAgentApiMapper createAgentApiMapper;
+
     private final AgentApiMapper agentApiMapper;
+
     private final AgentRuleApiMapper agentRuleApiMapper;
+
     private final CreateAgent createAgent;
+
     private final PatchAgentApiMapper patchAgentApiMapper;
+
     private final PatchAgent patchAgent;
+
     private final ChatAgentApiMapper chatAgentApiMapper;
+
     private final ChatAgent chatAgent;
+
     private final SubmitAgentChatExecution submitAgentChatExecution;
+
     private final GetAgentChatExecution getAgentChatExecution;
+
     private final GetAgents getAgents;
+
     private final GetAgent getAgent;
+
     private final GetAgentConversations getAgentConversations;
+
     private final GetAgentConversation getAgentConversation;
+
     private final ActivateAgent activateAgent;
+
     private final ArchiveAgent archiveAgent;
+
     private final RestoreAgent restoreAgent;
+
     private final DeleteAgent deleteAgent;
+
     private final GetAgentRules getAgentRules;
+
     private final CreateAgentRule createAgentRule;
+
     private final PatchAgentRule patchAgentRule;
+
     private final DeleteAgentRule deleteAgentRule;
 
     @Override
@@ -92,7 +113,8 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentDTO> createAgent(@Valid final CreateAgentRequestDTO createAgentRequestDTO) {
         final CreateAgentRequest request = this.createAgentApiMapper.asCreateAgentRequest(createAgentRequestDTO);
         final Agent response = this.createAgent.execute(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.agentApiMapper.asAgentDto(response));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.agentApiMapper.asAgentDto(response));
     }
 
     @Override
@@ -168,7 +190,8 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentRuleDTO> createAgentRule(final UUID agentId, @Valid final CreateAgentRuleRequestDTO createAgentRuleRequestDTO) {
         final CreateAgentRuleRequest request = this.agentRuleApiMapper.asCreateAgentRuleRequest(createAgentRuleRequestDTO);
         final AgentRule response = this.createAgentRule.execute(agentId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.agentRuleApiMapper.asAgentRuleDto(response));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.agentRuleApiMapper.asAgentRuleDto(response));
     }
 
     @Override
@@ -176,7 +199,11 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentRuleDTO> patchAgentRule(final UUID agentId,
                                                        final UUID ruleId,
                                                        @Valid final PatchAgentRuleRequestDTO patchAgentRuleRequestDTO) {
-        final AgentRule response = this.patchAgentRule.execute(agentId, ruleId, this.agentRuleApiMapper.asPatchAgentRuleRequest(patchAgentRuleRequestDTO));
+        final AgentRule response = this.patchAgentRule.execute(
+                agentId,
+                ruleId,
+                this.agentRuleApiMapper.asPatchAgentRuleRequest(patchAgentRuleRequestDTO)
+        );
         return ResponseEntity.ok(this.agentRuleApiMapper.asAgentRuleDto(response));
     }
 
