@@ -1,7 +1,6 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
-import com.app_afesox.atmssox.client.invoker.ApiClient;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
@@ -42,12 +41,6 @@ import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -66,8 +59,6 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     private final PatchAgentClientMapper patchAgentClientMapper;
 
     private final ChatAgentClientMapper chatAgentClientMapper;
-
-    private final ApiClient atmssoxClient;
 
     private final AtmssoxClientCallExecutor atmssoxClientCallExecutor;
 
@@ -207,51 +198,16 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                                                                 final ChatAgentRequest request,
                                                                 final String idempotencyKey) {
         final ChatAgentRequestDTO requestDTO = this.chatAgentClientMapper.asChatAgentRequestDto(request);
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        final HttpHeaders headerParams = new HttpHeaders();
-        if (idempotencyKey != null) {
-            headerParams.add("Idempotency-Key", idempotencyKey);
-        }
         final SubmitChatExecutionResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.atmssoxClient.invokeAPI(
-                        "/api/v1/agents/{agentId}/chat/executions",
-                        HttpMethod.POST,
-                        java.util.Map.of("agentId", agentId),
-                        queryParams,
-                        requestDTO,
-                        headerParams,
-                        new LinkedMultiValueMap<>(),
-                        new LinkedMultiValueMap<>(),
-                        java.util.List.of(MediaType.APPLICATION_JSON),
-                        MediaType.APPLICATION_JSON,
-                        new String[0],
-                        new ParameterizedTypeReference<SubmitChatExecutionResponseDTO>() { }
-                ).getBody()
+                () -> this.agentApi.submitAgentChatExecutionByExecutionsPath(agentId, requestDTO, idempotencyKey)
         );
         return this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO);
     }
 
     @Override
     public ChatExecution getAgentChatExecution(final UUID agentId, final UUID executionId, final UUID conversationId) {
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        if (conversationId != null) {
-            queryParams.add("conversationId", conversationId.toString());
-        }
         final ChatExecutionDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.atmssoxClient.invokeAPI(
-                        "/api/v1/agents/{agentId}/chat/executions/{executionId}",
-                        HttpMethod.GET,
-                        java.util.Map.of("agentId", agentId, "executionId", executionId),
-                        queryParams,
-                        null,
-                        new HttpHeaders(),
-                        new LinkedMultiValueMap<>(),
-                        new LinkedMultiValueMap<>(),
-                        java.util.List.of(MediaType.APPLICATION_JSON),
-                        null,
-                        new String[0],
-                        new ParameterizedTypeReference<ChatExecutionDTO>() { }
-                ).getBody()
+                () -> this.agentApi.getAgentChatExecution(agentId, executionId, conversationId)
         );
         return this.chatAgentClientMapper.asChatExecution(responseDTO);
     }

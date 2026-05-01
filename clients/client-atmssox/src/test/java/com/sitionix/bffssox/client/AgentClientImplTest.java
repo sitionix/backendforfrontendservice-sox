@@ -4,7 +4,6 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
-import com.app_afesox.atmssox.client.invoker.ApiClient;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
@@ -40,23 +39,18 @@ import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
-import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.util.MultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -85,9 +79,6 @@ class AgentClientImplTest {
     @Mock
     private ChatAgentClientMapper chatAgentClientMapper;
     @Mock
-    private ApiClient atmssoxClient;
-
-    @Mock
     private AtmssoxClientCallExecutor atmssoxClientCallExecutor;
 
     @BeforeEach
@@ -99,7 +90,6 @@ class AgentClientImplTest {
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
-                this.atmssoxClient,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -113,7 +103,6 @@ class AgentClientImplTest {
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
                 this.chatAgentClientMapper,
-                this.atmssoxClient,
                 this.atmssoxClientCallExecutor
         );
     }
@@ -391,8 +380,7 @@ class AgentClientImplTest {
             final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
-                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.agentApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, "idem-key")).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -402,7 +390,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, "idem-key");
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
     }
 
@@ -420,17 +408,18 @@ class AgentClientImplTest {
             final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
-                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.agentApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
 
         //when
-        this.agentClient.submitAgentChatExecution(givenAgentId, request, null);
+        final SubmitChatExecutionResponse actual = this.agentClient.submitAgentChatExecution(givenAgentId, request, null);
 
         //then
-        final ArgumentCaptor<HttpHeaders> headersCaptor = ArgumentCaptor.forClass(HttpHeaders.class);
-        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), headersCaptor.capture(), any(), any(), any(), any(), any(), any());
-        assertThat(headersCaptor.getValue().containsKey("Idempotency-Key")).isFalse();
+        assertThat(actual).isEqualTo(expected);
+        verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null);
+        verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
     }
 
     @Test
@@ -446,8 +435,7 @@ class AgentClientImplTest {
             final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
-                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.agentApi.getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
 
         //when
@@ -456,7 +444,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(this.agentApi).getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId);
         verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
     }
 
@@ -472,17 +460,17 @@ class AgentClientImplTest {
             final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.atmssoxClient.invokeAPI(any(), any(), anyMap(), any(), any(), any(), any(), any(), any(), any(), any(), any()))
-                .thenReturn(ResponseEntity.ok(responseDTO));
+        when(this.agentApi.getAgentChatExecution(givenAgentId, givenExecutionId, null)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
 
         //when
-        this.agentClient.getAgentChatExecution(givenAgentId, givenExecutionId, null);
+        final ChatExecution actual = this.agentClient.getAgentChatExecution(givenAgentId, givenExecutionId, null);
 
         //then
-        final ArgumentCaptor<MultiValueMap<String, String>> queryParamsCaptor = ArgumentCaptor.forClass(MultiValueMap.class);
-        verify(this.atmssoxClient).invokeAPI(any(), any(), anyMap(), queryParamsCaptor.capture(), any(), any(), any(), any(), any(), any(), any(), any());
-        assertThat(queryParamsCaptor.getValue().containsKey("conversationId")).isFalse();
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).getAgentChatExecution(givenAgentId, givenExecutionId, null);
+        verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
     }
 
     @Test
