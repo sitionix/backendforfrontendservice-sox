@@ -9,7 +9,6 @@ import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
@@ -106,15 +105,6 @@ public interface AgentClient {
     AgentRule rejectAgentRule(UUID agentId, UUID ruleId);
 
     DeleteAgentRuleResponse deleteAgentRule(UUID agentId, UUID ruleId);
-
-    /**
-     * Executes one chat request for one automation agent.
-     *
-     * @param agentId unique agent identifier.
-     * @param request chat request payload.
-     * @return assistant reply payload.
-     */
-    ChatAgentResponse chatAgent(UUID agentId, ChatAgentRequest request);
 
     SubmitChatExecutionResponse submitAgentChatExecution(UUID agentId, ChatAgentRequest request, String idempotencyKey);
 

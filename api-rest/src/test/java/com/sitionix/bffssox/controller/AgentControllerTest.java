@@ -17,7 +17,6 @@ import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
-import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
@@ -60,7 +59,6 @@ class AgentControllerTest {
     @Mock private PatchAgentApiMapper patchAgentApiMapper;
     @Mock private PatchAgent patchAgent;
     @Mock private ChatAgentApiMapper chatAgentApiMapper;
-    @Mock private ChatAgent chatAgent;
     @Mock private SubmitAgentChatExecution submitAgentChatExecution;
     @Mock private GetAgentChatExecution getAgentChatExecution;
     @Mock private GetAgents getAgents;
@@ -86,7 +84,6 @@ class AgentControllerTest {
                 this.patchAgentApiMapper,
                 this.patchAgent,
                 this.chatAgentApiMapper,
-                this.chatAgent,
                 this.submitAgentChatExecution,
                 this.getAgentChatExecution,
                 this.getAgents,
@@ -114,7 +111,6 @@ class AgentControllerTest {
                 this.patchAgentApiMapper,
                 this.patchAgent,
                 this.chatAgentApiMapper,
-                this.chatAgent,
                 this.submitAgentChatExecution,
                 this.getAgentChatExecution,
                 this.getAgents,

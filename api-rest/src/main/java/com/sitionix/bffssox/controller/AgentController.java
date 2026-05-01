@@ -10,7 +10,6 @@ import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
@@ -24,7 +23,6 @@ import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
@@ -37,7 +35,6 @@ import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
-import com.sitionix.bffssox.usecase.ChatAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgentRule;
@@ -77,8 +74,6 @@ public class AgentController implements AgentApi {
     private final PatchAgent patchAgent;
 
     private final ChatAgentApiMapper chatAgentApiMapper;
-
-    private final ChatAgent chatAgent;
 
     private final SubmitAgentChatExecution submitAgentChatExecution;
 

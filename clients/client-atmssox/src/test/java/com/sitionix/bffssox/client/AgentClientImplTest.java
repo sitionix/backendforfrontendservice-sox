@@ -49,7 +49,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -351,19 +350,6 @@ class AgentClientImplTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentApi).deleteAgent(givenAgentId);
         verify(this.agentClientMapper).asAgent(responseDTO);
-    }
-
-    @Test
-    void givenChatAgentRequest_whenChatAgent_thenThrowUnsupportedOperationException() {
-        //given
-        final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
-        final ChatAgentRequest request = mock(ChatAgentRequest.class);
-
-        //when
-        //then
-        assertThatThrownBy(() -> this.agentClient.chatAgent(givenAgentId, request))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("Synchronous chatAgent flow is removed; use submitAgentChatExecution");
     }
 
     @Test

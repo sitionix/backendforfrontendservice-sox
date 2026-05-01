@@ -27,7 +27,6 @@ import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
@@ -186,11 +185,6 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 () -> this.agentApi.deleteAgentRule(agentId, ruleId)
         );
         return this.agentRuleClientMapper.asDeleteAgentRuleResponse(responseDTO);
-    }
-
-    @Override
-    public ChatAgentResponse chatAgent(final UUID agentId, final ChatAgentRequest request) {
-        throw new UnsupportedOperationException("Synchronous chatAgent flow is removed; use submitAgentChatExecution");
     }
 
     @Override
