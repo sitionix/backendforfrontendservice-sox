@@ -1,36 +1,15 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.AcceptAgentRuleRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.Agent;
-import com.sitionix.bffssox.domain.AgentConversationDetails;
-import com.sitionix.bffssox.domain.AgentConversationsResponse;
-import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
-import com.sitionix.bffssox.domain.AgentRule;
-import com.sitionix.bffssox.domain.AgentRulesResponse;
-import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
-import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
-import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
-import com.sitionix.bffssox.domain.GetAgentRulesQuery;
-import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
-import com.sitionix.bffssox.domain.PatchAgentRequest;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.AgentRuleApiMapper;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
@@ -38,21 +17,20 @@ import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
-import com.sitionix.bffssox.usecase.ChatAgent;
-import com.sitionix.bffssox.usecase.AcceptAgentRule;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
-import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
+import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.GetAgent;
+import com.sitionix.bffssox.usecase.GetAgentChatExecution;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
-import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.GetAgentRules;
-import com.sitionix.bffssox.usecase.RejectAgentRule;
-import com.sitionix.bffssox.usecase.PatchAgentRule;
+import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.PatchAgent;
+import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.RestoreAgent;
+import com.sitionix.bffssox.usecase.SubmitAgentChatExecution;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +42,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -75,71 +52,27 @@ class AgentControllerTest {
 
     private AgentController agentController;
 
-    @Mock
-    private CreateAgentApiMapper createAgentApiMapper;
-
-    @Mock
-    private AgentApiMapper agentApiMapper;
-
-    @Mock
-    private AgentRuleApiMapper agentRuleApiMapper;
-
-    @Mock
-    private CreateAgent createAgent;
-
-    @Mock
-    private PatchAgentApiMapper patchAgentApiMapper;
-
-    @Mock
-    private PatchAgent patchAgent;
-
-    @Mock
-    private ChatAgentApiMapper chatAgentApiMapper;
-
-    @Mock
-    private ChatAgent chatAgent;
-
-    @Mock
-    private GetAgents getAgents;
-
-    @Mock
-    private GetAgent getAgent;
-
-    @Mock
-    private GetAgentConversations getAgentConversations;
-
-    @Mock
-    private GetAgentConversation getAgentConversation;
-
-    @Mock
-    private ActivateAgent activateAgent;
-
-    @Mock
-    private ArchiveAgent archiveAgent;
-
-    @Mock
-    private RestoreAgent restoreAgent;
-
-    @Mock
-    private DeleteAgent deleteAgent;
-
-    @Mock
-    private GetAgentRules getAgentRules;
-
-    @Mock
-    private CreateAgentRule createAgentRule;
-
-    @Mock
-    private PatchAgentRule patchAgentRule;
-
-    @Mock
-    private DeleteAgentRule deleteAgentRule;
-
-    @Mock
-    private AcceptAgentRule acceptAgentRule;
-
-    @Mock
-    private RejectAgentRule rejectAgentRule;
+    @Mock private CreateAgentApiMapper createAgentApiMapper;
+    @Mock private AgentApiMapper agentApiMapper;
+    @Mock private AgentRuleApiMapper agentRuleApiMapper;
+    @Mock private CreateAgent createAgent;
+    @Mock private PatchAgentApiMapper patchAgentApiMapper;
+    @Mock private PatchAgent patchAgent;
+    @Mock private ChatAgentApiMapper chatAgentApiMapper;
+    @Mock private SubmitAgentChatExecution submitAgentChatExecution;
+    @Mock private GetAgentChatExecution getAgentChatExecution;
+    @Mock private GetAgents getAgents;
+    @Mock private GetAgent getAgent;
+    @Mock private GetAgentConversations getAgentConversations;
+    @Mock private GetAgentConversation getAgentConversation;
+    @Mock private ActivateAgent activateAgent;
+    @Mock private ArchiveAgent archiveAgent;
+    @Mock private RestoreAgent restoreAgent;
+    @Mock private DeleteAgent deleteAgent;
+    @Mock private GetAgentRules getAgentRules;
+    @Mock private CreateAgentRule createAgentRule;
+    @Mock private PatchAgentRule patchAgentRule;
+    @Mock private DeleteAgentRule deleteAgentRule;
 
     @BeforeEach
     void setUp() {
@@ -151,7 +84,8 @@ class AgentControllerTest {
                 this.patchAgentApiMapper,
                 this.patchAgent,
                 this.chatAgentApiMapper,
-                this.chatAgent,
+                this.submitAgentChatExecution,
+                this.getAgentChatExecution,
                 this.getAgents,
                 this.getAgent,
                 this.getAgentConversations,
@@ -163,9 +97,7 @@ class AgentControllerTest {
                 this.getAgentRules,
                 this.createAgentRule,
                 this.patchAgentRule,
-                this.deleteAgentRule,
-                this.acceptAgentRule,
-                this.rejectAgentRule
+                this.deleteAgentRule
         );
     }
 
@@ -179,7 +111,8 @@ class AgentControllerTest {
                 this.patchAgentApiMapper,
                 this.patchAgent,
                 this.chatAgentApiMapper,
-                this.chatAgent,
+                this.submitAgentChatExecution,
+                this.getAgentChatExecution,
                 this.getAgents,
                 this.getAgent,
                 this.getAgentConversations,
@@ -191,382 +124,75 @@ class AgentControllerTest {
                 this.getAgentRules,
                 this.createAgentRule,
                 this.patchAgentRule,
-                this.deleteAgentRule,
-                this.acceptAgentRule,
-                this.rejectAgentRule
+                this.deleteAgentRule
         );
     }
 
     @Test
     void givenCreateAgentRequestDto_whenCreateAgent_thenReturnCreatedResponse() {
         //given
-        final CreateAgentRequestDTO requestDTO = mock(CreateAgentRequestDTO.class);
+        final CreateAgentRequestDTO requestDto = mock(CreateAgentRequestDTO.class);
         final CreateAgentRequest request = mock(CreateAgentRequest.class);
         final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
+        final AgentDTO responseDto = mock(AgentDTO.class);
 
-        when(this.createAgentApiMapper.asCreateAgentRequest(requestDTO)).thenReturn(request);
+        when(this.createAgentApiMapper.asCreateAgentRequest(requestDto)).thenReturn(request);
         when(this.createAgent.execute(request)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
+        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDto);
 
         //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.createAgent(requestDTO);
+        final ResponseEntity<AgentDTO> actual = this.agentController.createAgent(requestDto);
 
         //then
-        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.CREATED).body(responseDTO));
-        verify(this.createAgentApiMapper).asCreateAgentRequest(requestDTO);
+        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.CREATED).body(responseDto));
+        verify(this.createAgentApiMapper).asCreateAgentRequest(requestDto);
         verify(this.createAgent).execute(request);
         verify(this.agentApiMapper).asAgentDto(response);
     }
 
     @Test
-    void givenGetAgentsRequest_whenGetAgents_thenReturnOkResponse() {
+    void givenSubmitExecutionRequest_whenSubmitAgentChatExecution_thenReturnAcceptedEnvelope() {
         //given
-        final AgentsResponse response = mock(AgentsResponse.class);
-        final AgentsResponseDTO responseDTO = mock(AgentsResponseDTO.class);
-
-        when(this.getAgents.execute()).thenReturn(response);
-        when(this.agentApiMapper.asAgentsResponseDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentsResponseDTO> actual = this.agentController.getAgents();
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.getAgents).execute();
-        verify(this.agentApiMapper).asAgentsResponseDto(response);
-    }
-
-    @Test
-    void givenAgentId_whenGetAgent_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.getAgent.execute(agentId)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.getAgent(agentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.getAgent).execute(agentId);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenAgentId_whenGetAgentConversations_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("dbac37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final AgentConversationsResponse response = mock(AgentConversationsResponse.class);
-        final AgentConversationsResponseDTO responseDTO = mock(AgentConversationsResponseDTO.class);
-
-        when(this.getAgentConversations.execute(agentId)).thenReturn(response);
-        when(this.chatAgentApiMapper.asAgentConversationsResponseDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentConversationsResponseDTO> actual = this.agentController.getAgentConversations(agentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.getAgentConversations).execute(agentId);
-        verify(this.chatAgentApiMapper).asAgentConversationsResponseDto(response);
-    }
-
-    @Test
-    void givenConversationId_whenGetAgentConversation_thenReturnOkResponse() {
-        //given
-        final UUID conversationId = UUID.fromString("fbbc37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final AgentConversationDetails response = mock(AgentConversationDetails.class);
-        final AgentConversationDetailsDTO responseDTO = mock(AgentConversationDetailsDTO.class);
-
-        when(this.getAgentConversation.execute(conversationId)).thenReturn(response);
-        when(this.chatAgentApiMapper.asAgentConversationDetailsDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentConversationDetailsDTO> actual =
-                this.agentController.getAgentConversation(conversationId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.getAgentConversation).execute(conversationId);
-        verify(this.chatAgentApiMapper).asAgentConversationDetailsDto(response);
-    }
-
-    @Test
-    void givenPatchAgentRequestDto_whenPatchAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final PatchAgentRequestDTO givenRequestDTO = PatchAgentRequestDTO.builder()
-                .name("Updated Architecture Reviewer")
-                .build();
-        final PatchAgentRequest request = mock(PatchAgentRequest.class);
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.patchAgentApiMapper.asPatchAgentRequest(givenRequestDTO)).thenReturn(request);
-        when(this.patchAgent.execute(givenAgentId, request)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.patchAgent(givenAgentId, givenRequestDTO);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.patchAgentApiMapper).asPatchAgentRequest(givenRequestDTO);
-        verify(this.patchAgent).execute(givenAgentId, request);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenEmptyPatchAgentRequestDto_whenPatchAgent_thenThrowIllegalArgumentException() {
-        //given
-        final UUID givenAgentId = UUID.fromString("ebac37f0-90a2-4f6b-ab99-73f6ac5cf675");
-        final PatchAgentRequestDTO givenRequestDTO = PatchAgentRequestDTO.builder()
-                .name(null)
-                .description(null)
-                .instruction(null)
-                .build();
-
-        //when then
-        assertThatThrownBy(() -> this.agentController.patchAgent(givenAgentId, givenRequestDTO))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Patch payload cannot be empty");
-    }
-
-    @Test
-    void givenAgentId_whenActivateAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.activateAgent.execute(givenAgentId)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.activateAgent(givenAgentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.activateAgent).execute(givenAgentId);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenAgentId_whenArchiveAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.archiveAgent.execute(givenAgentId)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.archiveAgent(givenAgentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.archiveAgent).execute(givenAgentId);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenChatAgentRequestDto_whenChatAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc");
-        final ChatAgentRequestDTO givenRequestDTO = mock(ChatAgentRequestDTO.class);
+        final UUID agentId = UUID.fromString("76f023a2-cb0c-44d5-970d-053f4af51f6b");
+        final ChatAgentRequestDTO requestDto = mock(ChatAgentRequestDTO.class);
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentResponse response = mock(ChatAgentResponse.class);
-        final ChatAgentResponseDTO responseDTO = mock(ChatAgentResponseDTO.class);
+        final SubmitChatExecutionResponse response = mock(SubmitChatExecutionResponse.class);
+        final SubmitChatExecutionResponseDTO responseDto = mock(SubmitChatExecutionResponseDTO.class);
 
-        when(this.chatAgentApiMapper.asChatAgentRequest(givenRequestDTO)).thenReturn(request);
-        when(this.chatAgent.execute(givenAgentId, request)).thenReturn(response);
-        when(this.chatAgentApiMapper.asChatAgentResponseDto(response)).thenReturn(responseDTO);
+        when(this.chatAgentApiMapper.asChatAgentRequest(requestDto)).thenReturn(request);
+        when(this.submitAgentChatExecution.execute(agentId, request, "idem")).thenReturn(response);
+        when(this.chatAgentApiMapper.asSubmitChatExecutionResponseDto(response)).thenReturn(responseDto);
 
         //when
-        final ResponseEntity<ChatAgentResponseDTO> actual = this.agentController.chatAgent(givenAgentId, givenRequestDTO);
+        final ResponseEntity<SubmitChatExecutionResponseDTO> actual =
+                this.agentController.submitAgentChatExecution(agentId, requestDto, "idem");
 
         //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.chatAgentApiMapper).asChatAgentRequest(givenRequestDTO);
-        verify(this.chatAgent).execute(givenAgentId, request);
-        verify(this.chatAgentApiMapper).asChatAgentResponseDto(response);
+        assertThat(actual).isEqualTo(ResponseEntity.accepted().body(responseDto));
+        verify(this.chatAgentApiMapper).asChatAgentRequest(requestDto);
+        verify(this.submitAgentChatExecution).execute(agentId, request, "idem");
+        verify(this.chatAgentApiMapper).asSubmitChatExecutionResponseDto(response);
     }
 
     @Test
-    void givenAgentId_whenGetAgentRules_thenReturnOkResponse() {
+    void givenExecutionLookupRequest_whenGetAgentChatExecution_thenReturnOkResponse() {
         //given
-        final UUID agentId = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd");
-        final AgentRuleStatusDTO status = AgentRuleStatusDTO.ACTIVE;
-        final AgentRuleAuthorTypeDTO authorType = AgentRuleAuthorTypeDTO.AI;
-        final GetAgentRulesQuery query = mock(GetAgentRulesQuery.class);
-        final AgentRulesResponse response = mock(AgentRulesResponse.class);
-        final AgentRulesResponseDTO responseDTO = mock(AgentRulesResponseDTO.class);
+        final UUID agentId = UUID.fromString("1f723177-ec03-4506-9011-cf0b39c97c61");
+        final UUID executionId = UUID.fromString("d67d95cb-8fcb-4a09-8f17-4ad5295a784b");
+        final UUID conversationId = UUID.fromString("3b08ad4e-13f6-4d83-ab5d-dfe04ccebe4f");
+        final ChatExecution response = mock(ChatExecution.class);
+        final ChatExecutionDTO responseDto = mock(ChatExecutionDTO.class);
 
-        when(this.agentRuleApiMapper.asGetAgentRulesQuery(status, authorType)).thenReturn(query);
-        when(this.getAgentRules.execute(agentId, query)).thenReturn(response);
-        when(this.agentRuleApiMapper.asAgentRulesResponseDto(response)).thenReturn(responseDTO);
+        when(this.getAgentChatExecution.execute(agentId, executionId, conversationId)).thenReturn(response);
+        when(this.chatAgentApiMapper.asChatExecutionDto(response)).thenReturn(responseDto);
 
         //when
-        final ResponseEntity<AgentRulesResponseDTO> actual = this.agentController.getAgentRules(agentId, status, authorType);
+        final ResponseEntity<ChatExecutionDTO> actual =
+                this.agentController.getAgentChatExecution(agentId, executionId, conversationId);
 
         //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.agentRuleApiMapper).asGetAgentRulesQuery(status, authorType);
-        verify(this.getAgentRules).execute(agentId, query);
-        verify(this.agentRuleApiMapper).asAgentRulesResponseDto(response);
-    }
-
-    @Test
-    void givenCreateRuleRequest_whenCreateAgentRule_thenReturnCreatedResponse() {
-        //given
-        final UUID agentId = UUID.fromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee");
-        final CreateAgentRuleRequestDTO requestDTO = mock(CreateAgentRuleRequestDTO.class);
-        final CreateAgentRuleRequest request = mock(CreateAgentRuleRequest.class);
-        final AgentRule response = mock(AgentRule.class);
-        final AgentRuleDTO responseDTO = mock(AgentRuleDTO.class);
-
-        when(this.agentRuleApiMapper.asCreateAgentRuleRequest(requestDTO)).thenReturn(request);
-        when(this.createAgentRule.execute(agentId, request)).thenReturn(response);
-        when(this.agentRuleApiMapper.asAgentRuleDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentRuleDTO> actual = this.agentController.createAgentRule(agentId, requestDTO);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.status(HttpStatus.CREATED).body(responseDTO));
-        verify(this.agentRuleApiMapper).asCreateAgentRuleRequest(requestDTO);
-        verify(this.createAgentRule).execute(agentId, request);
-        verify(this.agentRuleApiMapper).asAgentRuleDto(response);
-    }
-
-    @Test
-    void givenPatchRuleRequest_whenPatchAgentRule_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff");
-        final UUID ruleId = UUID.fromString("11111111-2222-3333-4444-555555555555");
-        final PatchAgentRuleRequestDTO requestDTO = mock(PatchAgentRuleRequestDTO.class);
-        final PatchAgentRuleRequest request = mock(PatchAgentRuleRequest.class);
-        final AgentRule response = mock(AgentRule.class);
-        final AgentRuleDTO responseDTO = mock(AgentRuleDTO.class);
-
-        when(this.agentRuleApiMapper.asPatchAgentRuleRequest(requestDTO)).thenReturn(request);
-        when(this.patchAgentRule.execute(agentId, ruleId, request)).thenReturn(response);
-        when(this.agentRuleApiMapper.asAgentRuleDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentRuleDTO> actual = this.agentController.patchAgentRule(agentId, ruleId, requestDTO);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.agentRuleApiMapper).asPatchAgentRuleRequest(requestDTO);
-        verify(this.patchAgentRule).execute(agentId, ruleId, request);
-        verify(this.agentRuleApiMapper).asAgentRuleDto(response);
-    }
-
-    @Test
-    void givenAgentAndRuleIds_whenDeleteAgentRule_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("22222222-3333-4444-5555-666666666666");
-        final UUID ruleId = UUID.fromString("33333333-4444-5555-6666-777777777777");
-        final DeleteAgentRuleResponse response = mock(DeleteAgentRuleResponse.class);
-        final DeleteAgentRuleResponseDTO responseDTO = mock(DeleteAgentRuleResponseDTO.class);
-
-        when(this.deleteAgentRule.execute(agentId, ruleId)).thenReturn(response);
-        when(this.agentRuleApiMapper.asDeleteAgentRuleResponseDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<DeleteAgentRuleResponseDTO> actual = this.agentController.deleteAgentRule(agentId, ruleId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.deleteAgentRule).execute(agentId, ruleId);
-        verify(this.agentRuleApiMapper).asDeleteAgentRuleResponseDto(response);
-    }
-
-    @Test
-    void givenAgentId_whenRestoreAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("ac7e74e9-2fe8-4f03-b6da-e5ec38b69c0f");
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.restoreAgent.execute(givenAgentId)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.restoreAgent(givenAgentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.restoreAgent).execute(givenAgentId);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenAgentId_whenDeleteAgent_thenReturnOkResponse() {
-        //given
-        final UUID givenAgentId = UUID.fromString("23f2a882-4a92-4d9f-bb6c-aaf3c0295e73");
-        final Agent response = mock(Agent.class);
-        final AgentDTO responseDTO = mock(AgentDTO.class);
-
-        when(this.deleteAgent.execute(givenAgentId)).thenReturn(response);
-        when(this.agentApiMapper.asAgentDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentDTO> actual = this.agentController.deleteAgent(givenAgentId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.deleteAgent).execute(givenAgentId);
-        verify(this.agentApiMapper).asAgentDto(response);
-    }
-
-    @Test
-    void givenAcceptAgentRuleRequest_whenAcceptAgentRule_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("66666666-7777-8888-9999-aaaaaaaaaaaa");
-        final UUID ruleId = UUID.fromString("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
-        final AcceptAgentRuleRequestDTO requestDTO = mock(AcceptAgentRuleRequestDTO.class);
-        final AcceptAgentRuleRequest request = mock(AcceptAgentRuleRequest.class);
-        final AgentRule response = mock(AgentRule.class);
-        final AgentRuleDTO responseDTO = mock(AgentRuleDTO.class);
-
-        when(this.agentRuleApiMapper.asAcceptAgentRuleRequest(requestDTO)).thenReturn(request);
-        when(this.acceptAgentRule.execute(agentId, ruleId, request)).thenReturn(response);
-        when(this.agentRuleApiMapper.asAgentRuleDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentRuleDTO> actual = this.agentController.acceptAgentRule(agentId, ruleId, requestDTO);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.agentRuleApiMapper).asAcceptAgentRuleRequest(requestDTO);
-        verify(this.acceptAgentRule).execute(agentId, ruleId, request);
-        verify(this.agentRuleApiMapper).asAgentRuleDto(response);
-    }
-
-    @Test
-    void givenAgentAndRuleIds_whenRejectAgentRule_thenReturnOkResponse() {
-        //given
-        final UUID agentId = UUID.fromString("45fb8ef9-020e-4d35-a6d7-e361945f95a2");
-        final UUID ruleId = UUID.fromString("eb36639b-f6d1-47ce-9888-20f605e9cd7f");
-        final AgentRule response = mock(AgentRule.class);
-        final AgentRuleDTO responseDTO = mock(AgentRuleDTO.class);
-
-        when(this.rejectAgentRule.execute(agentId, ruleId)).thenReturn(response);
-        when(this.agentRuleApiMapper.asAgentRuleDto(response)).thenReturn(responseDTO);
-
-        //when
-        final ResponseEntity<AgentRuleDTO> actual = this.agentController.rejectAgentRule(agentId, ruleId);
-
-        //then
-        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDTO));
-        verify(this.rejectAgentRule).execute(agentId, ruleId);
-        verify(this.agentRuleApiMapper).asAgentRuleDto(response);
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
+        verify(this.getAgentChatExecution).execute(agentId, executionId, conversationId);
+        verify(this.chatAgentApiMapper).asChatExecutionDto(response);
     }
 }

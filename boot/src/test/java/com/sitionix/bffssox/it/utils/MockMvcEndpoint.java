@@ -5,7 +5,7 @@ import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
-import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
@@ -178,14 +178,14 @@ public class MockMvcEndpoint {
                             .expectResponse("responseDefaultGetAgentConversationWithHappyPath.json"),
                     ItUserTokens.USER_JWT);
 
-    public static final Endpoint<ChatAgentRequestDTO, ChatAgentResponseDTO> POST_CHAT_AGENT =
+    public static final Endpoint<ChatAgentRequestDTO, SubmitChatExecutionResponseDTO> POST_CHAT_AGENT =
             Endpoint.createContract("/api/v1/agents/{agentId}/chat",
                     HttpMethod.POST,
                     ChatAgentRequestDTO.class,
-                    ChatAgentResponseDTO.class,
-                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                    SubmitChatExecutionResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.ACCEPTED.value())
                             .withRequest("requestDefaultChatAgentNewConversation.json")
-                            .expectResponse("responseDefaultChatAgentNewConversation.json"),
+                            .expectResponse("responseDefaultSubmitChatExecutionNewConversation.json"),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<PatchAgentRequestDTO, AgentDTO> PATCH_AGENT =

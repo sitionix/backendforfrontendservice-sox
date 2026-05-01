@@ -1,6 +1,9 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
@@ -10,8 +13,6 @@ import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleStatusDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
@@ -24,14 +25,15 @@ import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
@@ -186,12 +188,22 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
-    public ChatAgentResponse chatAgent(final UUID agentId, final ChatAgentRequest request) {
+    public SubmitChatExecutionResponse submitAgentChatExecution(final UUID agentId,
+                                                                final ChatAgentRequest request,
+                                                                final String idempotencyKey) {
         final ChatAgentRequestDTO requestDTO = this.chatAgentClientMapper.asChatAgentRequestDto(request);
-        final ChatAgentResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.chatAgent(agentId, requestDTO)
+        final SubmitChatExecutionResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.submitAgentChatExecutionByExecutionsPath(agentId, requestDTO, idempotencyKey)
         );
-        return this.chatAgentClientMapper.asChatAgentResponse(responseDTO);
+        return this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO);
+    }
+
+    @Override
+    public ChatExecution getAgentChatExecution(final UUID agentId, final UUID executionId, final UUID conversationId) {
+        final ChatExecutionDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getAgentChatExecution(agentId, executionId, conversationId)
+        );
+        return this.chatAgentClientMapper.asChatExecution(responseDTO);
     }
 
     @Override

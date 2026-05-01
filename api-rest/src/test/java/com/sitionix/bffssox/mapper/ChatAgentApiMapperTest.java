@@ -3,15 +3,23 @@ package com.sitionix.bffssox.mapper;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationMessageDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentConversationDTO1;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
+import com.app_afesox.bffssox.api_first.dto.ChatExecutionFailureDTO;
+import com.app_afesox.bffssox.api_first.dto.ExecutionStatusDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
+import com.sitionix.bffssox.domain.ChatExecutionFailure;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +37,10 @@ class ChatAgentApiMapperTest {
 
     @BeforeEach
     void setUp() {
-        this.mapper = new ChatAgentApiMapperImpl();
+        this.mapper = new ChatAgentApiMapperImpl(
+                new ChatExecutionStatusApiMapperImpl(),
+                new ChatExecutionFailureApiMapperImpl()
+        );
     }
 
     @Test
@@ -120,7 +131,7 @@ class ChatAgentApiMapperTest {
                 this.getAgentConversationDto(
                         UUID.fromString("11111111-1111-1111-1111-111111111111"),
                         "Explain clean architecture",
-                        AgentConversationDTO.TypeEnum.DIRECT,
+                        AgentConversationDTO1.TypeEnum.DIRECT,
                         createdAt,
                         updatedAt
                 )
@@ -173,6 +184,38 @@ class ChatAgentApiMapperTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @Test
+    void givenSubmitChatExecutionResponse_whenAsSubmitChatExecutionResponseDto_thenReturnMappedDto() {
+        //given
+        final SubmitChatExecutionResponse given = this.getSubmitChatExecutionResponse();
+
+        //when
+        final SubmitChatExecutionResponseDTO actual = this.mapper.asSubmitChatExecutionResponseDto(given);
+
+        //then
+        assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
+        assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.ACCEPTED);
+        assertThat(actual.getAcceptedAt()).isEqualTo(given.getCreatedAt());
+    }
+
+    @Test
+    void givenChatExecution_whenAsChatExecutionDto_thenReturnMappedDto() {
+        //given
+        final ChatExecution given = this.getFailedChatExecution();
+
+        //when
+        final ChatExecutionDTO actual = this.mapper.asChatExecutionDto(given);
+
+        //then
+        assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.FAILED);
+        assertThat(actual.getError()).isEqualTo(ChatExecutionFailureDTO.builder()
+                .code("EXECUTION_ERROR")
+                .message("Execution failed")
+                .details(java.util.Map.of("retryable", true))
+                .build());
+    }
+
     private ChatAgentRequestDTO getChatAgentRequestDto(final String message) {
         return ChatAgentRequestDTO.builder()
                 .message(message)
@@ -195,7 +238,7 @@ class ChatAgentApiMapperTest {
     private ChatAgentResponseDTO getChatAgentResponseDto(final UUID conversationId, final AgentConversationMessageDTO reply) {
         return ChatAgentResponseDTO.builder()
                 .conversationId(conversationId)
-                .reply(reply)
+                .assistantMessage(reply)
                 .build();
     }
 
@@ -205,7 +248,7 @@ class ChatAgentApiMapperTest {
                 .build();
     }
 
-    private AgentConversationsResponseDTO getAgentConversationsResponseDto(final List<AgentConversationDTO> items) {
+    private AgentConversationsResponseDTO getAgentConversationsResponseDto(final List<AgentConversationDTO1> items) {
         return AgentConversationsResponseDTO.builder()
                 .items(items)
                 .build();
@@ -228,14 +271,14 @@ class ChatAgentApiMapperTest {
                 .build();
     }
 
-    private AgentConversationDTO getAgentConversationDto(
+    private AgentConversationDTO1 getAgentConversationDto(
             final UUID id,
             final String title,
-            final AgentConversationDTO.TypeEnum type,
+            final AgentConversationDTO1.TypeEnum type,
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt
     ) {
-        return AgentConversationDTO.builder()
+        return AgentConversationDTO1.builder()
                 .id(id)
                 .title(title)
                 .type(type)
@@ -312,6 +355,36 @@ class ChatAgentApiMapperTest {
                 .authorId(authorId)
                 .content(content)
                 .createdAt(createdAt)
+                .build();
+    }
+
+    private SubmitChatExecutionResponse getSubmitChatExecutionResponse() {
+        return SubmitChatExecutionResponse.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .state("QUEUED")
+                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
+                .idempotencyKey("idem")
+                .idempotencyReplayed(false)
+                .build();
+    }
+
+    private ChatExecution getFailedChatExecution() {
+        return ChatExecution.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .agentId(UUID.fromString("6e4e32f8-2f48-4600-9a73-bb026f98dbf4"))
+                .state("FAILED")
+                .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
+                .failure(this.getChatExecutionFailure())
+                .build();
+    }
+
+    private ChatExecutionFailure getChatExecutionFailure() {
+        return ChatExecutionFailure.builder()
+                .failureClass("EXECUTION_ERROR")
+                .reason("Execution failed")
+                .retryable(true)
                 .build();
     }
 }

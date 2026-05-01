@@ -2,7 +2,7 @@ package com.sitionix.bffssox.usecase;
 
 import com.sitionix.bffssox.client.AgentClient;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,16 +18,16 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ChatAgentImplTest {
+class SubmitAgentChatExecutionImplTest {
 
-    private ChatAgent chatAgent;
+    private SubmitAgentChatExecution submitAgentChatExecution;
 
     @Mock
     private AgentClient agentClient;
 
     @BeforeEach
     void setUp() {
-        this.chatAgent = new ChatAgentImpl(this.agentClient);
+        this.submitAgentChatExecution = new SubmitAgentChatExecutionImpl(this.agentClient);
     }
 
     @AfterEach
@@ -36,18 +36,19 @@ class ChatAgentImplTest {
     }
 
     @Test
-    void givenChatAgentRequest_whenExecute_thenReturnChatAgentResponse() {
+    void givenSubmitChatExecutionRequest_whenExecute_thenReturnClientResponse() {
         //given
-        final UUID agentId = UUID.fromString("2679f99c-1700-41d5-aa20-d58dfdf15a5f");
+        final UUID agentId = UUID.fromString("11ea96d9-7dc2-4810-a233-c7f8d48ece29");
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentResponse response = mock(ChatAgentResponse.class);
-        when(this.agentClient.chatAgent(agentId, request)).thenReturn(response);
+        final SubmitChatExecutionResponse response = mock(SubmitChatExecutionResponse.class);
+
+        when(this.agentClient.submitAgentChatExecution(agentId, request, "key")).thenReturn(response);
 
         //when
-        final ChatAgentResponse actual = this.chatAgent.execute(agentId, request);
+        final SubmitChatExecutionResponse actual = this.submitAgentChatExecution.execute(agentId, request, "key");
 
         //then
         assertThat(actual).isEqualTo(response);
-        verify(this.agentClient).chatAgent(agentId, request);
+        verify(this.agentClient).submitAgentChatExecution(agentId, request, "key");
     }
 }

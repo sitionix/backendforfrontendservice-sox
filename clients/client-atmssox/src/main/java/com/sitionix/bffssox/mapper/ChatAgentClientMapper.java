@@ -6,22 +6,39 @@ import com.app_afesox.atmssox.client.dto.AgentConversationMessageDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
+import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.List;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, uses = {
+        ChatExecutionStatusClientMapper.class,
+        ChatExecutionFailureClientMapper.class
+})
 public interface ChatAgentClientMapper {
 
     ChatAgentRequestDTO asChatAgentRequestDto(ChatAgentRequest src);
 
     ChatAgentResponse asChatAgentResponse(ChatAgentResponseDTO src);
+
+    @Mapping(target = "state", source = "status")
+    @Mapping(target = "createdAt", source = "acceptedAt")
+    SubmitChatExecutionResponse asSubmitChatExecutionResponse(SubmitChatExecutionResponseDTO src);
+
+    @Mapping(target = "state", source = "status")
+    @Mapping(target = "createdAt", source = "acceptedAt")
+    @Mapping(target = "failure", source = "error")
+    ChatExecution asChatExecution(ChatExecutionDTO src);
 
     AgentConversation asAgentConversation(AgentConversationDTO src);
 
@@ -49,4 +66,5 @@ public interface ChatAgentClientMapper {
     default String mapAuthorType(final AgentConversationMessageDTO.AuthorTypeEnum value) {
         return value == null ? null : value.getValue();
     }
+
 }
