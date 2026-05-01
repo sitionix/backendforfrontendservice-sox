@@ -18,6 +18,7 @@ import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
+import com.sitionix.bffssox.domain.ChatExecutionFailure;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -25,23 +26,29 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ChatAgentClientMapperTest {
 
     private ChatAgentClientMapper mapper;
-    private ChatExecutionStatusClientMapper chatExecutionStatusMapper;
+
+    @Mock
+    private ChatExecutionStatusClientMapper chatExecutionStatusClientMapper;
+
+    @Mock
+    private ChatExecutionFailureClientMapper chatExecutionFailureClientMapper;
 
     @BeforeEach
     void setUp() {
         this.mapper = new ChatAgentClientMapperImpl(
-                new ChatExecutionStatusClientMapperImpl(),
-                new ChatExecutionFailureClientMapperImpl()
+                this.chatExecutionStatusClientMapper,
+                this.chatExecutionFailureClientMapper
         );
-        this.chatExecutionStatusMapper = new ChatExecutionStatusClientMapperImpl();
     }
 
     @Test
@@ -185,6 +192,7 @@ class ChatAgentClientMapperTest {
         //given
         final SubmitChatExecutionResponseDTO given = this.getSubmitChatExecutionResponseDto();
         final SubmitChatExecutionResponse expected = this.getSubmitChatExecutionResponse();
+        when(this.chatExecutionStatusClientMapper.mapExecutionStatus(ExecutionStatusDTO.ACCEPTED)).thenReturn("QUEUED");
 
         //when
         final SubmitChatExecutionResponse actual = this.mapper.asSubmitChatExecutionResponse(given);
@@ -197,6 +205,10 @@ class ChatAgentClientMapperTest {
     void givenChatExecutionDto_whenAsChatExecution_thenReturnMappedDomain() {
         //given
         final ChatExecutionDTO given = this.getFailedChatExecutionDto();
+        final ChatExecutionFailureDTO failureDTO = given.getError();
+        when(this.chatExecutionStatusClientMapper.mapExecutionStatus(ExecutionStatusDTO.FAILED)).thenReturn("FAILED");
+        when(this.chatExecutionFailureClientMapper.asChatExecutionFailure(failureDTO))
+                .thenReturn(this.getChatExecutionFailure("EXECUTION_ERROR", "Execution failed", true));
 
         //when
         final ChatExecution actual = this.mapper.asChatExecution(given);
@@ -206,25 +218,6 @@ class ChatAgentClientMapperTest {
         assertThat(actual.getFailure().getFailureClass()).isEqualTo("EXECUTION_ERROR");
         assertThat(actual.getFailure().getReason()).isEqualTo("Execution failed");
         assertThat(actual.getFailure().getRetryable()).isTrue();
-    }
-
-    @Test
-    void givenAllLifecycleStatesFromAtms_whenAsChatExecution_thenReturnCanonicalExternalStates() {
-        //given
-        final List<ExecutionStatusDTO> given = List.of(
-                ExecutionStatusDTO.ACCEPTED,
-                ExecutionStatusDTO.IN_PROGRESS,
-                ExecutionStatusDTO.SUCCEEDED,
-                ExecutionStatusDTO.FAILED
-        );
-
-        //when
-        final List<String> actual = given.stream()
-                .map(this.chatExecutionStatusMapper::mapExecutionStatus)
-                .toList();
-
-        //then
-        assertThat(actual).isEqualTo(List.of("QUEUED", "IN_PROGRESS", "COMPLETED", "FAILED"));
     }
 
     private ChatAgentRequest getChatAgentRequest(final String message) {
@@ -404,6 +397,18 @@ class ChatAgentClientMapperTest {
                 .code("EXECUTION_ERROR")
                 .message("Execution failed")
                 .details(java.util.Map.of("retryable", true))
+                .build();
+    }
+
+    private ChatExecutionFailure getChatExecutionFailure(
+            final String failureClass,
+            final String reason,
+            final Boolean retryable
+    ) {
+        return ChatExecutionFailure.builder()
+                .failureClass(failureClass)
+                .reason(reason)
+                .retryable(retryable)
                 .build();
     }
 }

@@ -58,7 +58,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AgentClientImplTest {
 
-    private com.sitionix.bffssox.client.AgentClient agentClient;
+    private AgentClient agentClient;
 
     @Mock
     private AgentApi agentApi;
