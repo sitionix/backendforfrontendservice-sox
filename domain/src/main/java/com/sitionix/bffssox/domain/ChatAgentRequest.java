@@ -8,6 +8,8 @@ import lombok.Data;
 @Builder
 public class ChatAgentRequest {
 
+    private UUID clientRequestId;
+
     private UUID conversationId;
 
     private String message;

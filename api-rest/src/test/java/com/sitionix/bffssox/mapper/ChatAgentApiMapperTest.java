@@ -46,8 +46,9 @@ class ChatAgentApiMapperTest {
     @Test
     void givenChatAgentRequestDto_whenAsChatAgentRequest_thenReturnChatAgentRequest() {
         //given
-        final ChatAgentRequestDTO given = this.getChatAgentRequestDto("Explain clean architecture");
-        final ChatAgentRequest expected = this.getChatAgentRequest("Explain clean architecture");
+        final UUID clientRequestId = UUID.fromString("742261a5-e89f-4153-96f3-f1275d2dd4e4");
+        final ChatAgentRequestDTO given = this.getChatAgentRequestDto(clientRequestId, "Explain clean architecture");
+        final ChatAgentRequest expected = this.getChatAgentRequest(clientRequestId, "Explain clean architecture");
 
         //when
         final ChatAgentRequest actual = this.mapper.asChatAgentRequest(given);
@@ -216,14 +217,16 @@ class ChatAgentApiMapperTest {
                 .build());
     }
 
-    private ChatAgentRequestDTO getChatAgentRequestDto(final String message) {
+    private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId, final String message) {
         return ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }
 
-    private ChatAgentRequest getChatAgentRequest(final String message) {
+    private ChatAgentRequest getChatAgentRequest(final UUID clientRequestId, final String message) {
         return ChatAgentRequest.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }

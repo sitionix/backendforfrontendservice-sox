@@ -27,6 +27,7 @@ import org.mapstruct.Mapper;
 })
 public interface ChatAgentApiMapper {
 
+    @Mapping(target = "clientRequestId", source = "clientRequestId")
     ChatAgentRequest asChatAgentRequest(ChatAgentRequestDTO src);
 
     @Mapping(target = "assistantMessage", source = "reply")

@@ -54,8 +54,9 @@ class ChatAgentClientMapperTest {
     @Test
     void givenChatAgentRequest_whenAsChatAgentRequestDto_thenReturnChatAgentRequestDto() {
         //given
-        final ChatAgentRequest given = this.getChatAgentRequest("Explain SOLID");
-        final ChatAgentRequestDTO expected = this.getChatAgentRequestDto("Explain SOLID");
+        final UUID clientRequestId = UUID.fromString("6ba1153e-a336-42a1-92ea-3203be095aa2");
+        final ChatAgentRequest given = this.getChatAgentRequest(clientRequestId, "Explain SOLID");
+        final ChatAgentRequestDTO expected = this.getChatAgentRequestDto(clientRequestId, "Explain SOLID");
 
         //when
         final ChatAgentRequestDTO actual = this.mapper.asChatAgentRequestDto(given);
@@ -220,14 +221,16 @@ class ChatAgentClientMapperTest {
         assertThat(actual.getFailure().getRetryable()).isTrue();
     }
 
-    private ChatAgentRequest getChatAgentRequest(final String message) {
+    private ChatAgentRequest getChatAgentRequest(final UUID clientRequestId, final String message) {
         return ChatAgentRequest.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }
 
-    private ChatAgentRequestDTO getChatAgentRequestDto(final String message) {
+    private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId, final String message) {
         return ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }
