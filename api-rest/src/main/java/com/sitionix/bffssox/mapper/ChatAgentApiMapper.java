@@ -56,6 +56,7 @@ public interface ChatAgentApiMapper {
     AgentConversationsResponseDTO asAgentConversationsResponseDto(AgentConversationsResponse src);
 
     @Mapping(target = "messages", source = "messages")
+    @Mapping(target = "executions", source = "executions")
     AgentConversationDetailsDTO asAgentConversationDetailsDto(AgentConversationDetails src);
 
     default AgentConversationDetailsDTO.TypeEnum map(final String value) {
