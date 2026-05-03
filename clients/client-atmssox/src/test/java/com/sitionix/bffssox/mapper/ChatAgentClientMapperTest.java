@@ -2,11 +2,10 @@ package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.atmssox.client.dto.AgentConversationMessageDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDTO;
-import com.app_afesox.atmssox.client.dto.AgentConversationDTO1;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionFailureDTO;
 import com.app_afesox.atmssox.client.dto.ExecutionStatusDTO;
@@ -66,11 +65,11 @@ class ChatAgentClientMapperTest {
     }
 
     @Test
-    void givenChatAgentResponseDto_whenAsChatAgentResponse_thenReturnChatAgentResponse() {
+    void givenChatAgentExecutionDto_whenAsChatAgentResponse_thenReturnChatAgentResponse() {
         //given
         final UUID conversationId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         final OffsetDateTime createdAt = OffsetDateTime.parse("2026-04-21T10:01:00Z");
-        final ChatAgentResponseDTO given = this.getChatAgentResponseDto(
+        final ChatAgentExecutionDTO given = this.getChatAgentExecutionDto(
                 conversationId,
                 this.getAgentConversationMessageDto(
                         UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
@@ -82,7 +81,13 @@ class ChatAgentClientMapperTest {
         );
         final ChatAgentResponse expected = this.getChatAgentResponse(
                 conversationId,
-                null
+                this.getChatAgentMessage(
+                        UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                        "AGENT",
+                        "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
+                        "SOLID is a set of design principles.",
+                        createdAt
+                )
         );
 
         //when
@@ -90,7 +95,6 @@ class ChatAgentClientMapperTest {
 
         //then
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.getReply()).isNull();
     }
 
     @Test
@@ -106,9 +110,9 @@ class ChatAgentClientMapperTest {
     }
 
     @Test
-    void givenNullChatAgentResponseDto_whenAsChatAgentResponse_thenReturnNull() {
+    void givenNullChatAgentExecutionDto_whenAsChatAgentResponse_thenReturnNull() {
         //given
-        final ChatAgentResponseDTO given = null;
+        final ChatAgentExecutionDTO given = null;
 
         //when
         final ChatAgentResponse actual = this.mapper.asChatAgentResponse(given);
@@ -126,7 +130,7 @@ class ChatAgentClientMapperTest {
                 this.getAgentConversationDto(
                         UUID.fromString("11111111-1111-1111-1111-111111111111"),
                         "Explain clean architecture",
-                        AgentConversationDTO1.TypeEnum.DIRECT,
+                        AgentConversationDTO.TypeEnum.DIRECT,
                         createdAt,
                         updatedAt
                 )
@@ -235,9 +239,10 @@ class ChatAgentClientMapperTest {
                 .build();
     }
 
-    private ChatAgentResponseDTO getChatAgentResponseDto(final UUID conversationId, final AgentConversationMessageDTO reply) {
-        return ChatAgentResponseDTO.builder()
+    private ChatAgentExecutionDTO getChatAgentExecutionDto(final UUID conversationId, final AgentConversationMessageDTO reply) {
+        return ChatAgentExecutionDTO.builder()
                 .conversationId(conversationId)
+                .assistantMessage(reply)
                 .build();
     }
 
@@ -248,7 +253,7 @@ class ChatAgentClientMapperTest {
                 .build();
     }
 
-    private AgentConversationsResponseDTO getAgentConversationsResponseDto(final List<AgentConversationDTO1> items) {
+    private AgentConversationsResponseDTO getAgentConversationsResponseDto(final List<AgentConversationDTO> items) {
         return AgentConversationsResponseDTO.builder()
                 .items(items)
                 .build();
@@ -277,14 +282,14 @@ class ChatAgentClientMapperTest {
                 .build();
     }
 
-    private AgentConversationDTO1 getAgentConversationDto(
+    private AgentConversationDTO getAgentConversationDto(
             final UUID id,
             final String title,
-            final AgentConversationDTO1.TypeEnum type,
+            final AgentConversationDTO.TypeEnum type,
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt
     ) {
-        return AgentConversationDTO1.builder()
+        return AgentConversationDTO.builder()
                 .id(id)
                 .title(title)
                 .type(type)
@@ -368,6 +373,7 @@ class ChatAgentClientMapperTest {
         return SubmitChatExecutionResponseDTO.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
                 .status(ExecutionStatusDTO.ACCEPTED)
                 .acceptedAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("key-1")
@@ -379,6 +385,7 @@ class ChatAgentClientMapperTest {
         return SubmitChatExecutionResponse.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
                 .state("QUEUED")
                 .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("key-1")

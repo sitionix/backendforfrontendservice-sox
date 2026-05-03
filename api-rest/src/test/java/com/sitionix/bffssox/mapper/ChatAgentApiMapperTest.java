@@ -196,6 +196,7 @@ class ChatAgentApiMapperTest {
         //then
         assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
         assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
         assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.ACCEPTED);
         assertThat(actual.getAcceptedAt()).isEqualTo(given.getCreatedAt());
     }
@@ -365,6 +366,7 @@ class ChatAgentApiMapperTest {
         return SubmitChatExecutionResponse.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
                 .state("QUEUED")
                 .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("idem")

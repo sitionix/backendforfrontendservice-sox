@@ -4,8 +4,8 @@ import com.app_afesox.atmssox.client.dto.AgentConversationDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationMessageDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.ChatAgentExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
-import com.app_afesox.atmssox.client.dto.ChatAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
@@ -30,10 +30,12 @@ public interface ChatAgentClientMapper {
     @Mapping(target = "clientRequestId", source = "clientRequestId")
     ChatAgentRequestDTO asChatAgentRequestDto(ChatAgentRequest src);
 
-    ChatAgentResponse asChatAgentResponse(ChatAgentResponseDTO src);
+    @Mapping(target = "reply", source = "assistantMessage")
+    ChatAgentResponse asChatAgentResponse(ChatAgentExecutionDTO src);
 
     @Mapping(target = "state", source = "status")
     @Mapping(target = "createdAt", source = "acceptedAt")
+    @Mapping(target = "inputMessageId", source = "inputMessageId")
     SubmitChatExecutionResponse asSubmitChatExecutionResponse(SubmitChatExecutionResponseDTO src);
 
     @Mapping(target = "state", source = "status")

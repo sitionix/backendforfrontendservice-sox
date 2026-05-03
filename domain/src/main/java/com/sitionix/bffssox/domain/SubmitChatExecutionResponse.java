@@ -13,6 +13,8 @@ public class SubmitChatExecutionResponse {
 
     private UUID conversationId;
 
+    private UUID inputMessageId;
+
     private String state;
 
     private OffsetDateTime createdAt;

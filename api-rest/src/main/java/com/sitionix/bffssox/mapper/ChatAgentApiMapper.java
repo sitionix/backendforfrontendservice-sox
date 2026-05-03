@@ -35,6 +35,7 @@ public interface ChatAgentApiMapper {
 
     @Mapping(target = "status", source = "state")
     @Mapping(target = "acceptedAt", source = "createdAt")
+    @Mapping(target = "inputMessageId", source = "inputMessageId")
     @Mapping(target = "error", ignore = true)
     SubmitChatExecutionResponseDTO asSubmitChatExecutionResponseDto(SubmitChatExecutionResponse src);
 

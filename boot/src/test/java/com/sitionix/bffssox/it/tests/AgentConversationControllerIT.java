@@ -151,6 +151,26 @@ class AgentConversationControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when chat then return accepted with input message id")
+    void givenValidUserToken_whenChat_thenReturnAcceptedWithInputMessageId() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CHAT_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CHAT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("agentId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given blank message when chat then return bad request")
     void givenBlankMessage_whenChat_thenReturnBadRequest() {
         //given

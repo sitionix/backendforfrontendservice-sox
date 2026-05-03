@@ -12,7 +12,7 @@
     <artifactId>api-rest</artifactId>
 
     <properties>
-        <bffssox.api.version>0.0.31</bffssox.api.version>
+        <bffssox.api.version>0.0.33</bffssox.api.version>
     </properties>
 
     <dependencies>
@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-bffssox-api-first-stable</artifactId>
+            <artifactId>app-afesox-bffssox-api-first-sitionix-127-unstable</artifactId>
             <version>${bffssox.api.version}</version>
         </dependency>
         <dependency>
