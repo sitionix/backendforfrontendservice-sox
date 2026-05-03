@@ -23,4 +23,6 @@ public class AgentConversationDetails {
     private OffsetDateTime lastMessageAt;
 
     private List<ChatAgentMessage> messages;
+
+    private List<ChatExecution> executions;
 }

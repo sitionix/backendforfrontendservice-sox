@@ -175,6 +175,30 @@ class AgentControllerTest {
     }
 
     @Test
+    void givenSubmitExecutionRequest_whenSubmitAgentChatExecutionByExecutionsPath_thenDelegateToSubmitFlow() {
+        //given
+        final UUID agentId = UUID.fromString("f318a8d4-c8d5-44f2-ad4b-b3a6a900e955");
+        final ChatAgentRequestDTO requestDto = mock(ChatAgentRequestDTO.class);
+        final ChatAgentRequest request = mock(ChatAgentRequest.class);
+        final SubmitChatExecutionResponse response = mock(SubmitChatExecutionResponse.class);
+        final SubmitChatExecutionResponseDTO responseDto = mock(SubmitChatExecutionResponseDTO.class);
+
+        when(this.chatAgentApiMapper.asChatAgentRequest(requestDto)).thenReturn(request);
+        when(this.submitAgentChatExecution.execute(agentId, request, "idem")).thenReturn(response);
+        when(this.chatAgentApiMapper.asSubmitChatExecutionResponseDto(response)).thenReturn(responseDto);
+
+        //when
+        final ResponseEntity<SubmitChatExecutionResponseDTO> actual =
+                this.agentController.submitAgentChatExecutionByExecutionsPath(agentId, requestDto, "idem");
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.accepted().body(responseDto));
+        verify(this.chatAgentApiMapper).asChatAgentRequest(requestDto);
+        verify(this.submitAgentChatExecution).execute(agentId, request, "idem");
+        verify(this.chatAgentApiMapper).asSubmitChatExecutionResponseDto(response);
+    }
+
+    @Test
     void givenExecutionLookupRequest_whenGetAgentChatExecution_thenReturnOkResponse() {
         //given
         final UUID agentId = UUID.fromString("1f723177-ec03-4506-9011-cf0b39c97c61");

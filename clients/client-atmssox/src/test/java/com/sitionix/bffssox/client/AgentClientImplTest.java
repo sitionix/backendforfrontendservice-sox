@@ -50,6 +50,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -356,8 +358,12 @@ class AgentClientImplTest {
     void givenChatAgentRequest_whenSubmitAgentChatExecution_thenReturnExecutionAck() {
         //given
         final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
+        final UUID clientRequestId = UUID.fromString("8ecef151-3f6a-46a8-a9a4-1f61f65b6f09");
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentRequestDTO requestDTO = mock(ChatAgentRequestDTO.class);
+        final ChatAgentRequestDTO requestDTO = ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
+                .message("message")
+                .build();
         final SubmitChatExecutionResponseDTO responseDTO = mock(SubmitChatExecutionResponseDTO.class);
         final SubmitChatExecutionResponse expected = mock(SubmitChatExecutionResponse.class);
 
@@ -376,7 +382,11 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, "idem-key");
+        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(
+                eq(givenAgentId),
+                argThat(dto -> dto != null && clientRequestId.equals(dto.getClientRequestId())),
+                eq("idem-key")
+        );
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
     }
 

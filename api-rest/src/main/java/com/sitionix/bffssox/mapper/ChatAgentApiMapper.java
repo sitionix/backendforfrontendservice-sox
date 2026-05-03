@@ -27,6 +27,7 @@ import org.mapstruct.Mapper;
 })
 public interface ChatAgentApiMapper {
 
+    @Mapping(target = "clientRequestId", source = "clientRequestId")
     ChatAgentRequest asChatAgentRequest(ChatAgentRequestDTO src);
 
     @Mapping(target = "assistantMessage", source = "reply")
@@ -34,6 +35,7 @@ public interface ChatAgentApiMapper {
 
     @Mapping(target = "status", source = "state")
     @Mapping(target = "acceptedAt", source = "createdAt")
+    @Mapping(target = "inputMessageId", source = "inputMessageId")
     @Mapping(target = "error", ignore = true)
     SubmitChatExecutionResponseDTO asSubmitChatExecutionResponseDto(SubmitChatExecutionResponse src);
 
@@ -54,6 +56,7 @@ public interface ChatAgentApiMapper {
     AgentConversationsResponseDTO asAgentConversationsResponseDto(AgentConversationsResponse src);
 
     @Mapping(target = "messages", source = "messages")
+    @Mapping(target = "executions", source = "executions")
     AgentConversationDetailsDTO asAgentConversationDetailsDto(AgentConversationDetails src);
 
     default AgentConversationDetailsDTO.TypeEnum map(final String value) {

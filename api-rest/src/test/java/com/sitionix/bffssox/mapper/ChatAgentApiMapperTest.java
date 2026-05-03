@@ -46,8 +46,9 @@ class ChatAgentApiMapperTest {
     @Test
     void givenChatAgentRequestDto_whenAsChatAgentRequest_thenReturnChatAgentRequest() {
         //given
-        final ChatAgentRequestDTO given = this.getChatAgentRequestDto("Explain clean architecture");
-        final ChatAgentRequest expected = this.getChatAgentRequest("Explain clean architecture");
+        final UUID clientRequestId = UUID.fromString("742261a5-e89f-4153-96f3-f1275d2dd4e4");
+        final ChatAgentRequestDTO given = this.getChatAgentRequestDto(clientRequestId, "Explain clean architecture");
+        final ChatAgentRequest expected = this.getChatAgentRequest(clientRequestId, "Explain clean architecture");
 
         //when
         final ChatAgentRequest actual = this.mapper.asChatAgentRequest(given);
@@ -160,7 +161,8 @@ class ChatAgentApiMapperTest {
                         "agent-1",
                         "Clean architecture separates business logic.",
                         createdAt
-                ))
+                )),
+                List.of(this.getFailedChatExecution())
         );
         final AgentConversationDetailsDTO expected = this.getAgentConversationDetailsDto(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -174,7 +176,8 @@ class ChatAgentApiMapperTest {
                         "agent-1",
                         "Clean architecture separates business logic.",
                         createdAt
-                ))
+                )),
+                List.of(this.mapper.asChatExecutionDto(this.getFailedChatExecution()))
         );
 
         //when
@@ -195,6 +198,7 @@ class ChatAgentApiMapperTest {
         //then
         assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
         assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
         assertThat(actual.getStatus()).isEqualTo(ExecutionStatusDTO.ACCEPTED);
         assertThat(actual.getAcceptedAt()).isEqualTo(given.getCreatedAt());
     }
@@ -216,14 +220,16 @@ class ChatAgentApiMapperTest {
                 .build());
     }
 
-    private ChatAgentRequestDTO getChatAgentRequestDto(final String message) {
+    private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId, final String message) {
         return ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }
 
-    private ChatAgentRequest getChatAgentRequest(final String message) {
+    private ChatAgentRequest getChatAgentRequest(final UUID clientRequestId, final String message) {
         return ChatAgentRequest.builder()
+                .clientRequestId(clientRequestId)
                 .message(message)
                 .build();
     }
@@ -294,7 +300,8 @@ class ChatAgentApiMapperTest {
             final String type,
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
-            final List<ChatAgentMessage> messages
+            final List<ChatAgentMessage> messages,
+            final List<ChatExecution> executions
     ) {
         return AgentConversationDetails.builder()
                 .id(id)
@@ -304,6 +311,7 @@ class ChatAgentApiMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
+                .executions(executions)
                 .build();
     }
 
@@ -313,7 +321,8 @@ class ChatAgentApiMapperTest {
             final AgentConversationDetailsDTO.TypeEnum type,
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
-            final List<AgentConversationMessageDTO> messages
+            final List<AgentConversationMessageDTO> messages,
+            final List<ChatExecutionDTO> executions
     ) {
         return AgentConversationDetailsDTO.builder()
                 .id(id)
@@ -323,6 +332,7 @@ class ChatAgentApiMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
+                .executions(executions)
                 .build();
     }
 
@@ -362,6 +372,7 @@ class ChatAgentApiMapperTest {
         return SubmitChatExecutionResponse.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
                 .state("QUEUED")
                 .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("idem")
