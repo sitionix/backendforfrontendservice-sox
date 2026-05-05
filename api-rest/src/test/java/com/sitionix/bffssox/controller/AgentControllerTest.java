@@ -20,6 +20,7 @@ import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
+import com.sitionix.bffssox.usecase.DeleteAgentConversation;
 import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgentChatExecution;
@@ -73,6 +74,7 @@ class AgentControllerTest {
     @Mock private CreateAgentRule createAgentRule;
     @Mock private PatchAgentRule patchAgentRule;
     @Mock private DeleteAgentRule deleteAgentRule;
+    @Mock private DeleteAgentConversation deleteAgentConversation;
 
     @BeforeEach
     void setUp() {
@@ -97,7 +99,8 @@ class AgentControllerTest {
                 this.getAgentRules,
                 this.createAgentRule,
                 this.patchAgentRule,
-                this.deleteAgentRule
+                this.deleteAgentRule,
+                this.deleteAgentConversation
         );
     }
 
@@ -124,7 +127,8 @@ class AgentControllerTest {
                 this.getAgentRules,
                 this.createAgentRule,
                 this.patchAgentRule,
-                this.deleteAgentRule
+                this.deleteAgentRule,
+                this.deleteAgentConversation
         );
     }
 
@@ -218,5 +222,18 @@ class AgentControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
         verify(this.getAgentChatExecution).execute(agentId, executionId, conversationId);
         verify(this.chatAgentApiMapper).asChatExecutionDto(response);
+    }
+
+    @Test
+    void givenConversationId_whenDeleteAgentConversation_thenReturnNoContent() {
+        //given
+        final UUID conversationId = UUID.fromString("4dd6a86d-7de1-4187-9624-fc912633b102");
+
+        //when
+        final ResponseEntity<Void> actual = this.agentController.deleteAgentConversation(conversationId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.noContent().build());
+        verify(this.deleteAgentConversation).execute(conversationId);
     }
 }

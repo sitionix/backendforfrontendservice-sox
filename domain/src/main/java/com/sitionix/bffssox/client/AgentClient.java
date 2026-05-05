@@ -63,6 +63,13 @@ public interface AgentClient {
     AgentConversationDetails getAgentConversation(UUID conversationId);
 
     /**
+     * Soft deletes one direct conversation.
+     *
+     * @param conversationId unique conversation identifier.
+     */
+    void deleteAgentConversation(UUID conversationId);
+
+    /**
      * Activates one automation agent.
      *
      * @param agentId unique agent identifier.

@@ -237,6 +237,17 @@ public class WireMockEndpoint {
                                 .responseStatus(200);
                     });
 
+    public static final Endpoint<Void, Void> DELETE_AGENT_CONVERSATION =
+            Endpoint.createContract("/atmssox/api/v1/conversations/{conversationId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseStatus(204);
+                    });
+
     public static final Endpoint<ChatAgentRequestDTO, SubmitChatExecutionResponseDTO> POST_CHAT_AGENT =
             Endpoint.createContract("/atmssox/api/v1/agents/{agentId}/chat/executions",
                     HttpMethod.POST,

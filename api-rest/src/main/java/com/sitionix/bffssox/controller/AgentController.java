@@ -39,6 +39,7 @@ import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
+import com.sitionix.bffssox.usecase.DeleteAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgentChatExecution;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
@@ -103,6 +104,8 @@ public class AgentController implements AgentApi {
 
     private final DeleteAgentRule deleteAgentRule;
 
+    private final DeleteAgentConversation deleteAgentConversation;
+
     @Override
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgentDTO> createAgent(@Valid final CreateAgentRequestDTO createAgentRequestDTO) {
@@ -166,6 +169,13 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentDTO> deleteAgent(final UUID agentId) {
         final Agent response = this.deleteAgent.execute(agentId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteAgentConversation(final UUID conversationId) {
+        this.deleteAgentConversation.execute(conversationId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
