@@ -4,8 +4,8 @@ import com.app_afesox.bffssox.api_first.api.AgentApi;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
@@ -37,17 +37,17 @@ import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
+import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
 import com.sitionix.bffssox.usecase.DeleteAgentConversation;
-import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.GetAgent;
 import com.sitionix.bffssox.usecase.GetAgentChatExecution;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.GetAgentRules;
-import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.PatchAgentRule;
+import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.RestoreAgent;
 import com.sitionix.bffssox.usecase.SubmitAgentChatExecution;
 import jakarta.validation.Valid;
@@ -63,26 +63,47 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgentController implements AgentApi {
 
     private final CreateAgentApiMapper createAgentApiMapper;
+
     private final AgentApiMapper agentApiMapper;
+
     private final AgentRuleApiMapper agentRuleApiMapper;
+
     private final CreateAgent createAgent;
+
     private final PatchAgentApiMapper patchAgentApiMapper;
+
     private final PatchAgent patchAgent;
+
     private final ChatAgentApiMapper chatAgentApiMapper;
+
     private final SubmitAgentChatExecution submitAgentChatExecution;
+
     private final GetAgentChatExecution getAgentChatExecution;
+
     private final GetAgents getAgents;
+
     private final GetAgent getAgent;
+
     private final GetAgentConversations getAgentConversations;
+
     private final GetAgentConversation getAgentConversation;
+
     private final ActivateAgent activateAgent;
+
     private final ArchiveAgent archiveAgent;
+
     private final RestoreAgent restoreAgent;
+
     private final DeleteAgent deleteAgent;
+
     private final GetAgentRules getAgentRules;
+
     private final CreateAgentRule createAgentRule;
+
     private final PatchAgentRule patchAgentRule;
+
     private final DeleteAgentRule deleteAgentRule;
+
     private final DeleteAgentConversation deleteAgentConversation;
 
     @Override
