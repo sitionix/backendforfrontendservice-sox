@@ -151,6 +151,81 @@ class AgentConversationControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when delete one agent conversation then return no content")
+    void givenValidUserToken_whenDeleteOneAgentConversation_thenReturnNoContent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given invalid conversation id when delete one agent conversation then return bad request")
+    void givenInvalidConversationId_whenDeleteOneAgentConversation_thenReturnBadRequest() {
+        //given
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "not-a-valid-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultInvalidConversationId.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when delete one agent conversation then return unauthorized")
+    void givenMissingToken_whenDeleteOneAgentConversation_thenReturnUnauthorized() {
+        //given
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when delete one agent conversation then return not found with body")
+    void givenUpstreamNotFound_whenDeleteOneAgentConversation_thenReturnNotFoundWithBody() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .responseStatus(HttpStatus.NOT_FOUND)
+                .responseBody("responseDefaultMappingGetAgentConversationNotFound.json")
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultGetAgentConversationNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given valid user token when chat then return accepted with input message id")
     void givenValidUserToken_whenChat_thenReturnAcceptedWithInputMessageId() {
         //given

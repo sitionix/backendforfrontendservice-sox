@@ -178,6 +178,14 @@ public class MockMvcEndpoint {
                             .expectResponse("responseDefaultGetAgentConversationWithHappyPath.json"),
                     ItUserTokens.USER_JWT);
 
+    public static final Endpoint<Void, Void> DELETE_AGENT_CONVERSATION =
+            Endpoint.createContract("/api/v1/conversations/{conversationId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.NO_CONTENT.value()),
+                    ItUserTokens.USER_JWT);
+
     public static final Endpoint<ChatAgentRequestDTO, SubmitChatExecutionResponseDTO> POST_CHAT_AGENT =
             Endpoint.createContract("/api/v1/agents/{agentId}/chat",
                     HttpMethod.POST,
