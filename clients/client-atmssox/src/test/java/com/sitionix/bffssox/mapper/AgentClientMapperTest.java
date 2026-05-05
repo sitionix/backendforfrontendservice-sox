@@ -1,8 +1,12 @@
 package com.sitionix.bffssox.mapper;
 
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.sitionix.bffssox.domain.Agent;
+import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AgentStatus;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import java.time.OffsetDateTime;
@@ -77,6 +81,55 @@ class AgentClientMapperTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenAgentProjectDto_whenAsAgentProject_thenReturnAgentProject() {
+        //given
+        final AgentProjectDTO given = AgentProjectDTO.builder()
+                .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
+                .name("Project")
+                .description("Description")
+                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                .build();
+
+        //when
+        final AgentProject actual = this.mapper.asAgentProject(given);
+
+        //then
+        assertThat(actual.getId()).isEqualTo(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"));
+        assertThat(actual.getName()).isEqualTo("Project");
+        assertThat(actual.getDescription()).isEqualTo("Description");
+        assertThat(actual.getStatus()).isNull();
+        assertThat(actual.getCreatedAt()).isEqualTo(OffsetDateTime.parse("2026-04-10T10:00:00Z"));
+        assertThat(actual.getUpdatedAt()).isEqualTo(OffsetDateTime.parse("2026-04-10T10:01:00Z"));
+    }
+
+    @Test
+    void givenAgentProjectsPageResponseDto_whenAsAgentProjectsPageResponse_thenReturnPageResponse() {
+        //given
+        final AgentProjectsPageResponseDTO given = AgentProjectsPageResponseDTO.builder()
+                .items(List.of(AgentProjectDTO.builder()
+                        .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
+                        .name("Project")
+                        .description("Description")
+                        .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
+                        .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                        .build()))
+                .page(1)
+                .size(10)
+                .hasNext(true)
+                .build();
+
+        //when
+        final AgentProjectsPageResponse actual = this.mapper.asAgentProjectsPageResponse(given);
+
+        //then
+        assertThat(actual.getItems()).hasSize(1);
+        assertThat(actual.getPage()).isEqualTo(1);
+        assertThat(actual.getSize()).isEqualTo(10);
+        assertThat(actual.getHasNext()).isTrue();
     }
 
     private AgentDTO agentDto() {

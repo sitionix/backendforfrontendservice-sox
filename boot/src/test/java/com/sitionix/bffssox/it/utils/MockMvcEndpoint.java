@@ -4,7 +4,10 @@ import com.app_afesox.bffssox.api_first.dto.EmailVerificationDTO;
 import com.app_afesox.bffssox.api_first.dto.EmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
@@ -149,6 +152,25 @@ public class MockMvcEndpoint {
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
                             .withRequest("requestDefaultCreateAgentWithNameOnly.json")
                             .expectResponse("responseDefaultCreateAgentWithNameOnly.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<CreateAgentProjectRequestDTO, AgentProjectDTO> POST_CREATE_AGENT_PROJECT =
+            Endpoint.createContract("/api/v1/agent-projects",
+                    HttpMethod.POST,
+                    CreateAgentProjectRequestDTO.class,
+                    AgentProjectDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
+                            .withRequest("requestDefaultCreateAgentProject.json")
+                            .expectResponse("responseDefaultCreateAgentProject.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, AgentProjectsPageResponseDTO> GET_AGENT_PROJECTS =
+            Endpoint.createContract("/api/v1/agent-projects",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentProjectsPageResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentProjects.json"),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

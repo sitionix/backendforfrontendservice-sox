@@ -6,6 +6,8 @@ import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
@@ -15,12 +17,15 @@ import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
@@ -29,6 +34,7 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
@@ -38,6 +44,7 @@ import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
+import com.sitionix.bffssox.mapper.CreateAgentProjectClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +57,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     private final AgentApi agentApi;
 
     private final CreateAgentClientMapper createAgentClientMapper;
+    private final CreateAgentProjectClientMapper createAgentProjectClientMapper;
 
     private final AgentClientMapper agentClientMapper;
 
@@ -71,9 +79,26 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
+    public AgentProject createAgentProject(final CreateAgentProjectRequest request) {
+        final CreateAgentProjectRequestDTO requestDTO = this.createAgentProjectClientMapper.asCreateAgentProjectRequestDto(request);
+        final AgentProjectDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.createAgentProject(requestDTO)
+        );
+        return this.agentClientMapper.asAgentProject(responseDTO);
+    }
+
+    @Override
     public AgentsResponse getAgents() {
         final AgentsResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(this.agentApi::getAgents);
         return this.agentClientMapper.asAgentsResponse(responseDTO);
+    }
+
+    @Override
+    public AgentProjectsPageResponse getAgentProjects(final Integer page, final Integer size) {
+        final AgentProjectsPageResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getAgentProjects(page, size)
+        );
+        return this.agentClientMapper.asAgentProjectsPageResponse(responseDTO);
     }
 
     @Override

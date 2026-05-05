@@ -3,6 +3,8 @@ package com.sitionix.bffssox.client;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
@@ -11,6 +13,7 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
@@ -31,12 +34,16 @@ public interface AgentClient {
      */
     Agent createAgent(CreateAgentRequest request);
 
+    AgentProject createAgentProject(CreateAgentProjectRequest request);
+
     /**
      * Returns current automation agents.
      *
      * @return persisted agents response.
      */
     AgentsResponse getAgents();
+
+    AgentProjectsPageResponse getAgentProjects(Integer page, Integer size);
 
     /**
      * Returns one automation agent.
