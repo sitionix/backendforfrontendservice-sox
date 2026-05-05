@@ -101,6 +101,16 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     }
 
     @Override
+    public void deleteAgentConversation(final UUID conversationId) {
+        this.atmssoxClientCallExecutor.execute(
+                () -> {
+                    this.agentApi.deleteAgentConversation(conversationId);
+                    return null;
+                }
+        );
+    }
+
+    @Override
     public Agent activateAgent(final UUID agentId) {
         final AgentDTO responseDTO = this.atmssoxClientCallExecutor.execute(
                 () -> this.agentApi.activateAgent(agentId)

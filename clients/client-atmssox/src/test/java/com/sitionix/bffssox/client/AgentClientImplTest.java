@@ -231,6 +231,23 @@ class AgentClientImplTest {
     }
 
     @Test
+    void givenConversationId_whenDeleteAgentConversation_thenCallDownstreamDelete() {
+        //given
+        final UUID conversationId = UUID.fromString("34ce1743-04f0-4066-8fbe-4f965e4b4904");
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<Void> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+
+        //when
+        this.agentClient.deleteAgentConversation(conversationId);
+
+        //then
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).deleteAgentConversation(conversationId);
+    }
+
+    @Test
     void givenPatchAgentRequest_whenPatchAgent_thenReturnAgent() {
         //given
         final UUID givenAgentId = UUID.fromString("3064ed14-b2ab-4c37-a264-94574beb8dd2");
