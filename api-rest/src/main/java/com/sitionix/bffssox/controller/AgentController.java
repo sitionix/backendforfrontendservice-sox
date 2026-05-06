@@ -54,6 +54,7 @@ import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
+import com.sitionix.bffssox.usecase.GetAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentRules;
 import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.PatchAgent;
@@ -93,6 +94,7 @@ public class AgentController implements AgentApi {
 
     private final GetAgents getAgents;
     private final GetAgentProjects getAgentProjects;
+    private final GetAgentProject getAgentProject;
 
     private final GetAgent getAgent;
 
@@ -148,6 +150,13 @@ public class AgentController implements AgentApi {
     public ResponseEntity<AgentProjectsPageResponseDTO> getAgentProjects(final Integer page, final Integer size) {
         final AgentProjectsPageResponse response = this.getAgentProjects.execute(page, size);
         return ResponseEntity.ok(this.agentApiMapper.asAgentProjectsPageResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentProjectDTO> getAgentProject(final UUID projectId) {
+        final AgentProject response = this.getAgentProject.execute(projectId);
+        return ResponseEntity.ok(this.agentApiMapper.asAgentProjectDto(response));
     }
 
     @Override

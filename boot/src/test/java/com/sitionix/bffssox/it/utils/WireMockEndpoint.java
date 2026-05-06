@@ -229,6 +229,18 @@ public class WireMockEndpoint {
                                 .responseStatus(200);
                     });
 
+    public static final Endpoint<Void, AgentProjectDTO> GET_AGENT_PROJECT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentProjectDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetAgentProject.json")
+                                .responseStatus(200);
+                    });
+
     public static final Endpoint<Void, AgentDTO> GET_AGENT =
             Endpoint.createContract("/atmssox/api/v1/agents/{agentId}",
                     HttpMethod.GET,

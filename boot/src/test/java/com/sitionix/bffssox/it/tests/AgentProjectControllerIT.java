@@ -4,7 +4,9 @@ import com.sitionix.bffssox.it.preparation.AuthJwksDataPreparation;
 import com.sitionix.bffssox.it.utils.MockMvcEndpoint;
 import com.sitionix.bffssox.it.utils.WireMockEndpoint;
 import com.sitionix.forgeit.core.test.IntegrationTest;
+import com.sitionix.forgeit.mockmvc.api.PathParams;
 import com.sitionix.forgeit.mockmvc.api.QueryParams;
+import com.sitionix.forgeit.wiremock.api.WireMockPathParams;
 import com.sitionix.forgeit.wiremock.api.WireMockQueryParams;
 import com.sitionix.forgeit.wiremock.internal.domain.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +59,26 @@ class AgentProjectControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when get agent project then return project")
+    void givenValidUserToken_whenGetAgentProject_thenReturnProject() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given missing token when create agent project then return unauthorized")
     void givenMissingToken_whenCreateAgentProject_thenReturnUnauthorized() {
         //when then
@@ -81,11 +103,38 @@ class AgentProjectControllerIT {
     }
 
     @Test
+    @DisplayName("given invalid project id when get agent project then return bad request")
+    void givenInvalidProjectId_whenGetAgentProject_thenReturnBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "not-a-valid-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultGetAgentProjectInvalidProjectId.json"))
+                .assertDefault();
+    }
+
+    @Test
     @DisplayName("given missing token when get agent projects then return unauthorized")
     void givenMissingToken_whenGetAgentProjects_thenReturnUnauthorized() {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.GET_AGENT_PROJECTS)
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when get agent project then return unauthorized")
+    void givenMissingToken_whenGetAgentProject_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .token(null)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultGetSitesUnauthorized.json"))

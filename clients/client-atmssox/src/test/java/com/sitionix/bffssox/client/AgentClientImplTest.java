@@ -220,6 +220,29 @@ class AgentClientImplTest {
     }
 
     @Test
+    void givenProjectId_whenGetAgentProject_thenReturnAgentProject() {
+        //given
+        final UUID projectId = UUID.fromString("2d76e53b-f5f2-41d0-bbfd-4b26c9de5efe");
+        final AgentProjectDTO responseDTO = mock(AgentProjectDTO.class);
+        final AgentProject response = mock(AgentProject.class);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentProjectDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.getAgentProject(projectId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgentProject(responseDTO)).thenReturn(response);
+
+        //when
+        final AgentProject actual = this.agentClient.getAgentProject(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(response);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).getAgentProject(projectId);
+        verify(this.agentClientMapper).asAgentProject(responseDTO);
+    }
+
+    @Test
     void givenAgentId_whenGetAgent_thenReturnAgent() {
         //given
         final UUID agentId = UUID.fromString("3064ed14-b2ab-4c37-a264-94574beb8dd2");

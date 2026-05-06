@@ -173,6 +173,15 @@ public class MockMvcEndpoint {
                             .expectResponse("responseDefaultGetAgentProjects.json"),
                     ItUserTokens.USER_JWT);
 
+    public static final Endpoint<Void, AgentProjectDTO> GET_AGENT_PROJECT =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentProjectDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentProject.json"),
+                    ItUserTokens.USER_JWT);
+
     public static final Endpoint<Void, AgentDTO> GET_AGENT =
             Endpoint.createContract("/api/v1/agents/{agentId}",
                     HttpMethod.GET,
