@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentRuleOperationsPort;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,7 @@ class DeleteAgentRuleImplTest {
     private DeleteAgentRuleImpl deleteAgentRule;
 
     @Mock
-    private AgentClient agentClient;
+    private AgentRuleOperationsPort agentClient;
 
     @BeforeEach
     void setUp() {

@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentProjectOperationsPort;
 import com.sitionix.bffssox.domain.AgentProject;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ class GetAgentProjectImplTest {
     private GetAgentProject getAgentProject;
 
     @Mock
-    private AgentClient agentClient;
+    private AgentProjectOperationsPort agentClient;
 
     @BeforeEach
     void setUp() {

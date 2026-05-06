@@ -20,6 +20,7 @@ import com.app_afesox.bffssox.api_first.dto.AgentDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.PatchAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SiteOverviewDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
@@ -180,6 +181,24 @@ public class MockMvcEndpoint {
                     AgentProjectDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
                             .expectResponse("responseDefaultGetAgentProject.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<PatchAgentProjectRequestDTO, AgentProjectDTO> PATCH_AGENT_PROJECT =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}",
+                    HttpMethod.PATCH,
+                    PatchAgentProjectRequestDTO.class,
+                    AgentProjectDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultPatchAgentProjectNameOnly.json")
+                            .expectResponse("responseDefaultPatchAgentProjectNameOnly.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.NO_CONTENT.value()),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

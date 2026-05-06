@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentOperationsPort;
 import com.sitionix.bffssox.domain.Agent;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ArchiveAgentImpl implements ArchiveAgent {
 
-    private final AgentClient agentClient;
+    private final AgentOperationsPort agentClient;
 
     @Override
     public Agent execute(final UUID agentId) {

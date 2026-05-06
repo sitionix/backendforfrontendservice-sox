@@ -79,6 +79,46 @@ class AgentProjectControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when patch agent project then proxy patch and return updated project")
+    void givenValidUserToken_whenPatchAgentProject_thenProxyPatchAndReturnProject() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.PATCH_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when delete agent project then proxy delete and return no content")
+    void givenValidUserToken_whenDeleteAgentProject_thenProxyDeleteAndReturnNoContent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given missing token when create agent project then return unauthorized")
     void givenMissingToken_whenCreateAgentProject_thenReturnUnauthorized() {
         //when then

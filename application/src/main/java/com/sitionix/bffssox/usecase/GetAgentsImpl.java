@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentOperationsPort;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GetAgentsImpl implements GetAgents {
 
-    private final AgentClient agentClient;
+    private final AgentOperationsPort agentClient;
 
     @Override
     public AgentsResponse execute() {

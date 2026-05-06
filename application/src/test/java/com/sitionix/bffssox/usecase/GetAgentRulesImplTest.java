@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentRuleOperationsPort;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +24,7 @@ class GetAgentRulesImplTest {
     private GetAgentRulesImpl getAgentRules;
 
     @Mock
-    private AgentClient agentClient;
+    private AgentRuleOperationsPort agentClient;
 
     @BeforeEach
     void setUp() {

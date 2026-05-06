@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentProjectOperationsPort;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import java.util.UUID;
@@ -22,7 +22,7 @@ class PatchAgentProjectImplTest {
 
     private PatchAgentProject patchAgentProject;
 
-    @Mock private AgentClient agentClient;
+    @Mock private AgentProjectOperationsPort agentClient;
 
     @BeforeEach
     void setUp() {

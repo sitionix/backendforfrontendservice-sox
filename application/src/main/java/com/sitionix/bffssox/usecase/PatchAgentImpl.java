@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentOperationsPort;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import java.util.UUID;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PatchAgentImpl implements PatchAgent {
 
-    private final AgentClient agentClient;
+    private final AgentOperationsPort agentClient;
 
     @Override
     public Agent execute(final UUID agentId, final PatchAgentRequest request) {

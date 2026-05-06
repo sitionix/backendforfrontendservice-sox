@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentConversationOperationsPort;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GetAgentConversationImpl implements GetAgentConversation {
 
-    private final AgentClient agentClient;
+    private final AgentConversationOperationsPort agentClient;
 
     @Override
     public AgentConversationDetails execute(final UUID conversationId) {
