@@ -1,6 +1,10 @@
 package com.sitionix.bffssox.config;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.api.AgentChatApi;
+import com.app_afesox.atmssox.client.api.AgentConversationApi;
+import com.app_afesox.atmssox.client.api.AgentProjectApi;
+import com.app_afesox.atmssox.client.api.AgentRuleApi;
 import com.app_afesox.atmssox.client.invoker.ApiClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +45,25 @@ public class AtmssoxApiConfig {
     @Bean
     public AgentApi agentApi(@Qualifier("atmssoxClient") final ApiClient apiClient) {
         return new AgentApi(apiClient);
+    }
+
+    @Bean
+    public AgentProjectApi agentProjectApi(@Qualifier("atmssoxClient") final ApiClient apiClient) {
+        return new AgentProjectApi(apiClient);
+    }
+
+    @Bean
+    public AgentConversationApi agentConversationApi(@Qualifier("atmssoxClient") final ApiClient apiClient) {
+        return new AgentConversationApi(apiClient);
+    }
+
+    @Bean
+    public AgentRuleApi agentRuleApi(@Qualifier("atmssoxClient") final ApiClient apiClient) {
+        return new AgentRuleApi(apiClient);
+    }
+
+    @Bean
+    public AgentChatApi agentChatApi(@Qualifier("atmssoxClient") final ApiClient apiClient) {
+        return new AgentChatApi(apiClient);
     }
 }
