@@ -1,6 +1,10 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.api.AgentChatApi;
+import com.app_afesox.atmssox.client.api.AgentConversationApi;
+import com.app_afesox.atmssox.client.api.AgentProjectApi;
+import com.app_afesox.atmssox.client.api.AgentRuleApi;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
@@ -55,6 +59,10 @@ import org.springframework.stereotype.Service;
 public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient {
 
     private final AgentApi agentApi;
+    private final AgentProjectApi agentProjectApi;
+    private final AgentConversationApi agentConversationApi;
+    private final AgentRuleApi agentRuleApi;
+    private final AgentChatApi agentChatApi;
 
     private final CreateAgentClientMapper createAgentClientMapper;
     private final CreateAgentProjectClientMapper createAgentProjectClientMapper;
@@ -82,7 +90,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     public AgentProject createAgentProject(final CreateAgentProjectRequest request) {
         final CreateAgentProjectRequestDTO requestDTO = this.createAgentProjectClientMapper.asCreateAgentProjectRequestDto(request);
         final AgentProjectDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.createAgentProject(requestDTO)
+                () -> this.agentProjectApi.createAgentProject(requestDTO)
         );
         return this.agentClientMapper.asAgentProject(responseDTO);
     }
@@ -96,7 +104,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public AgentProjectsPageResponse getAgentProjects(final Integer page, final Integer size) {
         final AgentProjectsPageResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentProjects(page, size)
+                () -> this.agentProjectApi.getAgentProjects(page, size)
         );
         return this.agentClientMapper.asAgentProjectsPageResponse(responseDTO);
     }
@@ -104,7 +112,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public AgentProject getAgentProject(final UUID projectId) {
         final AgentProjectDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentProject(projectId)
+                () -> this.agentProjectApi.getAgentProject(projectId)
         );
         return this.agentClientMapper.asAgentProject(responseDTO);
     }
@@ -120,7 +128,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public AgentConversationsResponse getAgentConversations(final UUID agentId) {
         final AgentConversationsResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentConversations(agentId)
+                () -> this.agentConversationApi.getAgentConversations(agentId)
         );
         return this.chatAgentClientMapper.asAgentConversationsResponse(responseDTO);
     }
@@ -128,7 +136,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public AgentConversationDetails getAgentConversation(final UUID conversationId) {
         final AgentConversationDetailsDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentConversation(conversationId)
+                () -> this.agentConversationApi.getAgentConversation(conversationId)
         );
         return this.chatAgentClientMapper.asAgentConversationDetails(responseDTO);
     }
@@ -137,7 +145,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     public void deleteAgentConversation(final UUID conversationId) {
         this.atmssoxClientCallExecutor.execute(
                 () -> {
-                    this.agentApi.deleteAgentConversation(conversationId);
+                    this.agentConversationApi.deleteAgentConversation(conversationId);
                     return null;
                 }
         );
@@ -182,7 +190,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 ? null
                 : AgentRuleAuthorTypeDTO.fromValue(query.authorType());
         final AgentRulesResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentRules(agentId, status, authorType)
+                () -> this.agentRuleApi.getAgentRules(agentId, status, authorType)
         );
         return this.agentRuleClientMapper.asAgentRulesResponse(responseDTO);
     }
@@ -191,7 +199,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     public AgentRule createAgentRule(final UUID agentId, final CreateAgentRuleRequest request) {
         final CreateAgentRuleRequestDTO requestDTO = this.agentRuleClientMapper.asCreateAgentRuleRequestDto(request);
         final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.createAgentRule(agentId, requestDTO)
+                () -> this.agentRuleApi.createAgentRule(agentId, requestDTO)
         );
         return this.agentRuleClientMapper.asAgentRule(responseDTO);
     }
@@ -200,7 +208,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     public AgentRule patchAgentRule(final UUID agentId, final UUID ruleId, final PatchAgentRuleRequest request) {
         final PatchAgentRuleRequestDTO requestDTO = this.agentRuleClientMapper.asPatchAgentRuleRequestDto(request);
         final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.patchAgentRule(agentId, ruleId, requestDTO)
+                () -> this.agentRuleApi.patchAgentRule(agentId, ruleId, requestDTO)
         );
         return this.agentRuleClientMapper.asAgentRule(responseDTO);
     }
@@ -209,7 +217,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     public AgentRule acceptAgentRule(final UUID agentId, final UUID ruleId, final AcceptAgentRuleRequest request) {
         final AcceptAgentRuleRequestDTO requestDTO = request == null ? null : this.agentRuleClientMapper.asAcceptAgentRuleRequestDto(request);
         final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.acceptAgentRule(agentId, ruleId, requestDTO)
+                () -> this.agentRuleApi.acceptAgentRule(agentId, ruleId, requestDTO)
         );
         return this.agentRuleClientMapper.asAgentRule(responseDTO);
     }
@@ -217,7 +225,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public AgentRule rejectAgentRule(final UUID agentId, final UUID ruleId) {
         final AgentRuleDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.rejectAgentRule(agentId, ruleId)
+                () -> this.agentRuleApi.rejectAgentRule(agentId, ruleId)
         );
         return this.agentRuleClientMapper.asAgentRule(responseDTO);
     }
@@ -225,7 +233,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public DeleteAgentRuleResponse deleteAgentRule(final UUID agentId, final UUID ruleId) {
         final DeleteAgentRuleResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.deleteAgentRule(agentId, ruleId)
+                () -> this.agentRuleApi.deleteAgentRule(agentId, ruleId)
         );
         return this.agentRuleClientMapper.asDeleteAgentRuleResponse(responseDTO);
     }
@@ -236,7 +244,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                                                                 final String idempotencyKey) {
         final ChatAgentRequestDTO requestDTO = this.chatAgentClientMapper.asChatAgentRequestDto(request);
         final SubmitChatExecutionResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.submitAgentChatExecutionByExecutionsPath(agentId, requestDTO, idempotencyKey)
+                () -> this.agentChatApi.submitAgentChatExecutionByExecutionsPath(agentId, requestDTO, idempotencyKey)
         );
         return this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO);
     }
@@ -244,7 +252,7 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
     @Override
     public ChatExecution getAgentChatExecution(final UUID agentId, final UUID executionId, final UUID conversationId) {
         final ChatExecutionDTO responseDTO = this.atmssoxClientCallExecutor.execute(
-                () -> this.agentApi.getAgentChatExecution(agentId, executionId, conversationId)
+                () -> this.agentChatApi.getAgentChatExecution(agentId, executionId, conversationId)
         );
         return this.chatAgentClientMapper.asChatExecution(responseDTO);
     }

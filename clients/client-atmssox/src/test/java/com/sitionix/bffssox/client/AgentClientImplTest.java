@@ -1,6 +1,10 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.api.AgentProjectApi;
+import com.app_afesox.atmssox.client.api.AgentConversationApi;
+import com.app_afesox.atmssox.client.api.AgentRuleApi;
+import com.app_afesox.atmssox.client.api.AgentChatApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
@@ -71,6 +75,14 @@ class AgentClientImplTest {
 
     @Mock
     private AgentApi agentApi;
+    @Mock
+    private AgentProjectApi agentProjectApi;
+    @Mock
+    private AgentConversationApi agentConversationApi;
+    @Mock
+    private AgentRuleApi agentRuleApi;
+    @Mock
+    private AgentChatApi agentChatApi;
 
     @Mock
     private CreateAgentClientMapper createAgentClientMapper;
@@ -95,6 +107,10 @@ class AgentClientImplTest {
     void setUp() {
         this.agentClient = new AgentClientImpl(
                 this.agentApi,
+                this.agentProjectApi,
+                this.agentConversationApi,
+                this.agentRuleApi,
+                this.agentChatApi,
                 this.createAgentClientMapper,
                 this.createAgentProjectClientMapper,
                 this.agentClientMapper,
@@ -109,6 +125,14 @@ class AgentClientImplTest {
     void tearDown() {
         verifyNoMoreInteractions(
                 this.agentApi,
+                this.agentProjectApi,
+                this.agentConversationApi,
+                this.agentRuleApi,
+                this.agentChatApi,
+                this.agentProjectApi,
+                this.agentConversationApi,
+                this.agentRuleApi,
+                this.agentChatApi,
                 this.createAgentClientMapper,
                 this.createAgentProjectClientMapper,
                 this.agentClientMapper,
@@ -159,7 +183,7 @@ class AgentClientImplTest {
             final Supplier<AgentProjectDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.createAgentProject(requestDTO)).thenReturn(responseDTO);
+        when(this.agentProjectApi.createAgentProject(requestDTO)).thenReturn(responseDTO);
         when(this.agentClientMapper.asAgentProject(responseDTO)).thenReturn(response);
 
         //when
@@ -169,7 +193,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(response);
         verify(this.createAgentProjectClientMapper).asCreateAgentProjectRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).createAgentProject(requestDTO);
+        verify(this.agentProjectApi).createAgentProject(requestDTO);
         verify(this.agentClientMapper).asAgentProject(responseDTO);
     }
 
@@ -206,7 +230,7 @@ class AgentClientImplTest {
             final Supplier<AgentProjectsPageResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentProjects(1, 20)).thenReturn(responseDTO);
+        when(this.agentProjectApi.getAgentProjects(1, 20)).thenReturn(responseDTO);
         when(this.agentClientMapper.asAgentProjectsPageResponse(responseDTO)).thenReturn(response);
 
         //when
@@ -215,7 +239,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(response);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentProjects(1, 20);
+        verify(this.agentProjectApi).getAgentProjects(1, 20);
         verify(this.agentClientMapper).asAgentProjectsPageResponse(responseDTO);
     }
 
@@ -229,7 +253,7 @@ class AgentClientImplTest {
             final Supplier<AgentProjectDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentProject(projectId)).thenReturn(responseDTO);
+        when(this.agentProjectApi.getAgentProject(projectId)).thenReturn(responseDTO);
         when(this.agentClientMapper.asAgentProject(responseDTO)).thenReturn(response);
 
         //when
@@ -238,7 +262,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(response);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentProject(projectId);
+        verify(this.agentProjectApi).getAgentProject(projectId);
         verify(this.agentClientMapper).asAgentProject(responseDTO);
     }
 
@@ -277,7 +301,7 @@ class AgentClientImplTest {
             final Supplier<AgentConversationsResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentConversations(agentId)).thenReturn(responseDTO);
+        when(this.agentConversationApi.getAgentConversations(agentId)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asAgentConversationsResponse(responseDTO)).thenReturn(response);
 
         //when
@@ -286,7 +310,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(response);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentConversations(agentId);
+        verify(this.agentConversationApi).getAgentConversations(agentId);
         verify(this.chatAgentClientMapper).asAgentConversationsResponse(responseDTO);
     }
 
@@ -301,7 +325,7 @@ class AgentClientImplTest {
             final Supplier<AgentConversationDetailsDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentConversation(conversationId)).thenReturn(responseDTO);
+        when(this.agentConversationApi.getAgentConversation(conversationId)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asAgentConversationDetails(responseDTO)).thenReturn(response);
 
         //when
@@ -310,7 +334,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(response);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentConversation(conversationId);
+        verify(this.agentConversationApi).getAgentConversation(conversationId);
         verify(this.chatAgentClientMapper).asAgentConversationDetails(responseDTO);
     }
 
@@ -328,7 +352,7 @@ class AgentClientImplTest {
 
         //then
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).deleteAgentConversation(conversationId);
+        verify(this.agentConversationApi).deleteAgentConversation(conversationId);
     }
 
     @Test
@@ -470,7 +494,7 @@ class AgentClientImplTest {
             final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, "idem-key")).thenReturn(responseDTO);
+        when(this.agentChatApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, "idem-key")).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -480,7 +504,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(
+        verify(this.agentChatApi).submitAgentChatExecutionByExecutionsPath(
                 eq(givenAgentId),
                 argThat(dto -> dto != null && clientRequestId.equals(dto.getClientRequestId())),
                 eq("idem-key")
@@ -509,7 +533,7 @@ class AgentClientImplTest {
             final Supplier<SubmitChatExecutionResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null)).thenReturn(responseDTO);
+        when(this.agentChatApi.submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -519,7 +543,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.chatAgentClientMapper).asChatAgentRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null);
+        verify(this.agentChatApi).submitAgentChatExecutionByExecutionsPath(givenAgentId, requestDTO, null);
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
     }
 
@@ -536,7 +560,7 @@ class AgentClientImplTest {
             final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId)).thenReturn(responseDTO);
+        when(this.agentChatApi.getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
 
         //when
@@ -545,7 +569,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId);
+        verify(this.agentChatApi).getAgentChatExecution(givenAgentId, givenExecutionId, givenConversationId);
         verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
     }
 
@@ -561,7 +585,7 @@ class AgentClientImplTest {
             final Supplier<ChatExecutionDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentChatExecution(givenAgentId, givenExecutionId, null)).thenReturn(responseDTO);
+        when(this.agentChatApi.getAgentChatExecution(givenAgentId, givenExecutionId, null)).thenReturn(responseDTO);
         when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
 
         //when
@@ -570,7 +594,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentChatExecution(givenAgentId, givenExecutionId, null);
+        verify(this.agentChatApi).getAgentChatExecution(givenAgentId, givenExecutionId, null);
         verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
     }
 
@@ -586,7 +610,7 @@ class AgentClientImplTest {
             final Supplier<AgentRulesResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI)).thenReturn(responseDTO);
+        when(this.agentRuleApi.getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRulesResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -595,7 +619,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI);
+        verify(this.agentRuleApi).getAgentRules(givenAgentId, AgentRuleStatusDTO.ACTIVE, AgentRuleAuthorTypeDTO.AI);
         verify(this.agentRuleClientMapper).asAgentRulesResponse(responseDTO);
     }
 
@@ -610,7 +634,7 @@ class AgentClientImplTest {
             final Supplier<AgentRulesResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.getAgentRules(givenAgentId, null, null)).thenReturn(responseDTO);
+        when(this.agentRuleApi.getAgentRules(givenAgentId, null, null)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRulesResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -619,7 +643,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).getAgentRules(givenAgentId, null, null);
+        verify(this.agentRuleApi).getAgentRules(givenAgentId, null, null);
         verify(this.agentRuleClientMapper).asAgentRulesResponse(responseDTO);
     }
 
@@ -637,7 +661,7 @@ class AgentClientImplTest {
             final Supplier<AgentRuleDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.createAgentRule(givenAgentId, requestDTO)).thenReturn(responseDTO);
+        when(this.agentRuleApi.createAgentRule(givenAgentId, requestDTO)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRule(responseDTO)).thenReturn(expected);
 
         //when
@@ -647,7 +671,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.agentRuleClientMapper).asCreateAgentRuleRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).createAgentRule(givenAgentId, requestDTO);
+        verify(this.agentRuleApi).createAgentRule(givenAgentId, requestDTO);
         verify(this.agentRuleClientMapper).asAgentRule(responseDTO);
     }
 
@@ -666,7 +690,7 @@ class AgentClientImplTest {
             final Supplier<AgentRuleDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.patchAgentRule(givenAgentId, givenRuleId, requestDTO)).thenReturn(responseDTO);
+        when(this.agentRuleApi.patchAgentRule(givenAgentId, givenRuleId, requestDTO)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRule(responseDTO)).thenReturn(expected);
 
         //when
@@ -676,7 +700,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.agentRuleClientMapper).asPatchAgentRuleRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).patchAgentRule(givenAgentId, givenRuleId, requestDTO);
+        verify(this.agentRuleApi).patchAgentRule(givenAgentId, givenRuleId, requestDTO);
         verify(this.agentRuleClientMapper).asAgentRule(responseDTO);
     }
 
@@ -692,7 +716,7 @@ class AgentClientImplTest {
             final Supplier<AgentRuleDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.acceptAgentRule(givenAgentId, givenRuleId, null)).thenReturn(responseDTO);
+        when(this.agentRuleApi.acceptAgentRule(givenAgentId, givenRuleId, null)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRule(responseDTO)).thenReturn(expected);
 
         //when
@@ -701,7 +725,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).acceptAgentRule(givenAgentId, givenRuleId, null);
+        verify(this.agentRuleApi).acceptAgentRule(givenAgentId, givenRuleId, null);
         verify(this.agentRuleClientMapper).asAgentRule(responseDTO);
     }
 
@@ -720,7 +744,7 @@ class AgentClientImplTest {
             final Supplier<AgentRuleDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.acceptAgentRule(givenAgentId, givenRuleId, requestDTO)).thenReturn(responseDTO);
+        when(this.agentRuleApi.acceptAgentRule(givenAgentId, givenRuleId, requestDTO)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRule(responseDTO)).thenReturn(expected);
 
         //when
@@ -730,7 +754,7 @@ class AgentClientImplTest {
         assertThat(actual).isEqualTo(expected);
         verify(this.agentRuleClientMapper).asAcceptAgentRuleRequestDto(request);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).acceptAgentRule(givenAgentId, givenRuleId, requestDTO);
+        verify(this.agentRuleApi).acceptAgentRule(givenAgentId, givenRuleId, requestDTO);
         verify(this.agentRuleClientMapper).asAgentRule(responseDTO);
     }
 
@@ -746,7 +770,7 @@ class AgentClientImplTest {
             final Supplier<AgentRuleDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.rejectAgentRule(givenAgentId, givenRuleId)).thenReturn(responseDTO);
+        when(this.agentRuleApi.rejectAgentRule(givenAgentId, givenRuleId)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asAgentRule(responseDTO)).thenReturn(expected);
 
         //when
@@ -755,7 +779,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).rejectAgentRule(givenAgentId, givenRuleId);
+        verify(this.agentRuleApi).rejectAgentRule(givenAgentId, givenRuleId);
         verify(this.agentRuleClientMapper).asAgentRule(responseDTO);
     }
 
@@ -771,7 +795,7 @@ class AgentClientImplTest {
             final Supplier<DeleteAgentRuleResponseDTO> supplier = invocation.getArgument(0);
             return supplier.get();
         });
-        when(this.agentApi.deleteAgentRule(givenAgentId, givenRuleId)).thenReturn(responseDTO);
+        when(this.agentRuleApi.deleteAgentRule(givenAgentId, givenRuleId)).thenReturn(responseDTO);
         when(this.agentRuleClientMapper.asDeleteAgentRuleResponse(responseDTO)).thenReturn(expected);
 
         //when
@@ -780,7 +804,7 @@ class AgentClientImplTest {
         //then
         assertThat(actual).isEqualTo(expected);
         verify(this.atmssoxClientCallExecutor).execute(any());
-        verify(this.agentApi).deleteAgentRule(givenAgentId, givenRuleId);
+        verify(this.agentRuleApi).deleteAgentRule(givenAgentId, givenRuleId);
         verify(this.agentRuleClientMapper).asDeleteAgentRuleResponse(responseDTO);
     }
 }
