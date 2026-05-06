@@ -189,17 +189,7 @@ public class MockMvcEndpoint {
                     PatchAgentProjectRequestDTO.class,
                     AgentProjectDTO.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
-                            .withRequest("requestDefaultPatchAgentProjectNameOnly.json")
-                            .expectResponse("responseDefaultPatchAgentProjectNameOnly.json"),
-                    ItUserTokens.USER_JWT);
-
-    public static final Endpoint<Object, Void> PATCH_AGENT_PROJECT_UNSUPPORTED_FIELD =
-            Endpoint.createContract("/api/v1/agent-projects/{projectId}",
-                    HttpMethod.PATCH,
-                    Object.class,
-                    Void.class,
-                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
-                            .withRequest("requestDefaultPatchAgentProjectUnsupportedField.json"),
+                            .withRequest("requestDefaultPatchAgentProjectNameOnly.json"),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT =

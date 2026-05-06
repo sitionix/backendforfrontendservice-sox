@@ -93,6 +93,7 @@ class AgentProjectControllerIT {
                 .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
                 .withPathParameters(PathParams.create()
                         .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectResponse("responseDefaultPatchAgentProjectNameOnly.json"))
                 .assertDefault();
 
         requestBuilder.verify();
@@ -195,9 +196,11 @@ class AgentProjectControllerIT {
     void givenUnsupportedFieldPatchRequest_whenPatchAgentProject_thenProxyBadRequest() {
         //when then
         this.testManager.mockMvc()
-                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT_UNSUPPORTED_FIELD)
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
                 .withPathParameters(PathParams.create()
                         .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .withRequest("requestDefaultPatchAgentProjectUnsupportedField.json"))
                 .assertDefault();
     }
 
