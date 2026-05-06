@@ -67,4 +67,28 @@ class AgentProjectControllerIT {
                         .expectResponse("responseDefaultGetSitesUnauthorized.json"))
                 .assertDefault();
     }
+
+    @Test
+    @DisplayName("given blank project name when create agent project then return bad request")
+    void givenBlankProjectName_whenCreateAgentProject_thenReturnBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CREATE_AGENT_PROJECT)
+                .applyDefault(context -> context.withRequest("requestDefaultCreateAgentProjectBlankName.json")
+                        .expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultCreateAgentProjectBlankName.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when get agent projects then return unauthorized")
+    void givenMissingToken_whenGetAgentProjects_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECTS)
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
 }
