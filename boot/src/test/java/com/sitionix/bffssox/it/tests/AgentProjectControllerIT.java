@@ -137,7 +137,7 @@ class AgentProjectControllerIT {
                 .withPathParameters(PathParams.create()
                         .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
-                        .expectResponse("responseDefaultPatchAgentProjectBadRequest.json"))
+                        .expectResponse("responsePatchAgentProjectBadRequest.json"))
                 .assertDefault();
 
         requestBuilder.verify();
