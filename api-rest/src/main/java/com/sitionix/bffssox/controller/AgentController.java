@@ -4,15 +4,18 @@ import com.app_afesox.bffssox.api_first.api.AgentApi;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleAuthorTypeDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRuleStatusDTO;
+import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentRulesResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentRequestDTO;
@@ -20,22 +23,27 @@ import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.AgentRuleApiMapper;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentApiMapper;
+import com.sitionix.bffssox.mapper.CreateAgentProjectApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentApiMapper;
 import com.sitionix.bffssox.usecase.ActivateAgent;
 import com.sitionix.bffssox.usecase.ArchiveAgent;
 import com.sitionix.bffssox.usecase.CreateAgent;
+import com.sitionix.bffssox.usecase.CreateAgentProject;
 import com.sitionix.bffssox.usecase.CreateAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgentRule;
 import com.sitionix.bffssox.usecase.DeleteAgent;
@@ -45,6 +53,7 @@ import com.sitionix.bffssox.usecase.GetAgentChatExecution;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgents;
+import com.sitionix.bffssox.usecase.GetAgentProjects;
 import com.sitionix.bffssox.usecase.GetAgentRules;
 import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.PatchAgent;
@@ -63,12 +72,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgentController implements AgentApi {
 
     private final CreateAgentApiMapper createAgentApiMapper;
+    private final CreateAgentProjectApiMapper createAgentProjectApiMapper;
 
     private final AgentApiMapper agentApiMapper;
 
     private final AgentRuleApiMapper agentRuleApiMapper;
 
     private final CreateAgent createAgent;
+    private final CreateAgentProject createAgentProject;
 
     private final PatchAgentApiMapper patchAgentApiMapper;
 
@@ -81,6 +92,7 @@ public class AgentController implements AgentApi {
     private final GetAgentChatExecution getAgentChatExecution;
 
     private final GetAgents getAgents;
+    private final GetAgentProjects getAgentProjects;
 
     private final GetAgent getAgent;
 
@@ -117,9 +129,25 @@ public class AgentController implements AgentApi {
 
     @Override
     @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentProjectDTO> createAgentProject(@Valid final CreateAgentProjectRequestDTO createAgentProjectRequestDTO) {
+        final CreateAgentProjectRequest request = this.createAgentProjectApiMapper.asCreateAgentProjectRequest(createAgentProjectRequestDTO);
+        final AgentProject response = this.createAgentProject.execute(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.agentApiMapper.asAgentProjectDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AgentsResponseDTO> getAgents() {
         final AgentsResponse response = this.getAgents.execute();
         return ResponseEntity.ok(this.agentApiMapper.asAgentsResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentProjectsPageResponseDTO> getAgentProjects(final Integer page, final Integer size) {
+        final AgentProjectsPageResponse response = this.getAgentProjects.execute(page, size);
+        return ResponseEntity.ok(this.agentApiMapper.asAgentProjectsPageResponseDto(response));
     }
 
     @Override

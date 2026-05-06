@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "id": "7d7c7aa2-0e4d-47e4-88e0-2fc7c3c64e97",
+      "name": "Marketing Automation",
+      "description": "Project for marketing agents and campaign automation",
+      "status": "ACTIVE",
+      "createdAt": "2026-05-05T12:00:00Z",
+      "updatedAt": "2026-05-05T12:00:00Z"
+    }
+  ],
+  "page": 0,
+  "size": 20,
+  "hasNext": false
+}

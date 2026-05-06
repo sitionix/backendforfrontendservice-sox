@@ -7,9 +7,12 @@ import com.app_afesox.athssox.client.dto.LoginResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
@@ -201,6 +204,29 @@ public class WireMockEndpoint {
                         context.responseBody("responseDefaultMappingCreateAgentWithNameOnly.json")
                                 .plainUrl()
                                 .responseStatus(201);
+                    });
+
+    public static final Endpoint<CreateAgentProjectRequestDTO, AgentProjectDTO> POST_CREATE_AGENT_PROJECT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects",
+                    HttpMethod.POST,
+                    CreateAgentProjectRequestDTO.class,
+                    AgentProjectDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingCreateAgentProject.json")
+                                .plainUrl()
+                                .responseStatus(201);
+                    });
+
+    public static final Endpoint<Void, AgentProjectsPageResponseDTO> GET_AGENT_PROJECTS =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects",
+                    HttpMethod.GET,
+                    Void.class,
+                    AgentProjectsPageResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetAgentProjects.json")
+                                .responseStatus(200);
                     });
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

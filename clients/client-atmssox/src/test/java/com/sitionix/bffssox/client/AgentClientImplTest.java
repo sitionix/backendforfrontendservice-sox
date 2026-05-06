@@ -4,6 +4,8 @@ import com.app_afesox.atmssox.client.api.AgentApi;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.AcceptAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleAuthorTypeDTO;
@@ -14,6 +16,7 @@ import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
@@ -21,6 +24,8 @@ import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
@@ -29,6 +34,7 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
+import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
@@ -38,6 +44,7 @@ import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.AgentRuleClientMapper;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
+import com.sitionix.bffssox.mapper.CreateAgentProjectClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -67,6 +74,8 @@ class AgentClientImplTest {
 
     @Mock
     private CreateAgentClientMapper createAgentClientMapper;
+    @Mock
+    private CreateAgentProjectClientMapper createAgentProjectClientMapper;
 
     @Mock
     private AgentClientMapper agentClientMapper;
@@ -87,6 +96,7 @@ class AgentClientImplTest {
         this.agentClient = new AgentClientImpl(
                 this.agentApi,
                 this.createAgentClientMapper,
+                this.createAgentProjectClientMapper,
                 this.agentClientMapper,
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
@@ -100,6 +110,7 @@ class AgentClientImplTest {
         verifyNoMoreInteractions(
                 this.agentApi,
                 this.createAgentClientMapper,
+                this.createAgentProjectClientMapper,
                 this.agentClientMapper,
                 this.agentRuleClientMapper,
                 this.patchAgentClientMapper,
@@ -136,6 +147,33 @@ class AgentClientImplTest {
     }
 
     @Test
+    void givenCreateAgentProjectRequest_whenCreateAgentProject_thenReturnAgentProject() {
+        //given
+        final CreateAgentProjectRequest request = mock(CreateAgentProjectRequest.class);
+        final CreateAgentProjectRequestDTO requestDTO = mock(CreateAgentProjectRequestDTO.class);
+        final AgentProjectDTO responseDTO = mock(AgentProjectDTO.class);
+        final AgentProject response = mock(AgentProject.class);
+
+        when(this.createAgentProjectClientMapper.asCreateAgentProjectRequestDto(request)).thenReturn(requestDTO);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentProjectDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.createAgentProject(requestDTO)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgentProject(responseDTO)).thenReturn(response);
+
+        //when
+        final AgentProject actual = this.agentClient.createAgentProject(request);
+
+        //then
+        assertThat(actual).isEqualTo(response);
+        verify(this.createAgentProjectClientMapper).asCreateAgentProjectRequestDto(request);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).createAgentProject(requestDTO);
+        verify(this.agentClientMapper).asAgentProject(responseDTO);
+    }
+
+    @Test
     void givenGetAgentsRequest_whenGetAgents_thenReturnAgentsResponse() {
         //given
         final AgentsResponseDTO responseDTO = mock(AgentsResponseDTO.class);
@@ -156,6 +194,29 @@ class AgentClientImplTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentApi).getAgents();
         verify(this.agentClientMapper).asAgentsResponse(responseDTO);
+    }
+
+    @Test
+    void givenGetAgentProjectsRequest_whenGetAgentProjects_thenReturnAgentProjectsPageResponse() {
+        //given
+        final AgentProjectsPageResponseDTO responseDTO = mock(AgentProjectsPageResponseDTO.class);
+        final AgentProjectsPageResponse response = mock(AgentProjectsPageResponse.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentProjectsPageResponseDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.getAgentProjects(1, 20)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgentProjectsPageResponse(responseDTO)).thenReturn(response);
+
+        //when
+        final AgentProjectsPageResponse actual = this.agentClient.getAgentProjects(1, 20);
+
+        //then
+        assertThat(actual).isEqualTo(response);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).getAgentProjects(1, 20);
+        verify(this.agentClientMapper).asAgentProjectsPageResponse(responseDTO);
     }
 
     @Test
@@ -377,10 +438,7 @@ class AgentClientImplTest {
         final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
         final UUID clientRequestId = UUID.fromString("8ecef151-3f6a-46a8-a9a4-1f61f65b6f09");
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentRequestDTO requestDTO = ChatAgentRequestDTO.builder()
-                .clientRequestId(clientRequestId)
-                .message("message")
-                .build();
+        final ChatAgentRequestDTO requestDTO = this.getChatAgentRequestDto(clientRequestId);
         final SubmitChatExecutionResponseDTO responseDTO = mock(SubmitChatExecutionResponseDTO.class);
         final SubmitChatExecutionResponse expected = mock(SubmitChatExecutionResponse.class);
 
@@ -405,6 +463,13 @@ class AgentClientImplTest {
                 eq("idem-key")
         );
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
+    }
+
+    private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId) {
+        return ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
+                .message("message")
+                .build();
     }
 
     @Test
