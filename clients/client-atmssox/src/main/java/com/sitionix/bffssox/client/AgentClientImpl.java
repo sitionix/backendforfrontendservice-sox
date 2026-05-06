@@ -18,6 +18,7 @@ import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
+import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,16 @@ public class AgentClientImpl implements AgentClient {
     @Override
     public AgentProject getAgentProject(final UUID projectId) {
         return this.agentProjectAtmssoxClient.getAgentProject(projectId);
+    }
+
+    @Override
+    public AgentProject patchAgentProject(final UUID projectId, final PatchAgentProjectRequest request) {
+        return this.agentProjectAtmssoxClient.patchAgentProject(projectId, request);
+    }
+
+    @Override
+    public void deleteAgentProject(final UUID projectId) {
+        this.agentProjectAtmssoxClient.deleteAgentProject(projectId);
     }
 
     @Override

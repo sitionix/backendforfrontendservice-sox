@@ -18,6 +18,7 @@ import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
+import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.UUID;
 
@@ -46,6 +47,8 @@ public interface AgentClient {
     AgentProjectsPageResponse getAgentProjects(Integer page, Integer size);
 
     AgentProject getAgentProject(UUID projectId);
+    AgentProject patchAgentProject(UUID projectId, PatchAgentProjectRequest request);
+    void deleteAgentProject(UUID projectId);
 
     /**
      * Returns one automation agent.

@@ -9,6 +9,7 @@ import com.sitionix.bffssox.domain.AgentRule;
 import com.sitionix.bffssox.domain.AgentsResponse;
 import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
+import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
 import java.util.UUID;
@@ -163,6 +164,24 @@ class AgentClientImplTest {
         assertThat(actualDetails).isEqualTo(details);
         verify(this.agentProjectAtmssoxClient).getAgentProject(projectId);
         verify(this.agentConversationAtmssoxClient).getAgentConversation(conversationId);
+    }
+
+    @Test
+    void givenProjectPatchAndDelete_whenExecute_thenDelegateToProjectClient() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final PatchAgentProjectRequest request = mock(PatchAgentProjectRequest.class);
+        final AgentProject project = mock(AgentProject.class);
+        when(this.agentProjectAtmssoxClient.patchAgentProject(projectId, request)).thenReturn(project);
+
+        //when
+        final AgentProject actual = this.agentClient.patchAgentProject(projectId, request);
+        this.agentClient.deleteAgentProject(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(project);
+        verify(this.agentProjectAtmssoxClient).patchAgentProject(projectId, request);
+        verify(this.agentProjectAtmssoxClient).deleteAgentProject(projectId);
     }
 
     @Test
