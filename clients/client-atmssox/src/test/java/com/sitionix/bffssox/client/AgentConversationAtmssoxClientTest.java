@@ -1,7 +1,9 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentConversationApi;
+import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
+import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import java.util.UUID;
@@ -64,5 +66,39 @@ class AgentConversationAtmssoxClientTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentConversationApi).getAgentConversations(agentId);
         verify(this.chatAgentClientMapper).asAgentConversationsResponse(responseDTO);
+    }
+
+    @Test
+    void givenConversationId_whenGetAgentConversation_thenReturnMappedDetails() {
+        //given
+        final UUID conversationId = UUID.randomUUID();
+        final AgentConversationDetailsDTO responseDTO = mock(AgentConversationDetailsDTO.class);
+        final AgentConversationDetails expected = mock(AgentConversationDetails.class);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<AgentConversationDetailsDTO>) invocation.getArgument(0)).get());
+        when(this.agentConversationApi.getAgentConversation(conversationId)).thenReturn(responseDTO);
+        when(this.chatAgentClientMapper.asAgentConversationDetails(responseDTO)).thenReturn(expected);
+
+        //when
+        final AgentConversationDetails actual = this.agentConversationAtmssoxClient.getAgentConversation(conversationId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentConversationApi).getAgentConversation(conversationId);
+        verify(this.chatAgentClientMapper).asAgentConversationDetails(responseDTO);
+    }
+
+    @Test
+    void givenConversationId_whenDeleteAgentConversation_thenDelegateToApi() {
+        //given
+        final UUID conversationId = UUID.randomUUID();
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<Object>) invocation.getArgument(0)).get());
+
+        //when
+        this.agentConversationAtmssoxClient.deleteAgentConversation(conversationId);
+
+        //then
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentConversationApi).deleteAgentConversation(conversationId);
     }
 }
