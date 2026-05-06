@@ -37,6 +37,7 @@ import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetAgentRules;
 import com.sitionix.bffssox.usecase.GetAgents;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
+import com.sitionix.bffssox.usecase.GetAgentProject;
 import com.sitionix.bffssox.usecase.PatchAgent;
 import com.sitionix.bffssox.usecase.PatchAgentRule;
 import com.sitionix.bffssox.usecase.RestoreAgent;
@@ -75,6 +76,7 @@ class AgentControllerTest {
     @Mock private GetAgentChatExecution getAgentChatExecution;
     @Mock private GetAgents getAgents;
     @Mock private GetAgentProjects getAgentProjects;
+    @Mock private GetAgentProject getAgentProject;
     @Mock private GetAgent getAgent;
     @Mock private GetAgentConversations getAgentConversations;
     @Mock private GetAgentConversation getAgentConversation;
@@ -104,6 +106,7 @@ class AgentControllerTest {
                 this.getAgentChatExecution,
                 this.getAgents,
                 this.getAgentProjects,
+                this.getAgentProject,
                 this.getAgent,
                 this.getAgentConversations,
                 this.getAgentConversation,
@@ -135,6 +138,7 @@ class AgentControllerTest {
                 this.getAgentChatExecution,
                 this.getAgents,
                 this.getAgentProjects,
+                this.getAgentProject,
                 this.getAgent,
                 this.getAgentConversations,
                 this.getAgentConversation,
@@ -292,5 +296,23 @@ class AgentControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
         verify(this.getAgentProjects).execute(1, 30);
         verify(this.agentApiMapper).asAgentProjectsPageResponseDto(response);
+    }
+
+    @Test
+    void givenProjectId_whenGetAgentProject_thenReturnOkProjectResponse() {
+        //given
+        final UUID projectId = UUID.fromString("09e25bcf-f8a2-4f6c-860c-bf1af25dbbba");
+        final AgentProject response = mock(AgentProject.class);
+        final AgentProjectDTO responseDto = mock(AgentProjectDTO.class);
+        when(this.getAgentProject.execute(projectId)).thenReturn(response);
+        when(this.agentApiMapper.asAgentProjectDto(response)).thenReturn(responseDto);
+
+        //when
+        final ResponseEntity<AgentProjectDTO> actual = this.agentController.getAgentProject(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
+        verify(this.getAgentProject).execute(projectId);
+        verify(this.agentApiMapper).asAgentProjectDto(response);
     }
 }

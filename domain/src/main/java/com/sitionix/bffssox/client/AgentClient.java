@@ -45,6 +45,8 @@ public interface AgentClient {
 
     AgentProjectsPageResponse getAgentProjects(Integer page, Integer size);
 
+    AgentProject getAgentProject(UUID projectId);
+
     /**
      * Returns one automation agent.
      *

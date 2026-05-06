@@ -47,7 +47,15 @@ import com.sitionix.bffssox.mapper.CreateAgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentClientMapper;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -99,6 +107,28 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 () -> this.agentApi.getAgentProjects(page, size)
         );
         return this.agentClientMapper.asAgentProjectsPageResponse(responseDTO);
+    }
+
+    @Override
+    public AgentProject getAgentProject(final UUID projectId) {
+        final AgentProjectDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentApi.getApiClient().invokeAPI(
+                        "/api/v1/agent-projects/{projectId}",
+                        HttpMethod.GET,
+                        this.pathParams(projectId),
+                        new LinkedMultiValueMap<>(),
+                        null,
+                        new HttpHeaders(),
+                        new LinkedMultiValueMap<>(),
+                        new LinkedMultiValueMap<>(),
+                        List.of(MediaType.APPLICATION_JSON),
+                        null,
+                        new String[]{"bearerAuth"},
+                        new ParameterizedTypeReference<AgentProjectDTO>() {
+                        }
+                ).getBody()
+        );
+        return this.agentClientMapper.asAgentProject(responseDTO);
     }
 
     @Override
@@ -248,5 +278,11 @@ public class AgentClientImpl implements com.sitionix.bffssox.client.AgentClient 
                 () -> this.agentApi.patchAgent(agentId, requestDTO)
         );
         return this.agentClientMapper.asAgent(responseDTO);
+    }
+
+    private Map<String, Object> pathParams(final UUID projectId) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("projectId", projectId);
+        return params;
     }
 }

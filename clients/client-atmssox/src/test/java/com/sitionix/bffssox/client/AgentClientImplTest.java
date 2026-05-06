@@ -1,6 +1,7 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentApi;
+import com.app_afesox.atmssox.client.invoker.ApiClient;
 import com.app_afesox.atmssox.client.dto.AgentConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
@@ -54,6 +55,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -217,6 +221,59 @@ class AgentClientImplTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentApi).getAgentProjects(1, 20);
         verify(this.agentClientMapper).asAgentProjectsPageResponse(responseDTO);
+    }
+
+    @Test
+    void givenProjectId_whenGetAgentProject_thenReturnAgentProject() {
+        //given
+        final UUID projectId = UUID.fromString("2d76e53b-f5f2-41d0-bbfd-4b26c9de5efe");
+        final ApiClient apiClient = mock(ApiClient.class);
+        final AgentProjectDTO responseDTO = mock(AgentProjectDTO.class);
+        final AgentProject response = mock(AgentProject.class);
+        final ResponseEntity<AgentProjectDTO> responseEntity = ResponseEntity.ok(responseDTO);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> {
+            final Supplier<AgentProjectDTO> supplier = invocation.getArgument(0);
+            return supplier.get();
+        });
+        when(this.agentApi.getApiClient()).thenReturn(apiClient);
+        when(apiClient.invokeAPI(
+                eq("/api/v1/agent-projects/{projectId}"),
+                eq(HttpMethod.GET),
+                argThat(map -> projectId.equals(map.get("projectId"))),
+                any(),
+                eq(null),
+                any(),
+                any(),
+                any(),
+                any(),
+                eq(null),
+                any(),
+                any(ParameterizedTypeReference.class)
+        )).thenReturn(responseEntity);
+        when(this.agentClientMapper.asAgentProject(responseDTO)).thenReturn(response);
+
+        //when
+        final AgentProject actual = this.agentClient.getAgentProject(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(response);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentApi).getApiClient();
+        verify(apiClient).invokeAPI(
+                eq("/api/v1/agent-projects/{projectId}"),
+                eq(HttpMethod.GET),
+                argThat(map -> projectId.equals(map.get("projectId"))),
+                any(),
+                eq(null),
+                any(),
+                any(),
+                any(),
+                any(),
+                eq(null),
+                any(),
+                any(ParameterizedTypeReference.class)
+        );
+        verify(this.agentClientMapper).asAgentProject(responseDTO);
     }
 
     @Test
