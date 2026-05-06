@@ -19,14 +19,8 @@ class CreateAgentProjectClientMapperTest {
     @Test
     void givenCreateAgentProjectRequest_whenAsCreateAgentProjectRequestDto_thenReturnDto() {
         //given
-        final CreateAgentProjectRequest given = CreateAgentProjectRequest.builder()
-                .name("Project")
-                .description("Description")
-                .build();
-        final CreateAgentProjectRequestDTO expected = CreateAgentProjectRequestDTO.builder()
-                .name("Project")
-                .description("Description")
-                .build();
+        final CreateAgentProjectRequest given = this.createAgentProjectRequest();
+        final CreateAgentProjectRequestDTO expected = this.createAgentProjectRequestDto();
 
         //when
         final CreateAgentProjectRequestDTO actual = this.mapper.asCreateAgentProjectRequestDto(given);
@@ -45,5 +39,19 @@ class CreateAgentProjectClientMapperTest {
 
         //then
         assertThat(actual).isNull();
+    }
+
+    private CreateAgentProjectRequest createAgentProjectRequest() {
+        return CreateAgentProjectRequest.builder()
+                .name("Project")
+                .description("Description")
+                .build();
+    }
+
+    private CreateAgentProjectRequestDTO createAgentProjectRequestDto() {
+        return CreateAgentProjectRequestDTO.builder()
+                .name("Project")
+                .description("Description")
+                .build();
     }
 }

@@ -438,10 +438,7 @@ class AgentClientImplTest {
         final UUID givenAgentId = UUID.fromString("7ac2f8c1-3d66-4cb4-95d9-27df5c66bf20");
         final UUID clientRequestId = UUID.fromString("8ecef151-3f6a-46a8-a9a4-1f61f65b6f09");
         final ChatAgentRequest request = mock(ChatAgentRequest.class);
-        final ChatAgentRequestDTO requestDTO = ChatAgentRequestDTO.builder()
-                .clientRequestId(clientRequestId)
-                .message("message")
-                .build();
+        final ChatAgentRequestDTO requestDTO = this.getChatAgentRequestDto(clientRequestId);
         final SubmitChatExecutionResponseDTO responseDTO = mock(SubmitChatExecutionResponseDTO.class);
         final SubmitChatExecutionResponse expected = mock(SubmitChatExecutionResponse.class);
 
@@ -466,6 +463,13 @@ class AgentClientImplTest {
                 eq("idem-key")
         );
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
+    }
+
+    private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId) {
+        return ChatAgentRequestDTO.builder()
+                .clientRequestId(clientRequestId)
+                .message("message")
+                .build();
     }
 
     @Test

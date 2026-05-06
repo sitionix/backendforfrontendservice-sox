@@ -46,12 +46,8 @@ class AgentApiMapperTest {
     @Test
     void givenAgentsResponse_whenAsAgentsResponseDto_thenReturnAgentsResponseDto() {
         //given
-        final AgentsResponse given = AgentsResponse.builder()
-                .items(List.of(this.agent()))
-                .build();
-        final AgentsResponseDTO expected = AgentsResponseDTO.builder()
-                .items(List.of(this.agentDto()))
-                .build();
+        final AgentsResponse given = this.agentsResponse();
+        final AgentsResponseDTO expected = this.agentsResponseDto();
 
         //when
         final AgentsResponseDTO actual = this.mapper.asAgentsResponseDto(given);
@@ -87,14 +83,7 @@ class AgentApiMapperTest {
     @Test
     void givenAgentProject_whenAsAgentProjectDto_thenReturnAgentProjectDto() {
         //given
-        final AgentProject given = AgentProject.builder()
-                .id(UUID.fromString("f2f2b8c4-5039-4095-b5ec-d584bd429ca3"))
-                .name("Project")
-                .description("Description")
-                .status(AgentProjectStatus.ACTIVE)
-                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
-                .build();
+        final AgentProject given = this.agentProject();
 
         //when
         final AgentProjectDTO actual = this.mapper.asAgentProjectDto(given);
@@ -111,19 +100,7 @@ class AgentApiMapperTest {
     @Test
     void givenAgentProjectsPageResponse_whenAsAgentProjectsPageResponseDto_thenReturnDto() {
         //given
-        final AgentProjectsPageResponse given = AgentProjectsPageResponse.builder()
-                .items(List.of(AgentProject.builder()
-                        .id(UUID.fromString("f2f2b8c4-5039-4095-b5ec-d584bd429ca3"))
-                        .name("Project")
-                        .description("Description")
-                        .status(AgentProjectStatus.ACTIVE)
-                        .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
-                        .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
-                        .build()))
-                .page(0)
-                .size(20)
-                .hasNext(false)
-                .build();
+        final AgentProjectsPageResponse given = this.agentProjectsPageResponse();
 
         //when
         final AgentProjectsPageResponseDTO actual = this.mapper.asAgentProjectsPageResponseDto(given);
@@ -138,15 +115,7 @@ class AgentApiMapperTest {
     @Test
     void givenAgentWithArchivedStatusAndNullId_whenAsAgentDto_thenReturnArchivedStatusAndNullId() {
         //given
-        final Agent given = Agent.builder()
-                .id(null)
-                .name("A")
-                .description("D")
-                .instruction("I")
-                .status(AgentStatus.ARCHIVED)
-                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
-                .build();
+        final Agent given = this.archivedAgentWithNullId();
 
         //when
         final AgentDTO actual = this.mapper.asAgentDto(given);
@@ -175,6 +144,50 @@ class AgentApiMapperTest {
                 .description("Checks architecture decisions")
                 .instruction("Check boundaries first")
                 .status(AgentDTO.StatusEnum.ACTIVE)
+                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                .build();
+    }
+
+    private AgentProject agentProject() {
+        return AgentProject.builder()
+                .id(UUID.fromString("f2f2b8c4-5039-4095-b5ec-d584bd429ca3"))
+                .name("Project")
+                .description("Description")
+                .status(AgentProjectStatus.ACTIVE)
+                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                .build();
+    }
+
+    private AgentProjectsPageResponse agentProjectsPageResponse() {
+        return AgentProjectsPageResponse.builder()
+                .items(List.of(this.agentProject()))
+                .page(0)
+                .size(20)
+                .hasNext(false)
+                .build();
+    }
+
+    private AgentsResponse agentsResponse() {
+        return AgentsResponse.builder()
+                .items(List.of(this.agent()))
+                .build();
+    }
+
+    private AgentsResponseDTO agentsResponseDto() {
+        return AgentsResponseDTO.builder()
+                .items(List.of(this.agentDto()))
+                .build();
+    }
+
+    private Agent archivedAgentWithNullId() {
+        return Agent.builder()
+                .id(null)
+                .name("A")
+                .description("D")
+                .instruction("I")
+                .status(AgentStatus.ARCHIVED)
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
                 .build();

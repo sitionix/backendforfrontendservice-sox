@@ -45,12 +45,8 @@ class AgentClientMapperTest {
     @Test
     void givenAgentsResponseDto_whenAsAgentsResponse_thenReturnAgentsResponse() {
         //given
-        final AgentsResponseDTO given = AgentsResponseDTO.builder()
-                .items(List.of(this.agentDto()))
-                .build();
-        final AgentsResponse expected = AgentsResponse.builder()
-                .items(List.of(this.agent()))
-                .build();
+        final AgentsResponseDTO given = this.agentsResponseDto();
+        final AgentsResponse expected = this.agentsResponse();
 
         //when
         final AgentsResponse actual = this.mapper.asAgentsResponse(given);
@@ -86,13 +82,7 @@ class AgentClientMapperTest {
     @Test
     void givenAgentProjectDto_whenAsAgentProject_thenReturnAgentProject() {
         //given
-        final AgentProjectDTO given = AgentProjectDTO.builder()
-                .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
-                .name("Project")
-                .description("Description")
-                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
-                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
-                .build();
+        final AgentProjectDTO given = this.agentProjectDto();
 
         //when
         final AgentProject actual = this.mapper.asAgentProject(given);
@@ -109,18 +99,7 @@ class AgentClientMapperTest {
     @Test
     void givenAgentProjectsPageResponseDto_whenAsAgentProjectsPageResponse_thenReturnPageResponse() {
         //given
-        final AgentProjectsPageResponseDTO given = AgentProjectsPageResponseDTO.builder()
-                .items(List.of(AgentProjectDTO.builder()
-                        .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
-                        .name("Project")
-                        .description("Description")
-                        .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
-                        .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
-                        .build()))
-                .page(1)
-                .size(10)
-                .hasNext(true)
-                .build();
+        final AgentProjectsPageResponseDTO given = this.agentProjectsPageResponseDto();
 
         //when
         final AgentProjectsPageResponse actual = this.mapper.asAgentProjectsPageResponse(given);
@@ -151,6 +130,37 @@ class AgentClientMapperTest {
                 .status(AgentStatus.ARCHIVED)
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                .build();
+    }
+
+    private AgentProjectDTO agentProjectDto() {
+        return AgentProjectDTO.builder()
+                .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
+                .name("Project")
+                .description("Description")
+                .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
+                .build();
+    }
+
+    private AgentProjectsPageResponseDTO agentProjectsPageResponseDto() {
+        return AgentProjectsPageResponseDTO.builder()
+                .items(List.of(this.agentProjectDto()))
+                .page(1)
+                .size(10)
+                .hasNext(true)
+                .build();
+    }
+
+    private AgentsResponseDTO agentsResponseDto() {
+        return AgentsResponseDTO.builder()
+                .items(List.of(this.agentDto()))
+                .build();
+    }
+
+    private AgentsResponse agentsResponse() {
+        return AgentsResponse.builder()
+                .items(List.of(this.agent()))
                 .build();
     }
 }
