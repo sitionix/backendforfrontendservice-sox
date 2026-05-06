@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentOperationsPort;
+import com.sitionix.bffssox.client.AgentClient;
 import com.sitionix.bffssox.domain.Agent;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ class ArchiveAgentImplTest {
     private ArchiveAgent archiveAgent;
 
     @Mock
-    private AgentOperationsPort agentClient;
+    private AgentClient agentClient;
 
     @BeforeEach
     void setUp() {

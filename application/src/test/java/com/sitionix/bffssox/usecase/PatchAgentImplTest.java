@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.sitionix.bffssox.client.AgentOperationsPort;
+import com.sitionix.bffssox.client.AgentClient;
 import com.sitionix.bffssox.domain.Agent;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
 import java.util.UUID;
@@ -23,7 +23,7 @@ class PatchAgentImplTest {
     private PatchAgent patchAgent;
 
     @Mock
-    private AgentOperationsPort agentClient;
+    private AgentClient agentClient;
 
     @BeforeEach
     void setUp() {

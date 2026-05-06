@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AgentAtmssoxClient implements AgentOperationsPort {
+public class AgentAtmssoxClient implements AgentClient {
 
     private final AgentApi agentApi;
     private final CreateAgentClientMapper createAgentClientMapper;

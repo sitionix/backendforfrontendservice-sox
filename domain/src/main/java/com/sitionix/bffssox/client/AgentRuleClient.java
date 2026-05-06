@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * Port for automation agent rule operations.
  */
-public interface AgentRuleOperationsPort {
+public interface AgentRuleClient {
 
     AgentRulesResponse getAgentRules(UUID agentId, GetAgentRulesQuery query);
 

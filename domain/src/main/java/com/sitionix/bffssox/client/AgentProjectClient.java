@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Port for automation agent project operations.
  */
-public interface AgentProjectOperationsPort {
+public interface AgentProjectClient {
 
     AgentProject createAgentProject(CreateAgentProjectRequest request);
 

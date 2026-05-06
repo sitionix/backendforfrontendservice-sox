@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentProjectOperationsPort;
+import com.sitionix.bffssox.client.AgentProjectClient;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CreateAgentProjectImpl implements CreateAgentProject {
 
-    private final AgentProjectOperationsPort agentClient;
+    private final AgentProjectClient agentClient;
 
     @Override
     public AgentProject execute(final CreateAgentProjectRequest request) {

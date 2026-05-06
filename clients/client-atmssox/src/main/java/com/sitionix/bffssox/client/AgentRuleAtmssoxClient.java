@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AgentRuleAtmssoxClient implements AgentRuleOperationsPort {
+public class AgentRuleAtmssoxClient implements AgentRuleClient {
 
     private final AgentRuleApi agentRuleApi;
     private final AgentRuleClientMapper agentRuleClientMapper;

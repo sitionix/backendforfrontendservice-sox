@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Port for automation agent chat execution operations.
  */
-public interface AgentChatOperationsPort {
+public interface AgentChatClient {
 
     SubmitChatExecutionResponse submitAgentChatExecution(UUID agentId, ChatAgentRequest request, String idempotencyKey);
 

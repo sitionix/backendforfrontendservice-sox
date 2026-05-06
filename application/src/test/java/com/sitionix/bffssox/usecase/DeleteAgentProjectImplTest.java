@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentProjectOperationsPort;
+import com.sitionix.bffssox.client.AgentProjectClient;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ class DeleteAgentProjectImplTest {
 
     private DeleteAgentProject deleteAgentProject;
 
-    @Mock private AgentProjectOperationsPort agentClient;
+    @Mock private AgentProjectClient agentClient;
 
     @BeforeEach
     void setUp() {

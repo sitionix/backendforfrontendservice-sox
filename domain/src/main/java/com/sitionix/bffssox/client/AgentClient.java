@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Port for automation agent lifecycle and identity operations.
  */
-public interface AgentOperationsPort {
+public interface AgentClient {
 
     /**
      * Creates a new automation agent.

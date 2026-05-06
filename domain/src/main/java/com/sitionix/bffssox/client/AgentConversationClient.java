@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * Port for automation agent conversation operations.
  */
-public interface AgentConversationOperationsPort {
+public interface AgentConversationClient {
 
     AgentConversationsResponse getAgentConversations(UUID agentId);
 

@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentConversationOperationsPort;
+import com.sitionix.bffssox.client.AgentConversationClient;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ class DeleteAgentConversationImplTest {
     private DeleteAgentConversation deleteAgentConversation;
 
     @Mock
-    private AgentConversationOperationsPort agentClient;
+    private AgentConversationClient agentClient;
 
     @BeforeEach
     void setUp() {
