@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "id": "2f860741-6e23-4d20-91f0-2c4b1f8e6a36",
+      "name": "Architecture Reviewer",
+      "description": "Checks architecture decisions",
+      "status": "ACTIVE",
+      "createdAt": "2026-05-05T12:00:00Z",
+      "updatedAt": "2026-05-05T12:05:00Z",
+      "membershipId": "1a0db36f-8622-4a15-9910-2dea1b19e4a8",
+      "attachedAt": "2026-05-06T08:10:00Z"
+    }
+  ]
+}
