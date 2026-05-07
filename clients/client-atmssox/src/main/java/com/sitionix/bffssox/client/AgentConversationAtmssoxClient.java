@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AgentConversationAtmssoxClient {
+public class AgentConversationAtmssoxClient implements AgentConversationClient {
 
     private final AgentConversationApi agentConversationApi;
     private final ChatAgentClientMapper chatAgentClientMapper;

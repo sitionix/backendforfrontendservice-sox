@@ -19,6 +19,7 @@ import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
@@ -239,6 +240,25 @@ public class WireMockEndpoint {
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseBody("responseDefaultMappingGetAgentProject.json")
                                 .responseStatus(200);
+                    });
+
+    public static final Endpoint<PatchAgentProjectRequestDTO, AgentProjectDTO> PATCH_AGENT_PROJECT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}",
+                    HttpMethod.PATCH,
+                    PatchAgentProjectRequestDTO.class,
+                    AgentProjectDTO.class,
+                    (WiremockDefault) context -> {
+                        context.responseBody("responseDefaultMappingPatchAgentProjectNameOnly.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (WiremockDefault) context -> {
+                        context.responseStatus(204);
                     });
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

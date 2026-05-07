@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentConversationClient;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ class GetAgentConversationsImplTest {
     private GetAgentConversations getAgentConversations;
 
     @Mock
-    private AgentClient agentClient;
+    private AgentConversationClient agentClient;
 
     @BeforeEach
     void setUp() {

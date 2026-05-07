@@ -4,14 +4,18 @@ import com.app_afesox.bffssox.api_first.api.AgentProjectApi;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.PatchAgentProjectRequestDTO;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectApiMapper;
+import com.sitionix.bffssox.mapper.PatchAgentProjectApiMapper;
 import com.sitionix.bffssox.usecase.CreateAgentProject;
+import com.sitionix.bffssox.usecase.DeleteAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
+import com.sitionix.bffssox.usecase.PatchAgentProject;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,9 @@ public class AgentProjectController implements AgentProjectApi {
     private final CreateAgentProject createAgentProject;
     private final GetAgentProjects getAgentProjects;
     private final GetAgentProject getAgentProject;
+    private final PatchAgentProjectApiMapper patchAgentProjectApiMapper;
+    private final PatchAgentProject patchAgentProject;
+    private final DeleteAgentProject deleteAgentProject;
 
     @Override
     @PreAuthorize("isAuthenticated()")
@@ -50,5 +57,19 @@ public class AgentProjectController implements AgentProjectApi {
     public ResponseEntity<AgentProjectDTO> getAgentProject(final UUID projectId) {
         final AgentProject response = this.getAgentProject.execute(projectId);
         return ResponseEntity.ok(this.agentApiMapper.asAgentProjectDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AgentProjectDTO> patchAgentProject(final UUID projectId, @Valid final PatchAgentProjectRequestDTO patchAgentProjectRequestDTO) {
+        final AgentProject response = this.patchAgentProject.execute(projectId, this.patchAgentProjectApiMapper.asPatchAgentProjectRequest(patchAgentProjectRequestDTO));
+        return ResponseEntity.ok(this.agentApiMapper.asAgentProjectDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteAgentProject(final UUID projectId) {
+        this.deleteAgentProject.execute(projectId);
+        return ResponseEntity.noContent().build();
     }
 }

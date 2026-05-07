@@ -2,6 +2,7 @@ package com.sitionix.bffssox.usecase;
 
 import com.sitionix.bffssox.client.AgentProjectClient;
 import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,16 +18,15 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetAgentProjectImplTest {
+class PatchAgentProjectImplTest {
 
-    private GetAgentProject getAgentProject;
+    private PatchAgentProject patchAgentProject;
 
-    @Mock
-    private AgentProjectClient agentClient;
+    @Mock private AgentProjectClient agentClient;
 
     @BeforeEach
     void setUp() {
-        this.getAgentProject = new GetAgentProjectImpl(this.agentClient);
+        this.patchAgentProject = new PatchAgentProjectImpl(this.agentClient);
     }
 
     @AfterEach
@@ -35,17 +35,18 @@ class GetAgentProjectImplTest {
     }
 
     @Test
-    void givenProjectId_whenExecute_thenReturnProject() {
+    void givenProjectIdAndRequest_whenExecute_thenReturnAgentProject() {
         //given
-        final UUID projectId = UUID.fromString("7da63ca3-ca1f-4ec2-b050-8e46f5a3ad4f");
+        final UUID projectId = UUID.randomUUID();
+        final PatchAgentProjectRequest request = mock(PatchAgentProjectRequest.class);
         final AgentProject expected = mock(AgentProject.class);
-        when(this.agentClient.getAgentProject(projectId)).thenReturn(expected);
+        when(this.agentClient.patchAgentProject(projectId, request)).thenReturn(expected);
 
         //when
-        final AgentProject actual = this.getAgentProject.execute(projectId);
+        final AgentProject actual = this.patchAgentProject.execute(projectId, request);
 
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(this.agentClient).getAgentProject(projectId);
+        verify(this.agentClient).patchAgentProject(projectId, request);
     }
 }

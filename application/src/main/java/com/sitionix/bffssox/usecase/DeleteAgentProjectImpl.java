@@ -1,19 +1,18 @@
 package com.sitionix.bffssox.usecase;
 
 import com.sitionix.bffssox.client.AgentProjectClient;
-import com.sitionix.bffssox.domain.AgentProject;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GetAgentProjectImpl implements GetAgentProject {
+public class DeleteAgentProjectImpl implements DeleteAgentProject {
 
     private final AgentProjectClient agentClient;
 
     @Override
-    public AgentProject execute(final UUID projectId) {
-        return this.agentClient.getAgentProject(projectId);
+    public void execute(final UUID projectId) {
+        this.agentClient.deleteAgentProject(projectId);
     }
 }

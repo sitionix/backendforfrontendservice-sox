@@ -79,6 +79,132 @@ class AgentProjectControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when patch agent project then proxy patch and return updated project")
+    void givenValidUserToken_whenPatchAgentProject_thenProxyPatchAndReturnProject() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.PATCH_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectResponse("responseDefaultPatchAgentProjectNameOnly.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when delete agent project then proxy delete and return no content")
+    void givenValidUserToken_whenDeleteAgentProject_thenProxyDeleteAndReturnNoContent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream bad request when patch agent project then return bad request")
+    void givenUpstreamBadRequest_whenPatchAgentProject_thenReturnBadRequest() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.PATCH_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.BAD_REQUEST.value())
+                        .responseBody("responseDefaultMappingPatchAgentProjectBadRequest.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responsePatchAgentProjectBadRequest.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when patch agent project then return not found")
+    void givenUpstreamNotFound_whenPatchAgentProject_thenReturnNotFound() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.PATCH_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.NOT_FOUND.value())
+                        .responseBody("responseDefaultMappingPatchAgentProjectNotFound.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultPatchAgentProjectNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when delete agent project then return not found")
+    void givenUpstreamNotFound_whenDeleteAgentProject_thenReturnNotFound() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_PROJECT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.NOT_FOUND.value())
+                        .responseBody("responseDefaultMappingPatchAgentProjectNotFound.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultPatchAgentProjectNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given unsupported field patch request when patch agent project then proxy bad request")
+    void givenUnsupportedFieldPatchRequest_whenPatchAgentProject_thenProxyBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .withRequest("requestDefaultPatchAgentProjectUnsupportedField.json"))
+                .assertDefault();
+    }
+
+    @Test
     @DisplayName("given missing token when create agent project then return unauthorized")
     void givenMissingToken_whenCreateAgentProject_thenReturnUnauthorized() {
         //when then
@@ -133,6 +259,34 @@ class AgentProjectControllerIT {
         //when then
         this.testManager.mockMvc()
                 .ping(MockMvcEndpoint.GET_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when patch agent project then return unauthorized and skip downstream call")
+    void givenMissingToken_whenPatchAgentProject_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.PATCH_AGENT_PROJECT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when delete agent project then return unauthorized and skip downstream call")
+    void givenMissingToken_whenDeleteAgentProject_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT)
                 .withPathParameters(PathParams.create()
                         .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
                 .token(null)

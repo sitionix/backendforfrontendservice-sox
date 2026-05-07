@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentConversationClient;
+import com.sitionix.bffssox.client.AgentProjectClient;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,16 +13,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-class DeleteAgentConversationImplTest {
+class DeleteAgentProjectImplTest {
 
-    private DeleteAgentConversation deleteAgentConversation;
+    private DeleteAgentProject deleteAgentProject;
 
-    @Mock
-    private AgentConversationClient agentClient;
+    @Mock private AgentProjectClient agentClient;
 
     @BeforeEach
     void setUp() {
-        this.deleteAgentConversation = new DeleteAgentConversationImpl(this.agentClient);
+        this.deleteAgentProject = new DeleteAgentProjectImpl(this.agentClient);
     }
 
     @AfterEach
@@ -31,14 +30,14 @@ class DeleteAgentConversationImplTest {
     }
 
     @Test
-    void givenConversationId_whenExecute_thenDeleteConversationInClient() {
+    void givenProjectId_whenExecute_thenDeleteProject() {
         //given
-        final UUID conversationId = UUID.fromString("7a0f41f6-0664-45bb-944d-30de1120f3f1");
+        final UUID projectId = UUID.randomUUID();
 
         //when
-        this.deleteAgentConversation.execute(conversationId);
+        this.deleteAgentProject.execute(projectId);
 
         //then
-        verify(this.agentClient).deleteAgentConversation(conversationId);
+        verify(this.agentClient).deleteAgentProject(projectId);
     }
 }

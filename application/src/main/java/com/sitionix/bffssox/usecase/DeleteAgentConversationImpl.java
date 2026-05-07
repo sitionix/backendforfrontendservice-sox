@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentConversationClient;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DeleteAgentConversationImpl implements DeleteAgentConversation {
 
-    private final AgentClient agentClient;
+    private final AgentConversationClient agentClient;
 
     @Override
     public void execute(final UUID conversationId) {

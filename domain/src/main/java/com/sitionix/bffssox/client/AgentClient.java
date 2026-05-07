@@ -1,28 +1,13 @@
 package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.Agent;
-import com.sitionix.bffssox.domain.AgentConversationDetails;
-import com.sitionix.bffssox.domain.AgentConversationsResponse;
-import com.sitionix.bffssox.domain.AgentProject;
-import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
-import com.sitionix.bffssox.domain.AgentRule;
-import com.sitionix.bffssox.domain.AgentRulesResponse;
-import com.sitionix.bffssox.domain.AcceptAgentRuleRequest;
 import com.sitionix.bffssox.domain.AgentsResponse;
-import com.sitionix.bffssox.domain.ChatExecution;
-import com.sitionix.bffssox.domain.ChatAgentRequest;
-import com.sitionix.bffssox.domain.CreateAgentRuleRequest;
 import com.sitionix.bffssox.domain.CreateAgentRequest;
-import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
-import com.sitionix.bffssox.domain.DeleteAgentRuleResponse;
-import com.sitionix.bffssox.domain.GetAgentRulesQuery;
-import com.sitionix.bffssox.domain.PatchAgentRuleRequest;
 import com.sitionix.bffssox.domain.PatchAgentRequest;
-import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.UUID;
 
 /**
- * Downstream automation service client.
+ * Port for automation agent lifecycle and identity operations.
  */
 public interface AgentClient {
 
@@ -34,18 +19,12 @@ public interface AgentClient {
      */
     Agent createAgent(CreateAgentRequest request);
 
-    AgentProject createAgentProject(CreateAgentProjectRequest request);
-
     /**
      * Returns current automation agents.
      *
      * @return persisted agents response.
      */
     AgentsResponse getAgents();
-
-    AgentProjectsPageResponse getAgentProjects(Integer page, Integer size);
-
-    AgentProject getAgentProject(UUID projectId);
 
     /**
      * Returns one automation agent.
@@ -54,29 +33,6 @@ public interface AgentClient {
      * @return persisted agent.
      */
     Agent getAgent(UUID agentId);
-
-    /**
-     * Returns direct conversations for one automation agent.
-     *
-     * @param agentId unique agent identifier.
-     * @return conversations list response.
-     */
-    AgentConversationsResponse getAgentConversations(UUID agentId);
-
-    /**
-     * Returns one direct conversation with ordered message history.
-     *
-     * @param conversationId unique conversation identifier.
-     * @return conversation details response.
-     */
-    AgentConversationDetails getAgentConversation(UUID conversationId);
-
-    /**
-     * Soft deletes one direct conversation.
-     *
-     * @param conversationId unique conversation identifier.
-     */
-    void deleteAgentConversation(UUID conversationId);
 
     /**
      * Activates one automation agent.
@@ -109,22 +65,6 @@ public interface AgentClient {
      * @return updated agent.
      */
     Agent deleteAgent(UUID agentId);
-
-    AgentRulesResponse getAgentRules(UUID agentId, GetAgentRulesQuery query);
-
-    AgentRule createAgentRule(UUID agentId, CreateAgentRuleRequest request);
-
-    AgentRule patchAgentRule(UUID agentId, UUID ruleId, PatchAgentRuleRequest request);
-
-    AgentRule acceptAgentRule(UUID agentId, UUID ruleId, AcceptAgentRuleRequest request);
-
-    AgentRule rejectAgentRule(UUID agentId, UUID ruleId);
-
-    DeleteAgentRuleResponse deleteAgentRule(UUID agentId, UUID ruleId);
-
-    SubmitChatExecutionResponse submitAgentChatExecution(UUID agentId, ChatAgentRequest request, String idempotencyKey);
-
-    ChatExecution getAgentChatExecution(UUID agentId, UUID executionId, UUID conversationId);
 
     /**
      * Applies partial identity update for one automation agent.

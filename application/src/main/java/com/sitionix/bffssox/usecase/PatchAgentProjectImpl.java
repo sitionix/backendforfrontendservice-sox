@@ -2,18 +2,19 @@ package com.sitionix.bffssox.usecase;
 
 import com.sitionix.bffssox.client.AgentProjectClient;
 import com.sitionix.bffssox.domain.AgentProject;
-import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
+import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CreateAgentProjectImpl implements CreateAgentProject {
+public class PatchAgentProjectImpl implements PatchAgentProject {
 
     private final AgentProjectClient agentClient;
 
     @Override
-    public AgentProject execute(final CreateAgentProjectRequest request) {
-        return this.agentClient.createAgentProject(request);
+    public AgentProject execute(final UUID projectId, final PatchAgentProjectRequest request) {
+        return this.agentClient.patchAgentProject(projectId, request);
     }
 }

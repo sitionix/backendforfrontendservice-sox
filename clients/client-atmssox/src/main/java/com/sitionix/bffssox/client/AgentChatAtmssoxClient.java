@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AgentChatAtmssoxClient {
+public class AgentChatAtmssoxClient implements AgentChatClient {
 
     private final AgentChatApi agentChatApi;
     private final ChatAgentClientMapper chatAgentClientMapper;

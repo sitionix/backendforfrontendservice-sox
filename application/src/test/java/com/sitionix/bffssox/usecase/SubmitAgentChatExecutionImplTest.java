@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentChatClient;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.UUID;
@@ -23,7 +23,7 @@ class SubmitAgentChatExecutionImplTest {
     private SubmitAgentChatExecution submitAgentChatExecution;
 
     @Mock
-    private AgentClient agentClient;
+    private AgentChatClient agentClient;
 
     @BeforeEach
     void setUp() {

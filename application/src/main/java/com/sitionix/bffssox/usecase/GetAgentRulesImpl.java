@@ -1,6 +1,6 @@
 package com.sitionix.bffssox.usecase;
 
-import com.sitionix.bffssox.client.AgentClient;
+import com.sitionix.bffssox.client.AgentRuleClient;
 import com.sitionix.bffssox.domain.AgentRulesResponse;
 import com.sitionix.bffssox.domain.GetAgentRulesQuery;
 import java.util.UUID;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GetAgentRulesImpl implements GetAgentRules {
 
-    private final AgentClient agentClient;
+    private final AgentRuleClient agentClient;
 
     @Override
     public AgentRulesResponse execute(final UUID agentId, final GetAgentRulesQuery query) {
