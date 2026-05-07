@@ -25,6 +25,7 @@ import com.sitionix.bffssox.usecase.GetAgentProjects;
 import com.sitionix.bffssox.usecase.GetProjectAgents;
 import com.sitionix.bffssox.usecase.PatchAgentProject;
 import com.sitionix.bffssox.usecase.RemoveAgentFromProject;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,7 +114,7 @@ class AgentProjectControllerTest {
     @Test
     void givenProjectId_whenGetAgentProject_thenReturnProjectDto() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
         final AgentProject response = mock(AgentProject.class);
         final AgentProjectDTO responseDto = mock(AgentProjectDTO.class);
         when(this.getAgentProject.execute(projectId)).thenReturn(response);
@@ -131,7 +132,7 @@ class AgentProjectControllerTest {
     @Test
     void givenPatchRequest_whenPatchAgentProject_thenReturnProjectDto() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
         final PatchAgentProjectRequestDTO requestDto = mock(PatchAgentProjectRequestDTO.class);
         final PatchAgentProjectRequest request = mock(PatchAgentProjectRequest.class);
         final AgentProject response = mock(AgentProject.class);
@@ -153,7 +154,7 @@ class AgentProjectControllerTest {
     @Test
     void givenProjectId_whenDeleteAgentProject_thenReturnNoContent() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
 
         //when
         final ResponseEntity<Void> actual = this.agentProjectController.deleteAgentProject(projectId);
@@ -166,7 +167,7 @@ class AgentProjectControllerTest {
     @Test
     void givenProjectId_whenListAgentProjectAgents_thenReturnProjectAgentsResponse() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
         final ProjectAgentsResponse response = mock(ProjectAgentsResponse.class);
         final ProjectAgentsResponseDTO responseDto = mock(ProjectAgentsResponseDTO.class);
         when(this.getProjectAgents.execute(projectId)).thenReturn(response);
@@ -184,7 +185,7 @@ class AgentProjectControllerTest {
     @Test
     void givenRequest_whenAddAgentToProject_thenReturnProjectAgentResponse() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
         final AddAgentToProjectRequestDTO requestDto = mock(AddAgentToProjectRequestDTO.class);
         final AddAgentToProjectRequest request = mock(AddAgentToProjectRequest.class);
         final ProjectAgent response = mock(ProjectAgent.class);
@@ -206,8 +207,8 @@ class AgentProjectControllerTest {
     @Test
     void givenProjectIdAndAgentId_whenRemoveAgentFromProject_thenReturnNoContent() {
         //given
-        final java.util.UUID projectId = java.util.UUID.randomUUID();
-        final java.util.UUID agentId = java.util.UUID.randomUUID();
+        final UUID projectId = UUID.randomUUID();
+        final UUID agentId = UUID.randomUUID();
 
         //when
         final ResponseEntity<Void> actual = this.agentProjectController.removeAgentFromProject(projectId, agentId);
