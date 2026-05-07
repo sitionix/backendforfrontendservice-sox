@@ -17,7 +17,7 @@ class PatchAgentProjectRequestTest {
 
         //then
         assertThat(actual).isTrue();
-        assertThat(given.hashCode()).isEqualTo(expected.hashCode());
+        assertThat(given).hasSameHashCodeAs(expected);
     }
 
     @Test
