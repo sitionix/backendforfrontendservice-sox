@@ -1,12 +1,18 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentProjectApi;
+import com.app_afesox.atmssox.client.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
+import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
+import com.sitionix.bffssox.domain.ProjectAgent;
+import com.sitionix.bffssox.domain.ProjectAgentsResponse;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentProjectClientMapper;
@@ -118,5 +124,64 @@ class AgentProjectAtmssoxClientTest {
         //then
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentProjectApi).deleteAgentProject(projectId);
+    }
+
+    @Test
+    void givenProjectId_whenGetProjectAgents_thenReturnMappedResponse() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final ProjectAgentsResponseDTO responseDTO = mock(ProjectAgentsResponseDTO.class);
+        final ProjectAgentsResponse expected = mock(ProjectAgentsResponse.class);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<ProjectAgentsResponseDTO>) invocation.getArgument(0)).get());
+        when(this.agentProjectApi.listAgentProjectAgents(projectId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asProjectAgentsResponse(responseDTO)).thenReturn(expected);
+
+        //when
+        final ProjectAgentsResponse actual = this.agentProjectAtmssoxClient.getProjectAgents(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentProjectApi).listAgentProjectAgents(projectId);
+        verify(this.agentClientMapper).asProjectAgentsResponse(responseDTO);
+    }
+
+    @Test
+    void givenRequest_whenAddAgentToProject_thenReturnMappedResponse() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final AddAgentToProjectRequest request = mock(AddAgentToProjectRequest.class);
+        final AddAgentToProjectRequestDTO requestDTO = mock(AddAgentToProjectRequestDTO.class);
+        final ProjectAgentResponseDTO responseDTO = mock(ProjectAgentResponseDTO.class);
+        final ProjectAgent expected = mock(ProjectAgent.class);
+        when(this.agentClientMapper.asAddAgentToProjectRequestDto(request)).thenReturn(requestDTO);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<ProjectAgentResponseDTO>) invocation.getArgument(0)).get());
+        when(this.agentProjectApi.addAgentToProject(projectId, requestDTO)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asProjectAgent(responseDTO)).thenReturn(expected);
+
+        //when
+        final ProjectAgent actual = this.agentProjectAtmssoxClient.addAgentToProject(projectId, request);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.agentClientMapper).asAddAgentToProjectRequestDto(request);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentProjectApi).addAgentToProject(projectId, requestDTO);
+        verify(this.agentClientMapper).asProjectAgent(responseDTO);
+    }
+
+    @Test
+    void givenProjectIdAndAgentId_whenRemoveAgentFromProject_thenCallDeleteApi() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final UUID agentId = UUID.randomUUID();
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<Void>) invocation.getArgument(0)).get());
+
+        //when
+        this.agentProjectAtmssoxClient.removeAgentFromProject(projectId, agentId);
+
+        //then
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentProjectApi).removeAgentFromProject(projectId, agentId);
     }
 }

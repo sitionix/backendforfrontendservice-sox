@@ -1,21 +1,30 @@
 package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.api.AgentProjectApi;
+import com.app_afesox.bffssox.api_first.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentProjectRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentsResponseDTO;
+import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
+import com.sitionix.bffssox.domain.ProjectAgent;
+import com.sitionix.bffssox.domain.ProjectAgentsResponse;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentProjectApiMapper;
+import com.sitionix.bffssox.usecase.AddAgentToProject;
 import com.sitionix.bffssox.usecase.CreateAgentProject;
 import com.sitionix.bffssox.usecase.DeleteAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
+import com.sitionix.bffssox.usecase.GetProjectAgents;
 import com.sitionix.bffssox.usecase.PatchAgentProject;
+import com.sitionix.bffssox.usecase.RemoveAgentFromProject;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +45,9 @@ public class AgentProjectController implements AgentProjectApi {
     private final PatchAgentProjectApiMapper patchAgentProjectApiMapper;
     private final PatchAgentProject patchAgentProject;
     private final DeleteAgentProject deleteAgentProject;
+    private final GetProjectAgents getProjectAgents;
+    private final AddAgentToProject addAgentToProject;
+    private final RemoveAgentFromProject removeAgentFromProject;
 
     @Override
     @PreAuthorize("isAuthenticated()")
@@ -70,6 +82,29 @@ public class AgentProjectController implements AgentProjectApi {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteAgentProject(final UUID projectId) {
         this.deleteAgentProject.execute(projectId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ProjectAgentsResponseDTO> listAgentProjectAgents(final UUID projectId) {
+        final ProjectAgentsResponse response = this.getProjectAgents.execute(projectId);
+        return ResponseEntity.ok(this.agentApiMapper.asProjectAgentsResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ProjectAgentResponseDTO> addAgentToProject(final UUID projectId,
+                                                                     @Valid final AddAgentToProjectRequestDTO addAgentToProjectRequestDTO) {
+        final AddAgentToProjectRequest request = this.agentApiMapper.asAddAgentToProjectRequest(addAgentToProjectRequestDTO);
+        final ProjectAgent response = this.addAgentToProject.execute(projectId, request);
+        return ResponseEntity.ok(this.agentApiMapper.asProjectAgentResponseDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> removeAgentFromProject(final UUID projectId, final UUID agentId) {
+        this.removeAgentFromProject.execute(projectId, agentId);
         return ResponseEntity.noContent().build();
     }
 }
