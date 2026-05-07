@@ -2,20 +2,29 @@ package com.sitionix.bffssox.controller;
 
 import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentProjectRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentsResponseDTO;
+import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
+import com.sitionix.bffssox.domain.ProjectAgent;
+import com.sitionix.bffssox.domain.ProjectAgentsResponse;
 import com.sitionix.bffssox.mapper.AgentApiMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectApiMapper;
 import com.sitionix.bffssox.mapper.PatchAgentProjectApiMapper;
+import com.sitionix.bffssox.usecase.AddAgentToProject;
 import com.sitionix.bffssox.usecase.CreateAgentProject;
 import com.sitionix.bffssox.usecase.DeleteAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
+import com.sitionix.bffssox.usecase.GetProjectAgents;
 import com.sitionix.bffssox.usecase.PatchAgentProject;
+import com.sitionix.bffssox.usecase.RemoveAgentFromProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,18 +53,23 @@ class AgentProjectControllerTest {
     @Mock private PatchAgentProjectApiMapper patchAgentProjectApiMapper;
     @Mock private PatchAgentProject patchAgentProject;
     @Mock private DeleteAgentProject deleteAgentProject;
+    @Mock private GetProjectAgents getProjectAgents;
+    @Mock private AddAgentToProject addAgentToProject;
+    @Mock private RemoveAgentFromProject removeAgentFromProject;
 
     @BeforeEach
     void setUp() {
         this.agentProjectController = new AgentProjectController(this.createAgentProjectApiMapper, this.agentApiMapper,
                 this.createAgentProject, this.getAgentProjects, this.getAgentProject,
-                this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject);
+                this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject, this.getProjectAgents,
+                this.addAgentToProject, this.removeAgentFromProject);
     }
 
     @AfterEach
     void tearDown() {
         verifyNoMoreInteractions(this.createAgentProjectApiMapper, this.agentApiMapper, this.createAgentProject, this.getAgentProjects, this.getAgentProject,
-                this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject);
+                this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject, this.getProjectAgents, this.addAgentToProject,
+                this.removeAgentFromProject);
     }
 
     @Test
@@ -147,5 +161,59 @@ class AgentProjectControllerTest {
         //then
         assertThat(actual).isEqualTo(ResponseEntity.noContent().build());
         verify(this.deleteAgentProject).execute(projectId);
+    }
+
+    @Test
+    void givenProjectId_whenListAgentProjectAgents_thenReturnProjectAgentsResponse() {
+        //given
+        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final ProjectAgentsResponse response = mock(ProjectAgentsResponse.class);
+        final ProjectAgentsResponseDTO responseDto = mock(ProjectAgentsResponseDTO.class);
+        when(this.getProjectAgents.execute(projectId)).thenReturn(response);
+        when(this.agentApiMapper.asProjectAgentsResponseDto(response)).thenReturn(responseDto);
+
+        //when
+        final ResponseEntity<ProjectAgentsResponseDTO> actual = this.agentProjectController.listAgentProjectAgents(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
+        verify(this.getProjectAgents).execute(projectId);
+        verify(this.agentApiMapper).asProjectAgentsResponseDto(response);
+    }
+
+    @Test
+    void givenRequest_whenAddAgentToProject_thenReturnProjectAgentResponse() {
+        //given
+        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final AddAgentToProjectRequestDTO requestDto = mock(AddAgentToProjectRequestDTO.class);
+        final AddAgentToProjectRequest request = mock(AddAgentToProjectRequest.class);
+        final ProjectAgent response = mock(ProjectAgent.class);
+        final ProjectAgentResponseDTO responseDto = mock(ProjectAgentResponseDTO.class);
+        when(this.agentApiMapper.asAddAgentToProjectRequest(requestDto)).thenReturn(request);
+        when(this.addAgentToProject.execute(projectId, request)).thenReturn(response);
+        when(this.agentApiMapper.asProjectAgentResponseDto(response)).thenReturn(responseDto);
+
+        //when
+        final ResponseEntity<ProjectAgentResponseDTO> actual = this.agentProjectController.addAgentToProject(projectId, requestDto);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
+        verify(this.agentApiMapper).asAddAgentToProjectRequest(requestDto);
+        verify(this.addAgentToProject).execute(projectId, request);
+        verify(this.agentApiMapper).asProjectAgentResponseDto(response);
+    }
+
+    @Test
+    void givenProjectIdAndAgentId_whenRemoveAgentFromProject_thenReturnNoContent() {
+        //given
+        final java.util.UUID projectId = java.util.UUID.randomUUID();
+        final java.util.UUID agentId = java.util.UUID.randomUUID();
+
+        //when
+        final ResponseEntity<Void> actual = this.agentProjectController.removeAgentFromProject(projectId, agentId);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.noContent().build());
+        verify(this.removeAgentFromProject).execute(projectId, agentId);
     }
 }

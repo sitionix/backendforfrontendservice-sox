@@ -2,7 +2,10 @@ package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
+import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
+import com.sitionix.bffssox.domain.ProjectAgent;
+import com.sitionix.bffssox.domain.ProjectAgentsResponse;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import java.util.UUID;
 
@@ -20,4 +23,10 @@ public interface AgentProjectClient {
     AgentProject patchAgentProject(UUID projectId, PatchAgentProjectRequest request);
 
     void deleteAgentProject(UUID projectId);
+
+    ProjectAgentsResponse getProjectAgents(UUID projectId);
+
+    ProjectAgent addAgentToProject(UUID projectId, AddAgentToProjectRequest request);
+
+    void removeAgentFromProject(UUID projectId, UUID agentId);
 }

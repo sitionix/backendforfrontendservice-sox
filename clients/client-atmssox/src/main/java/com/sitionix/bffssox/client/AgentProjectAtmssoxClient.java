@@ -1,14 +1,20 @@
 package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentProjectApi;
+import com.app_afesox.atmssox.client.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
+import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
+import com.sitionix.bffssox.domain.ProjectAgent;
+import com.sitionix.bffssox.domain.ProjectAgentsResponse;
 import com.sitionix.bffssox.mapper.AgentClientMapper;
 import com.sitionix.bffssox.mapper.CreateAgentProjectClientMapper;
 import com.sitionix.bffssox.mapper.PatchAgentProjectClientMapper;
@@ -53,6 +59,31 @@ public class AgentProjectAtmssoxClient implements AgentProjectClient {
     public void deleteAgentProject(final UUID projectId) {
         this.atmssoxClientCallExecutor.execute(() -> {
             this.agentProjectApi.deleteAgentProject(projectId);
+            return null;
+        });
+    }
+
+    @Override
+    public ProjectAgentsResponse getProjectAgents(final UUID projectId) {
+        final ProjectAgentsResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentProjectApi.listAgentProjectAgents(projectId)
+        );
+        return this.agentClientMapper.asProjectAgentsResponse(responseDTO);
+    }
+
+    @Override
+    public ProjectAgent addAgentToProject(final UUID projectId, final AddAgentToProjectRequest request) {
+        final AddAgentToProjectRequestDTO requestDTO = this.agentClientMapper.asAddAgentToProjectRequestDto(request);
+        final ProjectAgentResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentProjectApi.addAgentToProject(projectId, requestDTO)
+        );
+        return this.agentClientMapper.asProjectAgent(responseDTO);
+    }
+
+    @Override
+    public void removeAgentFromProject(final UUID projectId, final UUID agentId) {
+        this.atmssoxClientCallExecutor.execute(() -> {
+            this.agentProjectApi.removeAgentFromProject(projectId, agentId);
             return null;
         });
     }
