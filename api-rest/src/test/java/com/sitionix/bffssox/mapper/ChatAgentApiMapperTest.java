@@ -279,6 +279,46 @@ class ChatAgentApiMapperTest {
         assertThat(actual.getParticipants()).hasSize(1);
     }
 
+    @Test
+    void givenNullProjectConversationEnums_whenMapProjectConversationEnums_thenReturnNulls() {
+        //given
+        final String nullValue = null;
+
+        //when
+        final ProjectConversationDTO.TypeEnum actualType = this.mapper.mapProjectConversationType(nullValue);
+        final ProjectConversationDetailsDTO.TypeEnum actualDetailsType = this.mapper.mapProjectConversationDetailsType(nullValue);
+        final ProjectConversationDTO.StatusEnum actualStatus = this.mapper.mapProjectConversationStatus(nullValue);
+        final ProjectConversationDetailsDTO.StatusEnum actualDetailsStatus = this.mapper.mapProjectConversationDetailsStatus(nullValue);
+        final ProjectConversationParticipantDTO.TypeEnum actualParticipantType =
+                this.mapper.mapProjectConversationParticipantType(nullValue);
+        final ProjectConversationParticipantDTO.StatusEnum actualParticipantStatus =
+                this.mapper.mapProjectConversationParticipantStatus(nullValue);
+
+        //then
+        assertThat(actualType).isNull();
+        assertThat(actualDetailsType).isNull();
+        assertThat(actualStatus).isNull();
+        assertThat(actualDetailsStatus).isNull();
+        assertThat(actualParticipantType).isNull();
+        assertThat(actualParticipantStatus).isNull();
+    }
+
+    @Test
+    void givenNullAgentConversationEnums_whenMapEnums_thenReturnNulls() {
+        //given
+        final String nullValue = null;
+
+        //when
+        final AgentConversationDetailsDTO.TypeEnum actualDetailsType = this.mapper.map(nullValue);
+        final AgentConversationDTO.TypeEnum actualConversationType = this.mapper.mapConversationType(nullValue);
+        final AgentConversationMessageDTO.AuthorTypeEnum actualAuthorType = this.mapper.mapAuthorType(nullValue);
+
+        //then
+        assertThat(actualDetailsType).isNull();
+        assertThat(actualConversationType).isNull();
+        assertThat(actualAuthorType).isNull();
+    }
+
     private ChatAgentRequestDTO getChatAgentRequestDto(final UUID clientRequestId, final String message) {
         return ChatAgentRequestDTO.builder()
                 .clientRequestId(clientRequestId)
