@@ -8,7 +8,13 @@ import com.app_afesox.atmssox.client.dto.ChatAgentExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionFailureDTO;
+import com.app_afesox.atmssox.client.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.atmssox.client.dto.ExecutionStatusDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationParticipantDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationProjectDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
@@ -18,9 +24,13 @@ import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatExecutionFailure;
+import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
+import com.sitionix.bffssox.domain.ProjectConversationDetails;
+import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -230,10 +240,102 @@ class ChatAgentClientMapperTest {
         assertThat(actual.getFailure().getRetryable()).isTrue();
     }
 
+    @Test
+    void givenCreateProjectConversationRequest_whenAsCreateProjectConversationRequestDto_thenReturnMappedDto() {
+        //given
+        final UUID agentId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        final CreateProjectConversationRequest given = CreateProjectConversationRequest.builder()
+                .agentIds(List.of(agentId))
+                .build();
+
+        //when
+        final CreateProjectConversationRequestDTO actual = this.mapper.asCreateProjectConversationRequestDto(given);
+
+        //then
+        assertThat(actual.getAgentIds()).isEqualTo(Set.of(agentId));
+    }
+
+    @Test
+    void givenProjectConversationsResponseDto_whenAsProjectConversationsResponse_thenReturnMappedDomain() {
+        //given
+        final ProjectConversationsResponseDTO given = ProjectConversationsResponseDTO.builder()
+                .items(List.of(this.getProjectConversationDto()))
+                .build();
+
+        //when
+        final ProjectConversationsResponse actual = this.mapper.asProjectConversationsResponse(given);
+
+        //then
+        assertThat(actual.getItems()).hasSize(1);
+        assertThat(actual.getItems().get(0).getType()).isEqualTo("MULTI_AGENT");
+        assertThat(actual.getItems().get(0).getStatus()).isEqualTo("ACTIVE");
+    }
+
+    @Test
+    void givenProjectConversationDetailsDto_whenAsProjectConversationDetails_thenReturnMappedDomain() {
+        //given
+        final ProjectConversationDetailsDTO given = this.getProjectConversationDetailsDto();
+
+        //when
+        final ProjectConversationDetails actual = this.mapper.asProjectConversationDetails(given);
+
+        //then
+        assertThat(actual.getType()).isEqualTo("MULTI_AGENT");
+        assertThat(actual.getStatus()).isEqualTo("ACTIVE");
+        assertThat(actual.getParticipants()).hasSize(1);
+        assertThat(actual.getProject().getName()).isEqualTo("Sitionix");
+    }
+
     private ChatAgentRequest getChatAgentRequest(final UUID clientRequestId, final String message) {
         return ChatAgentRequest.builder()
                 .clientRequestId(clientRequestId)
                 .message(message)
+                .build();
+    }
+
+    private ProjectConversationDTO getProjectConversationDto() {
+        return ProjectConversationDTO.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .projectId(UUID.fromString("22222222-2222-2222-2222-222222222222"))
+                .type(ProjectConversationDTO.TypeEnum.MULTI_AGENT)
+                .title("Team chat")
+                .status(ProjectConversationDTO.StatusEnum.ACTIVE)
+                .participants(List.of(this.getProjectConversationParticipantDto()))
+                .canSendMessages(Boolean.FALSE)
+                .createdAt(OffsetDateTime.parse("2026-05-08T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-05-08T10:01:00Z"))
+                .lastMessageAt(null)
+                .build();
+    }
+
+    private ProjectConversationDetailsDTO getProjectConversationDetailsDto() {
+        return ProjectConversationDetailsDTO.builder()
+                .id(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+                .projectId(UUID.fromString("22222222-2222-2222-2222-222222222222"))
+                .project(ProjectConversationProjectDTO.builder()
+                        .id(UUID.fromString("22222222-2222-2222-2222-222222222222"))
+                        .name("Sitionix")
+                        .context("Project context")
+                        .build())
+                .type(ProjectConversationDetailsDTO.TypeEnum.MULTI_AGENT)
+                .title("Team chat")
+                .status(ProjectConversationDetailsDTO.StatusEnum.ACTIVE)
+                .participants(List.of(this.getProjectConversationParticipantDto()))
+                .messages(List.of())
+                .canSendMessages(Boolean.FALSE)
+                .createdAt(OffsetDateTime.parse("2026-05-08T10:00:00Z"))
+                .updatedAt(OffsetDateTime.parse("2026-05-08T10:01:00Z"))
+                .lastMessageAt(null)
+                .build();
+    }
+
+    private ProjectConversationParticipantDTO getProjectConversationParticipantDto() {
+        return ProjectConversationParticipantDTO.builder()
+                .type(ProjectConversationParticipantDTO.TypeEnum.AGENT)
+                .agentId(UUID.fromString("33333333-3333-3333-3333-333333333333"))
+                .name("Writer")
+                .description("Writes copy")
+                .status(ProjectConversationParticipantDTO.StatusEnum.ACTIVE)
                 .build();
     }
 
