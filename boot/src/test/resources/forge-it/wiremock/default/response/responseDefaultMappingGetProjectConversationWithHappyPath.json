@@ -1,0 +1,18 @@
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "projectId": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
+  "project": {
+    "id": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
+    "name": "Sitionix",
+    "context": "Project context"
+  },
+  "type": "MULTI_AGENT",
+  "title": "Team chat",
+  "status": "ACTIVE",
+  "participants": [],
+  "messages": [],
+  "canSendMessages": false,
+  "createdAt": "2026-05-08T10:00:00Z",
+  "updatedAt": "2026-05-08T10:00:00Z",
+  "lastMessageAt": null
+}

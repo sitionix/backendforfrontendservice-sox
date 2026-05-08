@@ -9,6 +9,7 @@ import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentRequestDTO;
@@ -30,6 +31,8 @@ import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectAgentResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectAgentsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResponseRegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
@@ -228,6 +231,31 @@ public class MockMvcEndpoint {
                     Void.class,
                     Void.class,
                     (MockmvcDefault) context -> context.expectStatus(HttpStatus.NO_CONTENT.value()),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<CreateProjectConversationRequestDTO, ProjectConversationDetailsDTO> POST_PROJECT_CONVERSATION =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/conversations",
+                    HttpMethod.POST,
+                    CreateProjectConversationRequestDTO.class,
+                    ProjectConversationDetailsDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.CREATED.value())
+                            .withRequest("requestDefaultCreateProjectConversation.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, ProjectConversationsResponseDTO> GET_PROJECT_CONVERSATIONS =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/conversations",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectConversationsResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, ProjectConversationDetailsDTO> GET_PROJECT_CONVERSATION =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/conversations/{conversationId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectConversationDetailsDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value()),
                     ItUserTokens.USER_JWT);
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

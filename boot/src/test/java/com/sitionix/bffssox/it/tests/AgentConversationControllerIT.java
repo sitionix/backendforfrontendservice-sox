@@ -92,6 +92,121 @@ class AgentConversationControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when create project conversation then return created shell")
+    void givenValidUserToken_whenCreateProjectConversation_thenReturnCreatedShell() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_PROJECT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_PROJECT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when list project conversations then return conversations list")
+    void givenValidUserToken_whenListProjectConversations_thenReturnConversationsList() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_PROJECT_CONVERSATIONS)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_PROJECT_CONVERSATIONS)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when get project conversation then return conversation details")
+    void givenValidUserToken_whenGetProjectConversation_thenReturnConversationDetails() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_PROJECT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_PROJECT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given invalid project id when list project conversations then return bad request")
+    void givenInvalidProjectId_whenListProjectConversations_thenReturnBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_PROJECT_CONVERSATIONS)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "not-a-valid-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultGetAgentProjectInvalidProjectId.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when create project conversation then return unauthorized")
+    void givenMissingToken_whenCreateProjectConversation_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_PROJECT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when get project conversation then return not found")
+    void givenUpstreamNotFound_whenGetProjectConversation_thenReturnNotFound() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_PROJECT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.NOT_FOUND.value())
+                        .responseBody("responseDefaultMappingGetAgentConversationNotFound.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_PROJECT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultGetAgentConversationNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given valid user token when get one agent conversation then return conversation details")
     void givenValidUserToken_whenGetOneAgentConversation_thenReturnConversationDetails() {
         //given
