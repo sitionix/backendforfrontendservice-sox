@@ -15,6 +15,8 @@ public class AgentProject {
 
     private String description;
 
+    private String context;
+
     private AgentProjectStatus status;
 
     private OffsetDateTime createdAt;

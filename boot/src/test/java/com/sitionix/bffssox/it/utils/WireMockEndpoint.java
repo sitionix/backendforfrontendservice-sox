@@ -9,6 +9,7 @@ import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
+import com.app_afesox.atmssox.client.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
@@ -20,6 +21,8 @@ import com.app_afesox.atmssox.client.dto.DeleteAgentRuleResponseDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
+import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
@@ -259,6 +262,42 @@ public class WireMockEndpoint {
                     Void.class,
                     (WiremockDefault) context -> {
                         context.responseStatus(204);
+                    });
+
+    public static final Endpoint<Void, ProjectAgentsResponseDTO> GET_AGENT_PROJECT_AGENTS =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/agents",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectAgentsResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetAgentProjectAgents.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<AddAgentToProjectRequestDTO, ProjectAgentResponseDTO> POST_AGENT_PROJECT_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/agents",
+                    HttpMethod.POST,
+                    AddAgentToProjectRequestDTO.class,
+                    ProjectAgentResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.matchesJson("requestDefaultMappingAddAgentToProject.json")
+                                .header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingAddAgentToProject.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT_AGENT =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/agents/{agentId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseStatus(204);
                     });
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =

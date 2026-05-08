@@ -91,6 +91,7 @@ class AgentClientMapperTest {
         assertThat(actual.getId()).isEqualTo(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"));
         assertThat(actual.getName()).isEqualTo("Project");
         assertThat(actual.getDescription()).isEqualTo("Description");
+        assertThat(actual.getContext()).isEqualTo("Context");
         assertThat(actual.getStatus()).isNull();
         assertThat(actual.getCreatedAt()).isEqualTo(OffsetDateTime.parse("2026-04-10T10:00:00Z"));
         assertThat(actual.getUpdatedAt()).isEqualTo(OffsetDateTime.parse("2026-04-10T10:01:00Z"));
@@ -138,6 +139,7 @@ class AgentClientMapperTest {
                 .id(UUID.fromString("9df8ca36-d8c8-4703-9f8c-c8d50b5d4794"))
                 .name("Project")
                 .description("Description")
+                .context("Context")
                 .createdAt(OffsetDateTime.parse("2026-04-10T10:00:00Z"))
                 .updatedAt(OffsetDateTime.parse("2026-04-10T10:01:00Z"))
                 .build();

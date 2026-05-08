@@ -10,4 +10,6 @@ public class PatchAgentProjectRequest {
     private String name;
 
     private String description;
+
+    private String context;
 }

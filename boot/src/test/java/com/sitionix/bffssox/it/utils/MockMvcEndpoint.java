@@ -6,6 +6,7 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
@@ -27,6 +28,8 @@ import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResendEmailVerificationResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.RegisterUserDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectAgentsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ResponseRegisterUserDTO;
 import com.app_afesox.bffssox.api_first.dto.WorkspaceSitesResponseDTO;
 import com.sitionix.forgeit.domain.endpoint.Endpoint;
@@ -194,6 +197,33 @@ public class MockMvcEndpoint {
 
     public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT =
             Endpoint.createContract("/api/v1/agent-projects/{projectId}",
+                    HttpMethod.DELETE,
+                    Void.class,
+                    Void.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.NO_CONTENT.value()),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, ProjectAgentsResponseDTO> GET_AGENT_PROJECT_AGENTS =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/agents",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectAgentsResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .expectResponse("responseDefaultGetAgentProjectAgents.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<AddAgentToProjectRequestDTO, ProjectAgentResponseDTO> POST_AGENT_PROJECT_AGENT =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/agents",
+                    HttpMethod.POST,
+                    AddAgentToProjectRequestDTO.class,
+                    ProjectAgentResponseDTO.class,
+                    (MockmvcDefault) context -> context.expectStatus(HttpStatus.OK.value())
+                            .withRequest("requestDefaultAddAgentToProject.json")
+                            .expectResponse("responseDefaultAddAgentToProject.json"),
+                    ItUserTokens.USER_JWT);
+
+    public static final Endpoint<Void, Void> DELETE_AGENT_PROJECT_AGENT =
+            Endpoint.createContract("/api/v1/agent-projects/{projectId}/agents/{agentId}",
                     HttpMethod.DELETE,
                     Void.class,
                     Void.class,

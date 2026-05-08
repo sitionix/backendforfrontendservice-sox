@@ -120,6 +120,135 @@ class AgentProjectControllerIT {
     }
 
     @Test
+    @DisplayName("given valid user token when list agent project agents then return agents list")
+    void givenValidUserToken_whenListAgentProjectAgents_thenReturnAgentsList() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_AGENT_PROJECT_AGENTS)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT_AGENTS)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when add agent to project then return attached agent")
+    void givenValidUserToken_whenAddAgentToProject_thenReturnAttachedAgent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_AGENT_PROJECT_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given valid user token when remove agent from project then return no content")
+    void givenValidUserToken_whenRemoveAgentFromProject_thenReturnNoContent() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "2f860741-6e23-4d20-91f0-2c4b1f8e6a36"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "2f860741-6e23-4d20-91f0-2c4b1f8e6a36"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given blank agent id when add agent to project then return bad request and skip downstream call")
+    void givenBlankAgentId_whenAddAgentToProject_thenReturnBadRequestAndSkipDownstreamCall() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .applyDefault(context -> context.withRequest("requestDefaultAddAgentToProjectBlankAgentId.json")
+                        .expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultAddAgentToProjectBlankAgentId.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given invalid project id when list agent project agents then return bad request")
+    void givenInvalidProjectId_whenListAgentProjectAgents_thenReturnBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT_AGENTS)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "not-a-valid-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultGetAgentProjectInvalidProjectId.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given invalid agent id when remove agent from project then return bad request")
+    void givenInvalidAgentId_whenRemoveAgentFromProject_thenReturnBadRequest() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "invalid-agent-id"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultGetAgentProjectInvalidAgentId.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when remove agent from project then return not found")
+    void givenUpstreamNotFound_whenRemoveAgentFromProject_thenReturnNotFound() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .pathPattern(WireMockPathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "2f860741-6e23-4d20-91f0-2c4b1f8e6a36"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.NOT_FOUND.value())
+                        .responseBody("responseDefaultMappingPatchAgentProjectNotFound.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "2f860741-6e23-4d20-91f0-2c4b1f8e6a36"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultPatchAgentProjectNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given upstream bad request when patch agent project then return bad request")
     void givenUpstreamBadRequest_whenPatchAgentProject_thenReturnBadRequest() {
         //given
@@ -289,6 +418,49 @@ class AgentProjectControllerIT {
                 .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT)
                 .withPathParameters(PathParams.create()
                         .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when list agent project agents then return unauthorized")
+    void givenMissingToken_whenListAgentProjectAgents_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_PROJECT_AGENTS)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when add agent to project then return unauthorized")
+    void givenMissingToken_whenAddAgentToProject_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0"))
+                .token(null)
+                .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
+                        .expectResponse("responseDefaultGetSitesUnauthorized.json"))
+                .assertDefault();
+    }
+
+    @Test
+    @DisplayName("given missing token when remove agent from project then return unauthorized")
+    void givenMissingToken_whenRemoveAgentFromProject_thenReturnUnauthorized() {
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.DELETE_AGENT_PROJECT_AGENT)
+                .withPathParameters(PathParams.create()
+                        .add("projectId", "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0")
+                        .add("agentId", "2f860741-6e23-4d20-91f0-2c4b1f8e6a36"))
                 .token(null)
                 .applyDefault(context -> context.expectStatus(HttpStatus.UNAUTHORIZED.value())
                         .expectResponse("responseDefaultGetSitesUnauthorized.json"))
