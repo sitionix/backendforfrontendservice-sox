@@ -6,6 +6,9 @@ import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.usecase.DeleteAgentConversation;
+import com.sitionix.bffssox.usecase.CreateProjectConversation;
+import com.sitionix.bffssox.usecase.ListProjectConversations;
+import com.sitionix.bffssox.usecase.GetProjectConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import java.util.UUID;
@@ -32,16 +35,18 @@ class AgentConversationControllerTest {
     @Mock private GetAgentConversations getAgentConversations;
     @Mock private GetAgentConversation getAgentConversation;
     @Mock private DeleteAgentConversation deleteAgentConversation;
+    @Mock private CreateProjectConversation createProjectConversation;
+    @Mock private ListProjectConversations listProjectConversations;
+    @Mock private GetProjectConversation getProjectConversation;
 
     @BeforeEach
     void setUp() {
-        this.agentConversationController = new AgentConversationController(this.chatAgentApiMapper, this.getAgentConversations,
-                this.getAgentConversation, this.deleteAgentConversation);
+        this.agentConversationController = new AgentConversationController(this.chatAgentApiMapper, this.getAgentConversations, this.getAgentConversation, this.deleteAgentConversation, this.createProjectConversation, this.listProjectConversations, this.getProjectConversation);
     }
 
     @AfterEach
     void tearDown() {
-        verifyNoMoreInteractions(this.chatAgentApiMapper, this.getAgentConversations, this.getAgentConversation, this.deleteAgentConversation);
+        verifyNoMoreInteractions(this.chatAgentApiMapper, this.getAgentConversations, this.getAgentConversation, this.deleteAgentConversation, this.createProjectConversation, this.listProjectConversations, this.getProjectConversation);
     }
 
     @Test

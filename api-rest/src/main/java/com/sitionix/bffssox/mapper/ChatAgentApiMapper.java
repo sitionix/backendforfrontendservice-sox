@@ -7,6 +7,12 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationParticipantDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationProjectDTO;
+import com.app_afesox.bffssox.api_first.dto.ProjectConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
@@ -15,6 +21,12 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
+import com.sitionix.bffssox.domain.ProjectConversation;
+import com.sitionix.bffssox.domain.ProjectConversationDetails;
+import com.sitionix.bffssox.domain.ProjectConversationParticipant;
+import com.sitionix.bffssox.domain.ProjectConversationProject;
+import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.List;
 import org.mapstruct.InjectionStrategy;
@@ -69,6 +81,44 @@ public interface ChatAgentApiMapper {
 
     default AgentConversationMessageDTO.AuthorTypeEnum mapAuthorType(final String value) {
         return value == null ? null : AgentConversationMessageDTO.AuthorTypeEnum.fromValue(value);
+    }
+
+    CreateProjectConversationRequest asCreateProjectConversationRequest(CreateProjectConversationRequestDTO src);
+
+    ProjectConversationDTO asProjectConversationDto(ProjectConversation src);
+
+    ProjectConversationParticipantDTO asProjectConversationParticipantDto(ProjectConversationParticipant src);
+
+    ProjectConversationProjectDTO asProjectConversationProjectDto(ProjectConversationProject src);
+
+    @Mapping(target = "messages", source = "messages")
+    ProjectConversationDetailsDTO asProjectConversationDetailsDto(ProjectConversationDetails src);
+
+    @Mapping(target = "items", source = "items")
+    ProjectConversationsResponseDTO asProjectConversationsResponseDto(ProjectConversationsResponse src);
+
+    default ProjectConversationDTO.TypeEnum mapProjectConversationType(final String value) {
+        return value == null ? null : ProjectConversationDTO.TypeEnum.fromValue(value);
+    }
+
+    default ProjectConversationDetailsDTO.TypeEnum mapProjectConversationDetailsType(final String value) {
+        return value == null ? null : ProjectConversationDetailsDTO.TypeEnum.fromValue(value);
+    }
+
+    default ProjectConversationDTO.StatusEnum mapProjectConversationStatus(final String value) {
+        return value == null ? null : ProjectConversationDTO.StatusEnum.fromValue(value);
+    }
+
+    default ProjectConversationDetailsDTO.StatusEnum mapProjectConversationDetailsStatus(final String value) {
+        return value == null ? null : ProjectConversationDetailsDTO.StatusEnum.fromValue(value);
+    }
+
+    default ProjectConversationParticipantDTO.TypeEnum mapProjectConversationParticipantType(final String value) {
+        return value == null ? null : ProjectConversationParticipantDTO.TypeEnum.fromValue(value);
+    }
+
+    default ProjectConversationParticipantDTO.StatusEnum mapProjectConversationParticipantStatus(final String value) {
+        return value == null ? null : ProjectConversationParticipantDTO.StatusEnum.fromValue(value);
     }
 
 }

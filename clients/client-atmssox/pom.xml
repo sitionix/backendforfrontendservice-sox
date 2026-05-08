@@ -13,7 +13,7 @@
     <artifactId>client-atmssox</artifactId>
 
     <properties>
-        <atmssox.api.version>0.0.25</atmssox.api.version>
+        <atmssox.api.version>0.0.26</atmssox.api.version>
     </properties>
 
     <dependencies>
@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.afesox</groupId>
-            <artifactId>app-afesox-atmssox-client-stable</artifactId>
+            <artifactId>app-afesox-atmssox-client-sitionix-135-unstable</artifactId>
             <version>${atmssox.api.version}</version>
         </dependency>
         <dependency>
