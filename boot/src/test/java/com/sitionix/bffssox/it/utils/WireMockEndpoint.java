@@ -14,6 +14,7 @@ import com.app_afesox.atmssox.client.dto.AgentRuleDTO;
 import com.app_afesox.atmssox.client.dto.AgentRulesResponseDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
+import com.app_afesox.atmssox.client.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRuleRequestDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentRequestDTO;
@@ -23,6 +24,8 @@ import com.app_afesox.atmssox.client.dto.PatchAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
+import com.app_afesox.atmssox.client.dto.ProjectConversationsResponseDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenRequestDTO;
 import com.app_afesox.athssox.client.dto.RefreshAccessTokenResponseDTO;
 import com.app_afesox.athssox.client.dto.ResendEmailVerificationResponseDTO;
@@ -298,6 +301,43 @@ public class WireMockEndpoint {
                         context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
                                 .header("Authorization", Parameter.matches("Bearer\\s+.+"))
                                 .responseStatus(204);
+                    });
+
+    public static final Endpoint<CreateProjectConversationRequestDTO, ProjectConversationDetailsDTO> POST_PROJECT_CONVERSATION =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/conversations",
+                    HttpMethod.POST,
+                    CreateProjectConversationRequestDTO.class,
+                    ProjectConversationDetailsDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .matchesJson("requestDefaultMappingCreateProjectConversation.json")
+                                .responseBody("responseDefaultMappingGetProjectConversationWithHappyPath.json")
+                                .responseStatus(201);
+                    });
+
+    public static final Endpoint<Void, ProjectConversationsResponseDTO> GET_PROJECT_CONVERSATIONS =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/conversations",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectConversationsResponseDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetProjectConversationsWithHappyPath.json")
+                                .responseStatus(200);
+                    });
+
+    public static final Endpoint<Void, ProjectConversationDetailsDTO> GET_PROJECT_CONVERSATION =
+            Endpoint.createContract("/atmssox/api/v1/agent-projects/{projectId}/conversations/{conversationId}",
+                    HttpMethod.GET,
+                    Void.class,
+                    ProjectConversationDetailsDTO.class,
+                    (WiremockDefault) context -> {
+                        context.header("X-Forge-User-Sub", Parameter.equalTo("it-user-123"))
+                                .header("Authorization", Parameter.matches("Bearer\\s+.+"))
+                                .responseBody("responseDefaultMappingGetProjectConversationWithHappyPath.json")
+                                .responseStatus(200);
                     });
 
     public static final Endpoint<Void, AgentDTO> GET_AGENT =
