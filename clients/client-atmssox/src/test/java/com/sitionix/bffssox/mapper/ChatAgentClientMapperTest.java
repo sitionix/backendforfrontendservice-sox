@@ -15,6 +15,8 @@ import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationParticipantDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationProjectDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
@@ -27,6 +29,7 @@ import com.sitionix.bffssox.domain.ChatExecutionFailure;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -216,6 +219,34 @@ class ChatAgentClientMapperTest {
 
         //when
         final SubmitChatExecutionResponse actual = this.mapper.asSubmitChatExecutionResponse(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenChatAgentRequest_whenAsSubmitConversationExecutionRequestDto_thenReturnMappedDto() {
+        //given
+        final UUID clientRequestId = UUID.fromString("6ba1153e-a336-42a1-92ea-3203be095aa2");
+        final ChatAgentRequest given = this.getChatAgentRequest(clientRequestId, "Explain SOLID");
+        final SubmitConversationExecutionRequestDTO expected = this.getSubmitConversationExecutionRequestDto("Explain SOLID");
+
+        //when
+        final SubmitConversationExecutionRequestDTO actual = this.mapper.asSubmitConversationExecutionRequestDto(given);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenSubmitConversationExecutionResponseDto_whenAsSubmitConversationExecutionResponse_thenReturnMappedDomain() {
+        //given
+        final SubmitConversationExecutionResponseDTO given = this.getSubmitConversationExecutionResponseDto();
+        final SubmitConversationExecutionResponse expected = this.getSubmitConversationExecutionResponse();
+        when(this.chatExecutionStatusClientMapper.mapExecutionStatus(ExecutionStatusDTO.ACCEPTED)).thenReturn("QUEUED");
+
+        //when
+        final SubmitConversationExecutionResponse actual = this.mapper.asSubmitConversationExecutionResponse(given);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -492,6 +523,12 @@ class ChatAgentClientMapperTest {
                 .build();
     }
 
+    private SubmitConversationExecutionRequestDTO getSubmitConversationExecutionRequestDto(final String message) {
+        return SubmitConversationExecutionRequestDTO.builder()
+                .message(message)
+                .build();
+    }
+
     private SubmitChatExecutionResponse getSubmitChatExecutionResponse() {
         return SubmitChatExecutionResponse.builder()
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
@@ -501,6 +538,24 @@ class ChatAgentClientMapperTest {
                 .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("key-1")
                 .idempotencyReplayed(true)
+                .build();
+    }
+
+    private SubmitConversationExecutionResponseDTO getSubmitConversationExecutionResponseDto() {
+        return SubmitConversationExecutionResponseDTO.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
+                .executionStatus(ExecutionStatusDTO.ACCEPTED)
+                .build();
+    }
+
+    private SubmitConversationExecutionResponse getSubmitConversationExecutionResponse() {
+        return SubmitConversationExecutionResponse.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
+                .executionStatus("QUEUED")
                 .build();
     }
 

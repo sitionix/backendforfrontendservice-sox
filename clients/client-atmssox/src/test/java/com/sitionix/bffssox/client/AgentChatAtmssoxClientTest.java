@@ -2,8 +2,10 @@ package com.sitionix.bffssox.client;
 
 import com.app_afesox.atmssox.client.api.AgentChatApi;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
+import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import java.util.UUID;
@@ -69,5 +71,30 @@ class AgentChatAtmssoxClientTest {
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentChatApi).submitAgentChatExecutionByExecutionsPath(agentId, requestDTO, "idempotency-key");
         verify(this.chatAgentClientMapper).asSubmitChatExecutionResponse(responseDTO);
+    }
+
+    @Test
+    void givenExecutionLookupRequest_whenGetAgentChatExecution_thenReturnMappedResponse() {
+        //given
+        final UUID agentId = UUID.fromString("3064ed14-b2ab-4c37-a264-94574beb8dd2");
+        final UUID executionId = UUID.fromString("08350ef7-b16d-4e7b-b481-dbd68f919f5d");
+        final UUID conversationId = UUID.fromString("d6527d11-7f15-4f75-b3a2-674fb2209973");
+        final ChatExecutionDTO responseDTO = mock(ChatExecutionDTO.class);
+        final ChatExecution expected = mock(ChatExecution.class);
+
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(
+                invocation -> ((Supplier<ChatExecutionDTO>) invocation.getArgument(0)).get()
+        );
+        when(this.agentChatApi.getAgentChatExecution(agentId, executionId, conversationId)).thenReturn(responseDTO);
+        when(this.chatAgentClientMapper.asChatExecution(responseDTO)).thenReturn(expected);
+
+        //when
+        final ChatExecution actual = this.agentChatAtmssoxClient.getAgentChatExecution(agentId, executionId, conversationId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentChatApi).getAgentChatExecution(agentId, executionId, conversationId);
+        verify(this.chatAgentClientMapper).asChatExecution(responseDTO);
     }
 }
