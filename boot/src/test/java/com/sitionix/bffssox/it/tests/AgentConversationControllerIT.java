@@ -391,4 +391,137 @@ class AgentConversationControllerIT {
                         .expectResponse("responseDefaultGetSitesUnauthorized.json"))
                 .assertDefault();
     }
+
+    @Test
+    @DisplayName("given valid user token when submit conversation execution then return accepted response")
+    void givenValidUserToken_whenSubmitConversationExecution_thenReturnAcceptedResponse() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given request without client request id when submit conversation execution then return accepted response")
+    void givenRequestWithoutClientRequestId_whenSubmitConversationExecution_thenReturnAcceptedResponse() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.withRequest("requestDefaultSubmitConversationExecutionWithoutClientRequestId.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream validation response when submit conversation execution then return bad request mapping")
+    void givenUpstreamValidationResponse_whenSubmitConversationExecution_thenReturnBadRequestMapping() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.BAD_REQUEST.value())
+                        .responseBody("responseDefaultMappingSubmitConversationExecutionValidationError.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.BAD_REQUEST.value())
+                        .expectResponse("responseDefaultSubmitConversationExecutionValidationError.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream not found when submit conversation execution then return not found mapping")
+    void givenUpstreamNotFound_whenSubmitConversationExecution_thenReturnNotFoundMapping() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseStatus(HttpStatus.NOT_FOUND.value())
+                        .responseBody("responseDefaultMappingGetAgentConversationNotFound.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectStatus(HttpStatus.NOT_FOUND.value())
+                        .expectResponse("responseDefaultGetAgentConversationNotFound.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream dispatch skipped status when submit conversation execution then return unchanged status")
+    void givenUpstreamDispatchSkippedStatus_whenSubmitConversationExecution_thenReturnUnchangedStatus() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseBody("responseDefaultMappingSubmitConversationExecutionDispatchSkipped.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectResponse("responseDefaultSubmitConversationExecutionDispatchSkipped.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given nullable execution id response when submit conversation execution then return accepted mapping")
+    void givenNullableExecutionIdResponse_whenSubmitConversationExecution_thenReturnAcceptedMapping() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseBody("responseDefaultMappingSubmitConversationExecutionNullableExecutionId.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectResponse("responseDefaultSubmitConversationExecutionNullableExecutionId.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
 }
