@@ -7,6 +7,8 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
@@ -21,6 +23,7 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversation;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
@@ -42,6 +45,9 @@ public interface ChatAgentApiMapper {
     @Mapping(target = "clientRequestId", source = "clientRequestId")
     ChatAgentRequest asChatAgentRequest(ChatAgentRequestDTO src);
 
+    @Mapping(target = "conversationId", ignore = true)
+    ChatAgentRequest asChatAgentRequest(SubmitConversationExecutionRequestDTO src);
+
     @Mapping(target = "assistantMessage", source = "reply")
     ChatAgentResponseDTO asChatAgentResponseDto(ChatAgentResponse src);
 
@@ -50,6 +56,9 @@ public interface ChatAgentApiMapper {
     @Mapping(target = "inputMessageId", source = "inputMessageId")
     @Mapping(target = "error", ignore = true)
     SubmitChatExecutionResponseDTO asSubmitChatExecutionResponseDto(SubmitChatExecutionResponse src);
+
+    @Mapping(target = "executionStatus", source = "executionStatus")
+    SubmitConversationExecutionResponseDTO asSubmitConversationExecutionResponseDto(SubmitConversationExecutionResponse src);
 
     @Mapping(target = "status", source = "state")
     @Mapping(target = "acceptedAt", source = "createdAt")

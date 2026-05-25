@@ -6,11 +6,15 @@ import com.app_afesox.atmssox.client.dto.AgentConversationsResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.mapper.ChatAgentClientMapper;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -68,5 +72,14 @@ public class AgentConversationAtmssoxClient implements AgentConversationClient {
                 () -> this.agentConversationApi.getProjectConversation(projectId, conversationId)
         );
         return this.chatAgentClientMapper.asProjectConversationDetails(responseDTO);
+    }
+
+    @Override
+    public SubmitConversationExecutionResponse submitConversationExecution(final UUID conversationId, final ChatAgentRequest request) {
+        final SubmitConversationExecutionRequestDTO requestDTO = this.chatAgentClientMapper.asSubmitConversationExecutionRequestDto(request);
+        final SubmitConversationExecutionResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentConversationApi.submitConversationExecution(conversationId, requestDTO)
+        );
+        return this.chatAgentClientMapper.asSubmitConversationExecutionResponse(responseDTO);
     }
 }
