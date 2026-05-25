@@ -5,6 +5,8 @@ import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.ChatAgentRequest;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import java.util.UUID;
 
 /**
@@ -23,4 +25,6 @@ public interface AgentConversationClient {
     ProjectConversationsResponse listProjectConversations(UUID projectId);
 
     ProjectConversationDetails getProjectConversation(UUID projectId, UUID conversationId);
+
+    SubmitConversationExecutionResponse submitConversationExecution(UUID conversationId, ChatAgentRequest request);
 }

@@ -30,6 +30,7 @@ public class AgentChatAtmssoxClient implements AgentChatClient {
         return this.chatAgentClientMapper.asSubmitChatExecutionResponse(responseDTO);
     }
 
+    @Override
     public ChatExecution getAgentChatExecution(final UUID agentId, final UUID executionId, final UUID conversationId) {
         final ChatExecutionDTO responseDTO = this.atmssoxClientCallExecutor.execute(
                 () -> this.agentChatApi.getAgentChatExecution(agentId, executionId, conversationId)

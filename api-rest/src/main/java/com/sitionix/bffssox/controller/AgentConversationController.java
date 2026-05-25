@@ -6,11 +6,15 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.ChatAgentRequest;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.usecase.CreateProjectConversation;
 import com.sitionix.bffssox.usecase.DeleteAgentConversation;
@@ -18,6 +22,7 @@ import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import com.sitionix.bffssox.usecase.GetProjectConversation;
 import com.sitionix.bffssox.usecase.ListProjectConversations;
+import com.sitionix.bffssox.usecase.SubmitConversationExecution;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +42,7 @@ public class AgentConversationController implements AgentConversationApi {
     private final CreateProjectConversation createProjectConversation;
     private final ListProjectConversations listProjectConversations;
     private final GetProjectConversation getProjectConversation;
+    private final SubmitConversationExecution submitConversationExecution;
 
     @Override
     @PreAuthorize("isAuthenticated()")
@@ -80,5 +86,16 @@ public class AgentConversationController implements AgentConversationApi {
     public ResponseEntity<ProjectConversationDetailsDTO> getProjectConversation(final UUID projectId, final UUID conversationId) {
         final ProjectConversationDetails response = this.getProjectConversation.execute(projectId, conversationId);
         return ResponseEntity.ok(this.chatAgentApiMapper.asProjectConversationDetailsDto(response));
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SubmitConversationExecutionResponseDTO> submitConversationExecution(
+            final UUID conversationId,
+            @Valid final SubmitConversationExecutionRequestDTO submitConversationExecutionRequestDTO
+    ) {
+        final ChatAgentRequest request = this.chatAgentApiMapper.asChatAgentRequest(submitConversationExecutionRequestDTO);
+        final SubmitConversationExecutionResponse response = this.submitConversationExecution.execute(conversationId, request);
+        return ResponseEntity.accepted().body(this.chatAgentApiMapper.asSubmitConversationExecutionResponseDto(response));
     }
 }

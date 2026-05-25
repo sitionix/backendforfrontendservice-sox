@@ -13,6 +13,8 @@ import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationParticipantDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationProjectDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.atmssox.client.dto.SubmitConversationExecutionResponseDTO;
 import com.app_afesox.atmssox.client.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
@@ -22,6 +24,7 @@ import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.ProjectConversation;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationParticipant;
@@ -42,6 +45,8 @@ public interface ChatAgentClientMapper {
     @Mapping(target = "clientRequestId", source = "clientRequestId")
     ChatAgentRequestDTO asChatAgentRequestDto(ChatAgentRequest src);
 
+    SubmitConversationExecutionRequestDTO asSubmitConversationExecutionRequestDto(ChatAgentRequest src);
+
     @Mapping(target = "reply", source = "assistantMessage")
     ChatAgentResponse asChatAgentResponse(ChatAgentExecutionDTO src);
 
@@ -49,6 +54,8 @@ public interface ChatAgentClientMapper {
     @Mapping(target = "createdAt", source = "acceptedAt")
     @Mapping(target = "inputMessageId", source = "inputMessageId")
     SubmitChatExecutionResponse asSubmitChatExecutionResponse(SubmitChatExecutionResponseDTO src);
+
+    SubmitConversationExecutionResponse asSubmitConversationExecutionResponse(SubmitConversationExecutionResponseDTO src);
 
     @Mapping(target = "state", source = "status")
     @Mapping(target = "createdAt", source = "acceptedAt")

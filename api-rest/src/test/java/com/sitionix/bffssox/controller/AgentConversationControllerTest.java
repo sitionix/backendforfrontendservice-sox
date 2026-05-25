@@ -15,6 +15,7 @@ import com.sitionix.bffssox.usecase.DeleteAgentConversation;
 import com.sitionix.bffssox.usecase.CreateProjectConversation;
 import com.sitionix.bffssox.usecase.ListProjectConversations;
 import com.sitionix.bffssox.usecase.GetProjectConversation;
+import com.sitionix.bffssox.usecase.SubmitConversationExecution;
 import com.sitionix.bffssox.usecase.GetAgentConversation;
 import com.sitionix.bffssox.usecase.GetAgentConversations;
 import java.util.UUID;
@@ -44,15 +45,34 @@ class AgentConversationControllerTest {
     @Mock private CreateProjectConversation createProjectConversation;
     @Mock private ListProjectConversations listProjectConversations;
     @Mock private GetProjectConversation getProjectConversation;
+    @Mock private SubmitConversationExecution submitConversationExecution;
 
     @BeforeEach
     void setUp() {
-        this.agentConversationController = new AgentConversationController(this.chatAgentApiMapper, this.getAgentConversations, this.getAgentConversation, this.deleteAgentConversation, this.createProjectConversation, this.listProjectConversations, this.getProjectConversation);
+        this.agentConversationController = new AgentConversationController(
+                this.chatAgentApiMapper,
+                this.getAgentConversations,
+                this.getAgentConversation,
+                this.deleteAgentConversation,
+                this.createProjectConversation,
+                this.listProjectConversations,
+                this.getProjectConversation,
+                this.submitConversationExecution
+        );
     }
 
     @AfterEach
     void tearDown() {
-        verifyNoMoreInteractions(this.chatAgentApiMapper, this.getAgentConversations, this.getAgentConversation, this.deleteAgentConversation, this.createProjectConversation, this.listProjectConversations, this.getProjectConversation);
+        verifyNoMoreInteractions(
+                this.chatAgentApiMapper,
+                this.getAgentConversations,
+                this.getAgentConversation,
+                this.deleteAgentConversation,
+                this.createProjectConversation,
+                this.listProjectConversations,
+                this.getProjectConversation,
+                this.submitConversationExecution
+        );
     }
 
     @Test
