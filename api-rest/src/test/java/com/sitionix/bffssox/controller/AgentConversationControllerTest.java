@@ -5,11 +5,15 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionRequestDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
 import com.sitionix.bffssox.domain.AgentConversationsResponse;
+import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.mapper.ChatAgentApiMapper;
 import com.sitionix.bffssox.usecase.DeleteAgentConversation;
 import com.sitionix.bffssox.usecase.CreateProjectConversation;
@@ -184,5 +188,28 @@ class AgentConversationControllerTest {
         assertThat(actual).isEqualTo(ResponseEntity.ok(responseDto));
         verify(this.getProjectConversation).execute(projectId, conversationId);
         verify(this.chatAgentApiMapper).asProjectConversationDetailsDto(response);
+    }
+
+    @Test
+    void givenConversationIdAndRequest_whenSubmitConversationExecution_thenReturnAcceptedResponse() {
+        //given
+        final UUID conversationId = UUID.randomUUID();
+        final SubmitConversationExecutionRequestDTO requestDto = mock(SubmitConversationExecutionRequestDTO.class);
+        final ChatAgentRequest request = mock(ChatAgentRequest.class);
+        final SubmitConversationExecutionResponse response = mock(SubmitConversationExecutionResponse.class);
+        final SubmitConversationExecutionResponseDTO responseDto = mock(SubmitConversationExecutionResponseDTO.class);
+        when(this.chatAgentApiMapper.asChatAgentRequest(requestDto)).thenReturn(request);
+        when(this.submitConversationExecution.execute(conversationId, request)).thenReturn(response);
+        when(this.chatAgentApiMapper.asSubmitConversationExecutionResponseDto(response)).thenReturn(responseDto);
+
+        //when
+        final ResponseEntity<SubmitConversationExecutionResponseDTO> actual =
+                this.agentConversationController.submitConversationExecution(conversationId, requestDto);
+
+        //then
+        assertThat(actual).isEqualTo(ResponseEntity.accepted().body(responseDto));
+        verify(this.chatAgentApiMapper).asChatAgentRequest(requestDto);
+        verify(this.submitConversationExecution).execute(conversationId, request);
+        verify(this.chatAgentApiMapper).asSubmitConversationExecutionResponseDto(response);
     }
 }
