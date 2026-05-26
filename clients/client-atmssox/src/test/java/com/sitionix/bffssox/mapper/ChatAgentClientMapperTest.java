@@ -43,6 +43,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -278,6 +279,56 @@ class ChatAgentClientMapperTest {
         assertThatThrownBy(() -> ExecutionStatusDTO.fromValue(unknownStatus))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Unexpected value");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusInProgress_whenMapSubmitExecutionStatus_thenReturnInProgress() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.IN_PROGRESS, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("IN_PROGRESS");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusSucceeded_whenMapSubmitExecutionStatus_thenReturnCompleted() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.SUCCEEDED, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("COMPLETED");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusFailed_whenMapSubmitExecutionStatus_thenReturnFailed() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.FAILED, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("FAILED");
+    }
+
+    @Test
+    void givenExecutionIdAndUnknownStatus_whenMapSubmitExecutionStatus_thenReturnRawValue() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+        final ExecutionStatusDTO executionStatus = mock(ExecutionStatusDTO.class);
+        when(executionStatus.getValue()).thenReturn("UNKNOWN_STATUS");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(executionStatus, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("UNKNOWN_STATUS");
     }
 
     @Test

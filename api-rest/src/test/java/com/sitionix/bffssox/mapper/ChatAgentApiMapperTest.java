@@ -35,6 +35,7 @@ import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -309,6 +310,56 @@ class ChatAgentApiMapperTest {
         assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
         assertThat(actual.getExecutionId()).isNull();
         assertThat(actual.getExecutionStatus()).isNull();
+    }
+
+    @Test
+    void givenRuntimeDispatchedNull_whenMapSubmitExecutionStatus_thenReturnNull() {
+        //given
+        final String executionStatus = "QUEUED";
+        final Boolean runtimeDispatched = null;
+
+        //when
+        final ExecutionStatusDTO actual = this.mapper.mapSubmitExecutionStatus(executionStatus, runtimeDispatched);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenCompletedExecutionStatusAndRuntimeDispatchedTrue_whenMapSubmitExecutionStatus_thenReturnSucceeded() {
+        //given
+        final String executionStatus = "COMPLETED";
+        final Boolean runtimeDispatched = Boolean.TRUE;
+
+        //when
+        final ExecutionStatusDTO actual = this.mapper.mapSubmitExecutionStatus(executionStatus, runtimeDispatched);
+
+        //then
+        assertThat(actual).isEqualTo(ExecutionStatusDTO.SUCCEEDED);
+    }
+
+    @Test
+    void givenNullExecutions_whenMapExecution_thenReturnNull() {
+        //given
+        final List<ChatExecution> executions = null;
+
+        //when
+        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenEmptyExecutions_whenMapExecution_thenReturnNull() {
+        //given
+        final List<ChatExecution> executions = Collections.emptyList();
+
+        //when
+        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
+
+        //then
+        assertThat(actual).isNull();
     }
 
     @Test
