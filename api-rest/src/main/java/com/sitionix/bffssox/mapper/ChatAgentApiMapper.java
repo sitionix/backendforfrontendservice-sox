@@ -7,6 +7,7 @@ import com.app_afesox.bffssox.api_first.dto.AgentConversationsResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatExecutionDTO;
 import com.app_afesox.bffssox.api_first.dto.ChatAgentResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.ExecutionStatusDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateProjectConversationRequestDTO;
@@ -23,6 +24,7 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
+import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversation;
@@ -57,7 +59,9 @@ public interface ChatAgentApiMapper {
     @Mapping(target = "error", ignore = true)
     SubmitChatExecutionResponseDTO asSubmitChatExecutionResponseDto(SubmitChatExecutionResponse src);
 
-    @Mapping(target = "executionStatus", source = "executionStatus")
+    @Mapping(target = "executionId", expression = "java(Boolean.TRUE.equals(src.getRuntimeDispatched()) ? src.getExecutionId() : null)")
+    @Mapping(target = "executionStatus",
+            expression = "java(mapSubmitExecutionStatus(src.getExecutionStatus(), src.getRuntimeDispatched()))")
     SubmitConversationExecutionResponseDTO asSubmitConversationExecutionResponseDto(SubmitConversationExecutionResponse src);
 
     @Mapping(target = "status", source = "state")
@@ -77,7 +81,7 @@ public interface ChatAgentApiMapper {
     AgentConversationsResponseDTO asAgentConversationsResponseDto(AgentConversationsResponse src);
 
     @Mapping(target = "messages", source = "messages")
-    @Mapping(target = "executions", source = "executions")
+    @Mapping(target = "execution", source = "executions")
     AgentConversationDetailsDTO asAgentConversationDetailsDto(AgentConversationDetails src);
 
     default AgentConversationDetailsDTO.TypeEnum map(final String value) {
@@ -128,6 +132,27 @@ public interface ChatAgentApiMapper {
 
     default ProjectConversationParticipantDTO.StatusEnum mapProjectConversationParticipantStatus(final String value) {
         return value == null ? null : ProjectConversationParticipantDTO.StatusEnum.fromValue(value);
+    }
+
+    default ChatExecutionDTO mapExecution(final List<ChatExecution> executions) {
+        if (executions == null || executions.isEmpty()) {
+            return null;
+        }
+        return this.asChatExecutionDto(executions.get(0));
+    }
+
+    default ExecutionStatusDTO mapSubmitExecutionStatus(final String value, final Boolean runtimeDispatched) {
+        if (!Boolean.TRUE.equals(runtimeDispatched)) {
+            return null;
+        }
+        if (value == null) {
+            return null;
+        }
+        return switch (value) {
+            case "QUEUED" -> ExecutionStatusDTO.ACCEPTED;
+            case "COMPLETED" -> ExecutionStatusDTO.SUCCEEDED;
+            default -> ExecutionStatusDTO.fromValue(value);
+        };
     }
 
 }

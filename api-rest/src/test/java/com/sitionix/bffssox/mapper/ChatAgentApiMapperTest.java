@@ -190,7 +190,7 @@ class ChatAgentApiMapperTest {
                         "Clean architecture separates business logic.",
                         createdAt
                 )),
-                List.of(this.mapper.asChatExecutionDto(this.getFailedChatExecution()))
+                this.mapper.asChatExecutionDto(this.getFailedChatExecution())
         );
 
         //when
@@ -467,7 +467,7 @@ class ChatAgentApiMapperTest {
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
             final List<AgentConversationMessageDTO> messages,
-            final List<ChatExecutionDTO> executions
+            final ChatExecutionDTO execution
     ) {
         return AgentConversationDetailsDTO.builder()
                 .id(id)
@@ -477,7 +477,7 @@ class ChatAgentApiMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(execution)
                 .build();
     }
 

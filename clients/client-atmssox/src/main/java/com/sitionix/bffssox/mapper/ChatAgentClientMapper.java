@@ -8,6 +8,7 @@ import com.app_afesox.atmssox.client.dto.ChatAgentExecutionDTO;
 import com.app_afesox.atmssox.client.dto.ChatAgentRequestDTO;
 import com.app_afesox.atmssox.client.dto.ChatExecutionDTO;
 import com.app_afesox.atmssox.client.dto.CreateProjectConversationRequestDTO;
+import com.app_afesox.atmssox.client.dto.ExecutionStatusDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.atmssox.client.dto.ProjectConversationParticipantDTO;
@@ -32,6 +33,7 @@ import com.sitionix.bffssox.domain.ProjectConversationProject;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.util.List;
+import java.util.UUID;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mapper;
@@ -55,6 +57,10 @@ public interface ChatAgentClientMapper {
     @Mapping(target = "inputMessageId", source = "inputMessageId")
     SubmitChatExecutionResponse asSubmitChatExecutionResponse(SubmitChatExecutionResponseDTO src);
 
+    @Mapping(target = "runtimeDispatched", expression = "java(src.getExecutionId() != null && src.getExecutionStatus() != null)")
+    @Mapping(target = "executionId", expression = "java(src.getExecutionId() != null && src.getExecutionStatus() != null ? src.getExecutionId() : null)")
+    @Mapping(target = "executionStatus",
+            expression = "java(mapSubmitExecutionStatus(src.getExecutionStatus(), src.getExecutionId()))")
     SubmitConversationExecutionResponse asSubmitConversationExecutionResponse(SubmitConversationExecutionResponseDTO src);
 
     @Mapping(target = "state", source = "status")
@@ -126,5 +132,21 @@ public interface ChatAgentClientMapper {
 
     default String mapProjectConversationParticipantStatus(final ProjectConversationParticipantDTO.StatusEnum value) {
         return value == null ? null : value.getValue();
+    }
+
+    default String mapSubmitExecutionStatus(final ExecutionStatusDTO value, final UUID executionId) {
+        if (executionId == null) {
+            return null;
+        }
+        if (value == null) {
+            return null;
+        }
+        return switch (value.getValue()) {
+            case "ACCEPTED" -> "QUEUED";
+            case "IN_PROGRESS" -> "IN_PROGRESS";
+            case "SUCCEEDED" -> "COMPLETED";
+            case "FAILED" -> "FAILED";
+            default -> value.getValue();
+        };
     }
 }

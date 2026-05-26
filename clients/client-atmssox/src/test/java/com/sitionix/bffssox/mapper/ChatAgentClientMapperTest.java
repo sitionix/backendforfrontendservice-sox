@@ -243,7 +243,6 @@ class ChatAgentClientMapperTest {
         //given
         final SubmitConversationExecutionResponseDTO given = this.getSubmitConversationExecutionResponseDto();
         final SubmitConversationExecutionResponse expected = this.getSubmitConversationExecutionResponse();
-        when(this.chatExecutionStatusClientMapper.mapExecutionStatus(ExecutionStatusDTO.ACCEPTED)).thenReturn("QUEUED");
 
         //when
         final SubmitConversationExecutionResponse actual = this.mapper.asSubmitConversationExecutionResponse(given);
@@ -555,6 +554,7 @@ class ChatAgentClientMapperTest {
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
                 .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
+                .runtimeDispatched(Boolean.TRUE)
                 .executionStatus("QUEUED")
                 .build();
     }

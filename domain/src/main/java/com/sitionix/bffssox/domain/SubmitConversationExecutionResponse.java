@@ -12,6 +12,8 @@ public class SubmitConversationExecutionResponse {
 
     private UUID inputMessageId;
 
+    private Boolean runtimeDispatched;
+
     private UUID executionId;
 
     private String executionStatus;
