@@ -24,7 +24,6 @@ import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.ChatAgentMessage;
 import com.sitionix.bffssox.domain.ChatAgentRequest;
 import com.sitionix.bffssox.domain.ChatAgentResponse;
-import com.sitionix.bffssox.domain.ChatExecution;
 import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.CreateProjectConversationRequest;
 import com.sitionix.bffssox.domain.ProjectConversation;
