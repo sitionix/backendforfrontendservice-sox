@@ -227,6 +227,28 @@ class AgentConversationControllerIT {
     }
 
     @Test
+    @DisplayName("given upstream execution metadata when get one agent conversation then return execution object")
+    void givenUpstreamExecutionMetadata_whenGetOneAgentConversation_thenReturnExecutionObject() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.GET_AGENT_CONVERSATION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .responseBody("responseDefaultMappingGetAgentConversationWithExecutionInProgress.json")
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.GET_AGENT_CONVERSATION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectResponse("responseDefaultGetAgentConversationWithExecutionInProgress.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
     @DisplayName("given invalid conversation id when get one agent conversation then return bad request")
     void givenInvalidConversationId_whenGetOneAgentConversation_thenReturnBadRequest() {
         //given
@@ -498,6 +520,28 @@ class AgentConversationControllerIT {
                 .withPathParameters(PathParams.create()
                         .add("conversationId", "11111111-1111-1111-1111-111111111111"))
                 .applyDefault(context -> context.expectResponse("responseDefaultSubmitConversationExecutionRuntimeNotDispatched.json"))
+                .assertDefault();
+
+        requestBuilder.verify();
+    }
+
+    @Test
+    @DisplayName("given upstream in progress status when submit conversation execution then return in progress mapping")
+    void givenUpstreamInProgressStatus_whenSubmitConversationExecution_thenReturnInProgressMapping() {
+        //given
+        final RequestBuilder<?, ?> requestBuilder = this.testManager.wiremock()
+                .createMapping(WireMockEndpoint.POST_CONVERSATION_EXECUTION)
+                .pathPattern(WireMockPathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.responseBody("responseDefaultMappingSubmitConversationExecutionInProgress.json"))
+                .createDefault();
+
+        //when then
+        this.testManager.mockMvc()
+                .ping(MockMvcEndpoint.POST_CONVERSATION_EXECUTION)
+                .withPathParameters(PathParams.create()
+                        .add("conversationId", "11111111-1111-1111-1111-111111111111"))
+                .applyDefault(context -> context.expectResponse("responseDefaultSubmitConversationExecutionInProgress.json"))
                 .assertDefault();
 
         requestBuilder.verify();
