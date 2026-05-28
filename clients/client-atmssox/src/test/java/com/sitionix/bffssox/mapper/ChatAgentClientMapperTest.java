@@ -42,6 +42,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -243,13 +245,90 @@ class ChatAgentClientMapperTest {
         //given
         final SubmitConversationExecutionResponseDTO given = this.getSubmitConversationExecutionResponseDto();
         final SubmitConversationExecutionResponse expected = this.getSubmitConversationExecutionResponse();
-        when(this.chatExecutionStatusClientMapper.mapExecutionStatus(ExecutionStatusDTO.ACCEPTED)).thenReturn("QUEUED");
 
         //when
         final SubmitConversationExecutionResponse actual = this.mapper.asSubmitConversationExecutionResponse(given);
 
         //then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void givenSubmitConversationExecutionResponseDtoWithoutExecutionMetadata_whenAsSubmitConversationExecutionResponse_thenReturnRuntimeDispatchedFalse() {
+        //given
+        final SubmitConversationExecutionResponseDTO given = this.getSubmitConversationExecutionResponseDto(null, null);
+
+        //when
+        final SubmitConversationExecutionResponse actual = this.mapper.asSubmitConversationExecutionResponse(given);
+
+        //then
+        assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
+        assertThat(actual.getRuntimeDispatched()).isFalse();
+        assertThat(actual.getExecutionId()).isNull();
+        assertThat(actual.getExecutionStatus()).isNull();
+    }
+
+    @Test
+    void givenUnknownExecutionStatusValue_whenCreateExecutionStatusDto_thenThrowIllegalArgumentException() {
+        //given
+        final String unknownStatus = "SOME_NEW_STATUS";
+
+        //when
+        //then
+        assertThatThrownBy(() -> ExecutionStatusDTO.fromValue(unknownStatus))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unexpected value");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusInProgress_whenMapSubmitExecutionStatus_thenReturnInProgress() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.IN_PROGRESS, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("IN_PROGRESS");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusSucceeded_whenMapSubmitExecutionStatus_thenReturnCompleted() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.SUCCEEDED, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("COMPLETED");
+    }
+
+    @Test
+    void givenExecutionIdAndStatusFailed_whenMapSubmitExecutionStatus_thenReturnFailed() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(ExecutionStatusDTO.FAILED, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("FAILED");
+    }
+
+    @Test
+    void givenExecutionIdAndUnknownStatus_whenMapSubmitExecutionStatus_thenReturnRawValue() {
+        //given
+        final UUID executionId = UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95");
+        final ExecutionStatusDTO executionStatus = mock(ExecutionStatusDTO.class);
+        when(executionStatus.getValue()).thenReturn("UNKNOWN_STATUS");
+
+        //when
+        final String actual = this.mapper.mapSubmitExecutionStatus(executionStatus, executionId);
+
+        //then
+        assertThat(actual).isEqualTo("UNKNOWN_STATUS");
     }
 
     @Test
@@ -542,11 +621,21 @@ class ChatAgentClientMapperTest {
     }
 
     private SubmitConversationExecutionResponseDTO getSubmitConversationExecutionResponseDto() {
+        return this.getSubmitConversationExecutionResponseDto(
+                UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"),
+                ExecutionStatusDTO.ACCEPTED
+        );
+    }
+
+    private SubmitConversationExecutionResponseDTO getSubmitConversationExecutionResponseDto(
+            final UUID executionId,
+            final ExecutionStatusDTO executionStatus
+    ) {
         return SubmitConversationExecutionResponseDTO.builder()
-                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .executionId(executionId)
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
                 .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
-                .executionStatus(ExecutionStatusDTO.ACCEPTED)
+                .executionStatus(executionStatus)
                 .build();
     }
 
@@ -555,6 +644,7 @@ class ChatAgentClientMapperTest {
                 .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
                 .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
                 .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
+                .runtimeDispatched(Boolean.TRUE)
                 .executionStatus("QUEUED")
                 .build();
     }

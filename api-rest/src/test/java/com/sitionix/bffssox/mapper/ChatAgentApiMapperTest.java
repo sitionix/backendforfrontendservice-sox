@@ -16,6 +16,7 @@ import com.app_afesox.bffssox.api_first.dto.ProjectConversationDetailsDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationParticipantDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationProjectDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectConversationsResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.SubmitConversationExecutionResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.SubmitChatExecutionResponseDTO;
 import com.sitionix.bffssox.domain.AgentConversation;
 import com.sitionix.bffssox.domain.AgentConversationDetails;
@@ -31,8 +32,10 @@ import com.sitionix.bffssox.domain.ProjectConversationDetails;
 import com.sitionix.bffssox.domain.ProjectConversationParticipant;
 import com.sitionix.bffssox.domain.ProjectConversationProject;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
+import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -190,7 +193,7 @@ class ChatAgentApiMapperTest {
                         "Clean architecture separates business logic.",
                         createdAt
                 )),
-                List.of(this.mapper.asChatExecutionDto(this.getFailedChatExecution()))
+                this.mapper.asChatExecutionDto(this.getFailedChatExecution())
         );
 
         //when
@@ -277,6 +280,86 @@ class ChatAgentApiMapperTest {
         assertThat(actual.getStatus()).isEqualTo(ProjectConversationDetailsDTO.StatusEnum.ACTIVE);
         assertThat(actual.getProject().getName()).isEqualTo("Sitionix");
         assertThat(actual.getParticipants()).hasSize(1);
+    }
+
+    @Test
+    void givenSubmitConversationExecutionResponseWithRuntimeDispatch_whenAsSubmitConversationExecutionResponseDto_thenReturnExecutionMetadata() {
+        //given
+        final SubmitConversationExecutionResponse given = this.getSubmitConversationExecutionResponse(Boolean.TRUE, "QUEUED");
+
+        //when
+        final SubmitConversationExecutionResponseDTO actual = this.mapper.asSubmitConversationExecutionResponseDto(given);
+
+        //then
+        assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
+        assertThat(actual.getExecutionId()).isEqualTo(given.getExecutionId());
+        assertThat(actual.getExecutionStatus()).isEqualTo(ExecutionStatusDTO.ACCEPTED);
+    }
+
+    @Test
+    void givenSubmitConversationExecutionResponseWithoutRuntimeDispatch_whenAsSubmitConversationExecutionResponseDto_thenReturnNullExecutionMetadata() {
+        //given
+        final SubmitConversationExecutionResponse given = this.getSubmitConversationExecutionResponse(Boolean.FALSE, "QUEUED");
+
+        //when
+        final SubmitConversationExecutionResponseDTO actual = this.mapper.asSubmitConversationExecutionResponseDto(given);
+
+        //then
+        assertThat(actual.getConversationId()).isEqualTo(given.getConversationId());
+        assertThat(actual.getInputMessageId()).isEqualTo(given.getInputMessageId());
+        assertThat(actual.getExecutionId()).isNull();
+        assertThat(actual.getExecutionStatus()).isNull();
+    }
+
+    @Test
+    void givenRuntimeDispatchedNull_whenMapSubmitExecutionStatus_thenReturnNull() {
+        //given
+        final String executionStatus = "QUEUED";
+        final Boolean runtimeDispatched = null;
+
+        //when
+        final ExecutionStatusDTO actual = this.mapper.mapSubmitExecutionStatus(executionStatus, runtimeDispatched);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenCompletedExecutionStatusAndRuntimeDispatchedTrue_whenMapSubmitExecutionStatus_thenReturnSucceeded() {
+        //given
+        final String executionStatus = "COMPLETED";
+        final Boolean runtimeDispatched = Boolean.TRUE;
+
+        //when
+        final ExecutionStatusDTO actual = this.mapper.mapSubmitExecutionStatus(executionStatus, runtimeDispatched);
+
+        //then
+        assertThat(actual).isEqualTo(ExecutionStatusDTO.SUCCEEDED);
+    }
+
+    @Test
+    void givenNullExecutions_whenMapExecution_thenReturnNull() {
+        //given
+        final List<ChatExecution> executions = null;
+
+        //when
+        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
+
+        //then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void givenEmptyExecutions_whenMapExecution_thenReturnNull() {
+        //given
+        final List<ChatExecution> executions = Collections.emptyList();
+
+        //when
+        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
+
+        //then
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -467,7 +550,7 @@ class ChatAgentApiMapperTest {
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
             final List<AgentConversationMessageDTO> messages,
-            final List<ChatExecutionDTO> executions
+            final ChatExecutionDTO execution
     ) {
         return AgentConversationDetailsDTO.builder()
                 .id(id)
@@ -477,7 +560,7 @@ class ChatAgentApiMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(execution)
                 .build();
     }
 
@@ -522,6 +605,19 @@ class ChatAgentApiMapperTest {
                 .createdAt(OffsetDateTime.parse("2026-04-29T10:00:00Z"))
                 .idempotencyKey("idem")
                 .idempotencyReplayed(false)
+                .build();
+    }
+
+    private SubmitConversationExecutionResponse getSubmitConversationExecutionResponse(
+            final Boolean runtimeDispatched,
+            final String executionStatus
+    ) {
+        return SubmitConversationExecutionResponse.builder()
+                .executionId(UUID.fromString("d8827667-03f3-4d46-ae0d-d35e43ecdf95"))
+                .conversationId(UUID.fromString("5bddb194-5ca2-4461-9b6b-c5f986fa86ea"))
+                .inputMessageId(UUID.fromString("f0beec7e-5c98-48b9-ae82-0a6952576a7a"))
+                .runtimeDispatched(runtimeDispatched)
+                .executionStatus(executionStatus)
                 .build();
     }
 
