@@ -1,6 +1,5 @@
 package com.sitionix.bffssox.domain;
 
-import java.util.Map;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
@@ -9,15 +8,11 @@ import lombok.Data;
 @Builder
 public class AgentProjectFlowNode {
 
-    private UUID id;
-
     private String nodeType;
 
     private UUID referenceId;
 
+    private String status;
+
     private AgentProjectFlowNodePosition position;
-
-    private String designStatus;
-
-    private Map<String, Object> config;
 }

@@ -10,7 +10,5 @@ public class AgentProjectFlowPaletteSource {
 
     private String sourceType;
 
-    private UUID sourceId;
-
-    private String sourceName;
+    private UUID referenceId;
 }

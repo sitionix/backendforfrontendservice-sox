@@ -1,6 +1,5 @@
 package com.sitionix.bffssox.domain;
 
-import java.util.Map;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
@@ -9,13 +8,9 @@ import lombok.Data;
 @Builder
 public class AgentProjectFlowEdge {
 
-    private UUID id;
+    private UUID sourceId;
 
-    private UUID sourceNodeId;
-
-    private UUID targetNodeId;
+    private UUID targetId;
 
     private String edgeType;
-
-    private Map<String, Object> config;
 }

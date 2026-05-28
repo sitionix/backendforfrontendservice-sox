@@ -3,6 +3,7 @@ package com.sitionix.bffssox.mapper;
 import com.app_afesox.atmssox.client.dto.AgentDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectFlowPaletteResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectFlowPaletteSourceDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectFlowResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentsResponseDTO;
@@ -28,6 +29,10 @@ public interface AgentClientMapper {
     AgentProject asAgentProject(AgentProjectDTO src);
     AgentProjectFlowResponse asAgentProjectFlowResponse(AgentProjectFlowResponseDTO src);
     AgentProjectFlowPaletteResponse asAgentProjectFlowPaletteResponse(AgentProjectFlowPaletteResponseDTO src);
+
+    default String asSourceType(final AgentProjectFlowPaletteSourceDTO.SourceTypeEnum sourceType) {
+        return sourceType == null ? null : sourceType.getValue();
+    }
 
     AgentsResponse asAgentsResponse(AgentsResponseDTO src);
 

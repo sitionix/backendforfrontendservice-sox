@@ -3,9 +3,9 @@ package com.sitionix.bffssox.controller;
 import com.app_afesox.bffssox.api_first.api.AgentProjectApi;
 import com.app_afesox.bffssox.api_first.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentProjectFlowPaletteResponseDTO;
-import com.app_afesox.bffssox.api_first.dto.AgentProjectFlowResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.AgentProjectsPageResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.GetAgentProjectFlowPaletteResponseDTO;
+import com.app_afesox.bffssox.api_first.dto.GetAgentProjectFlowResponseDTO;
 import com.app_afesox.bffssox.api_first.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.PatchAgentProjectRequestDTO;
 import com.app_afesox.bffssox.api_first.dto.ProjectAgentResponseDTO;
@@ -81,16 +81,16 @@ public class AgentProjectController implements AgentProjectApi {
 
     @Override
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<AgentProjectFlowResponseDTO> getAgentProjectFlow(final UUID projectId) {
+    public ResponseEntity<GetAgentProjectFlowResponseDTO> getAgentProjectFlow(final UUID projectId) {
         final AgentProjectFlowResponse response = this.getAgentProjectFlow.execute(projectId);
-        return ResponseEntity.ok(this.agentApiMapper.asAgentProjectFlowResponseDto(response));
+        return ResponseEntity.ok(this.agentApiMapper.asGetAgentProjectFlowResponseDto(response));
     }
 
     @Override
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<AgentProjectFlowPaletteResponseDTO> getAgentProjectFlowPalette(final UUID projectId) {
+    public ResponseEntity<GetAgentProjectFlowPaletteResponseDTO> getAgentProjectFlowPalette(final UUID projectId) {
         final AgentProjectFlowPaletteResponse response = this.getAgentProjectFlowPalette.execute(projectId);
-        return ResponseEntity.ok(this.agentApiMapper.asAgentProjectFlowPaletteResponseDto(response));
+        return ResponseEntity.ok(this.agentApiMapper.asGetAgentProjectFlowPaletteResponseDto(response));
     }
 
     @Override

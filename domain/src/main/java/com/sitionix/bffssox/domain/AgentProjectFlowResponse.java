@@ -9,6 +9,8 @@ import lombok.Data;
 @Builder
 public class AgentProjectFlowResponse {
 
+    private UUID projectId;
+
     private UUID flowId;
 
     private List<AgentProjectFlowNode> nodes;
