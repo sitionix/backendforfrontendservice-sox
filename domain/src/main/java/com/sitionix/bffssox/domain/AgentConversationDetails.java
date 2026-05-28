@@ -24,5 +24,5 @@ public class AgentConversationDetails {
 
     private List<ChatAgentMessage> messages;
 
-    private List<ChatExecution> executions;
+    private ChatExecution execution;
 }

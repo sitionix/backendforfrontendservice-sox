@@ -35,7 +35,6 @@ import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitConversationExecutionResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -178,7 +177,7 @@ class ChatAgentApiMapperTest {
                         "Clean architecture separates business logic.",
                         createdAt
                 )),
-                List.of(this.getFailedChatExecution())
+                this.getFailedChatExecution()
         );
         final AgentConversationDetailsDTO expected = this.getAgentConversationDetailsDto(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -336,30 +335,6 @@ class ChatAgentApiMapperTest {
 
         //then
         assertThat(actual).isEqualTo(ExecutionStatusDTO.SUCCEEDED);
-    }
-
-    @Test
-    void givenNullExecutions_whenMapExecution_thenReturnNull() {
-        //given
-        final List<ChatExecution> executions = null;
-
-        //when
-        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
-
-        //then
-        assertThat(actual).isNull();
-    }
-
-    @Test
-    void givenEmptyExecutions_whenMapExecution_thenReturnNull() {
-        //given
-        final List<ChatExecution> executions = Collections.emptyList();
-
-        //when
-        final ChatExecutionDTO actual = this.mapper.mapExecution(executions);
-
-        //then
-        assertThat(actual).isNull();
     }
 
     @Test
@@ -529,7 +504,7 @@ class ChatAgentApiMapperTest {
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
             final List<ChatAgentMessage> messages,
-            final List<ChatExecution> executions
+            final ChatExecution execution
     ) {
         return AgentConversationDetails.builder()
                 .id(id)
@@ -539,7 +514,7 @@ class ChatAgentApiMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(execution)
                 .build();
     }
 
