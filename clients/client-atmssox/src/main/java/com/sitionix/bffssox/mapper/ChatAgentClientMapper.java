@@ -32,6 +32,7 @@ import com.sitionix.bffssox.domain.ProjectConversationParticipant;
 import com.sitionix.bffssox.domain.ProjectConversationProject;
 import com.sitionix.bffssox.domain.ProjectConversationsResponse;
 import com.sitionix.bffssox.domain.SubmitChatExecutionResponse;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.mapstruct.InjectionStrategy;
@@ -81,8 +82,15 @@ public interface ChatAgentClientMapper {
 
     @Mapping(target = "type", source = "type")
     @Mapping(target = "messages", source = "messages")
-    @Mapping(target = "executions", source = "executions")
+    @Mapping(target = "executions", expression = "java(mapExecutions(src.getExecution()))")
     AgentConversationDetails asAgentConversationDetails(AgentConversationDetailsDTO src);
+
+    default List<ChatExecution> mapExecutions(final ChatExecutionDTO execution) {
+        if (execution == null) {
+            return Collections.emptyList();
+        }
+        return List.of(this.asChatExecution(execution));
+    }
 
     default String map(final AgentConversationDetailsDTO.TypeEnum value) {
         return value == null ? null : value.getValue();

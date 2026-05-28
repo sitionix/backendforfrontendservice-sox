@@ -3,12 +3,16 @@ package com.sitionix.bffssox.client;
 import com.app_afesox.atmssox.client.api.AgentProjectApi;
 import com.app_afesox.atmssox.client.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectFlowPaletteResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectFlowResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
 import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectFlow;
+import com.sitionix.bffssox.domain.AgentProjectFlowPaletteResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
 import com.sitionix.bffssox.domain.ProjectAgent;
@@ -183,5 +187,45 @@ class AgentProjectAtmssoxClientTest {
         //then
         verify(this.atmssoxClientCallExecutor).execute(any());
         verify(this.agentProjectApi).removeAgentFromProject(projectId, agentId);
+    }
+
+    @Test
+    void givenProjectId_whenGetAgentProjectFlow_thenReturnMappedFlow() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final AgentProjectFlowResponseDTO responseDTO = mock(AgentProjectFlowResponseDTO.class);
+        final AgentProjectFlow expected = mock(AgentProjectFlow.class);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<AgentProjectFlowResponseDTO>) invocation.getArgument(0)).get());
+        when(this.agentProjectApi.getAgentProjectFlow(projectId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgentProjectFlow(responseDTO)).thenReturn(expected);
+
+        //when
+        final AgentProjectFlow actual = this.agentProjectAtmssoxClient.getAgentProjectFlow(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentProjectApi).getAgentProjectFlow(projectId);
+        verify(this.agentClientMapper).asAgentProjectFlow(responseDTO);
+    }
+
+    @Test
+    void givenProjectId_whenGetAgentProjectFlowPalette_thenReturnMappedPalette() {
+        //given
+        final UUID projectId = UUID.randomUUID();
+        final AgentProjectFlowPaletteResponseDTO responseDTO = mock(AgentProjectFlowPaletteResponseDTO.class);
+        final AgentProjectFlowPaletteResponse expected = mock(AgentProjectFlowPaletteResponse.class);
+        when(this.atmssoxClientCallExecutor.execute(any())).thenAnswer(invocation -> ((Supplier<AgentProjectFlowPaletteResponseDTO>) invocation.getArgument(0)).get());
+        when(this.agentProjectApi.getAgentProjectFlowPalette(projectId)).thenReturn(responseDTO);
+        when(this.agentClientMapper.asAgentProjectFlowPaletteResponse(responseDTO)).thenReturn(expected);
+
+        //when
+        final AgentProjectFlowPaletteResponse actual = this.agentProjectAtmssoxClient.getAgentProjectFlowPalette(projectId);
+
+        //then
+        assertThat(actual).isEqualTo(expected);
+        verify(this.atmssoxClientCallExecutor).execute(any());
+        verify(this.agentProjectApi).getAgentProjectFlowPalette(projectId);
+        verify(this.agentClientMapper).asAgentProjectFlowPaletteResponse(responseDTO);
     }
 }

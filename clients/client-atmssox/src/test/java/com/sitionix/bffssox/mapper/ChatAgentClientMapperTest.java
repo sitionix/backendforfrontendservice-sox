@@ -533,7 +533,7 @@ class ChatAgentClientMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(executions == null || executions.isEmpty() ? null : executions.getFirst())
                 .build();
     }
 

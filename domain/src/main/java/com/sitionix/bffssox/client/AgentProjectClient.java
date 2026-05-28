@@ -1,6 +1,8 @@
 package com.sitionix.bffssox.client;
 
 import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectFlow;
+import com.sitionix.bffssox.domain.AgentProjectFlowPaletteResponse;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
@@ -29,4 +31,8 @@ public interface AgentProjectClient {
     ProjectAgent addAgentToProject(UUID projectId, AddAgentToProjectRequest request);
 
     void removeAgentFromProject(UUID projectId, UUID agentId);
+
+    AgentProjectFlow getAgentProjectFlow(UUID projectId);
+
+    AgentProjectFlowPaletteResponse getAgentProjectFlowPalette(UUID projectId);
 }
