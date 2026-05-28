@@ -51,7 +51,7 @@ public interface AgentApiMapper {
 
     default List<com.app_afesox.bffssox.api_first.dto.AgentProjectFlowNodeDTO1> asAgentProjectFlowNodeDTO1s(final List<AgentProjectFlowNode> src) {
         if (src == null) {
-            return null;
+            return Collections.emptyList();
         }
         return src.stream().map(this::asAgentProjectFlowNodeDTO1).toList();
     }
@@ -60,7 +60,7 @@ public interface AgentApiMapper {
 
     default List<com.app_afesox.bffssox.api_first.dto.AgentProjectFlowEdgeDTO> asAgentProjectFlowEdgeDTOs(final List<AgentProjectFlowEdge> src) {
         if (src == null) {
-            return null;
+            return Collections.emptyList();
         }
         return src.stream().map(this::asAgentProjectFlowEdgeDTO).toList();
     }
