@@ -21,6 +21,8 @@ import com.sitionix.bffssox.usecase.AddAgentToProject;
 import com.sitionix.bffssox.usecase.CreateAgentProject;
 import com.sitionix.bffssox.usecase.DeleteAgentProject;
 import com.sitionix.bffssox.usecase.GetAgentProject;
+import com.sitionix.bffssox.usecase.GetAgentProjectFlow;
+import com.sitionix.bffssox.usecase.GetAgentProjectFlowPalette;
 import com.sitionix.bffssox.usecase.GetAgentProjects;
 import com.sitionix.bffssox.usecase.GetProjectAgents;
 import com.sitionix.bffssox.usecase.PatchAgentProject;
@@ -51,6 +53,8 @@ class AgentProjectControllerTest {
     @Mock private CreateAgentProject createAgentProject;
     @Mock private GetAgentProjects getAgentProjects;
     @Mock private GetAgentProject getAgentProject;
+    @Mock private GetAgentProjectFlow getAgentProjectFlow;
+    @Mock private GetAgentProjectFlowPalette getAgentProjectFlowPalette;
     @Mock private PatchAgentProjectApiMapper patchAgentProjectApiMapper;
     @Mock private PatchAgentProject patchAgentProject;
     @Mock private DeleteAgentProject deleteAgentProject;
@@ -61,7 +65,7 @@ class AgentProjectControllerTest {
     @BeforeEach
     void setUp() {
         this.agentProjectController = new AgentProjectController(this.createAgentProjectApiMapper, this.agentApiMapper,
-                this.createAgentProject, this.getAgentProjects, this.getAgentProject,
+                this.createAgentProject, this.getAgentProjects, this.getAgentProject, this.getAgentProjectFlow, this.getAgentProjectFlowPalette,
                 this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject, this.getProjectAgents,
                 this.addAgentToProject, this.removeAgentFromProject);
     }
@@ -69,6 +73,7 @@ class AgentProjectControllerTest {
     @AfterEach
     void tearDown() {
         verifyNoMoreInteractions(this.createAgentProjectApiMapper, this.agentApiMapper, this.createAgentProject, this.getAgentProjects, this.getAgentProject,
+                this.getAgentProjectFlow, this.getAgentProjectFlowPalette,
                 this.patchAgentProjectApiMapper, this.patchAgentProject, this.deleteAgentProject, this.getProjectAgents, this.addAgentToProject,
                 this.removeAgentFromProject);
     }

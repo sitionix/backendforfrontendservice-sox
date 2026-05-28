@@ -3,6 +3,8 @@ package com.sitionix.bffssox.client;
 import com.app_afesox.atmssox.client.api.AgentProjectApi;
 import com.app_afesox.atmssox.client.dto.AddAgentToProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectFlowPaletteResponseDTO;
+import com.app_afesox.atmssox.client.dto.AgentProjectFlowResponseDTO;
 import com.app_afesox.atmssox.client.dto.AgentProjectsPageResponseDTO;
 import com.app_afesox.atmssox.client.dto.CreateAgentProjectRequestDTO;
 import com.app_afesox.atmssox.client.dto.PatchAgentProjectRequestDTO;
@@ -10,6 +12,8 @@ import com.app_afesox.atmssox.client.dto.ProjectAgentResponseDTO;
 import com.app_afesox.atmssox.client.dto.ProjectAgentsResponseDTO;
 import com.sitionix.bffssox.domain.AddAgentToProjectRequest;
 import com.sitionix.bffssox.domain.AgentProject;
+import com.sitionix.bffssox.domain.AgentProjectFlowPaletteResponse;
+import com.sitionix.bffssox.domain.AgentProjectFlowResponse;
 import com.sitionix.bffssox.domain.AgentProjectsPageResponse;
 import com.sitionix.bffssox.domain.CreateAgentProjectRequest;
 import com.sitionix.bffssox.domain.PatchAgentProjectRequest;
@@ -48,6 +52,20 @@ public class AgentProjectAtmssoxClient implements AgentProjectClient {
     public AgentProject getAgentProject(final UUID projectId) {
         final AgentProjectDTO responseDTO = this.atmssoxClientCallExecutor.execute(() -> this.agentProjectApi.getAgentProject(projectId));
         return this.agentClientMapper.asAgentProject(responseDTO);
+    }
+
+    @Override
+    public AgentProjectFlowResponse getAgentProjectFlow(final UUID projectId) {
+        final AgentProjectFlowResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(() -> this.agentProjectApi.getAgentProjectFlow(projectId));
+        return this.agentClientMapper.asAgentProjectFlowResponse(responseDTO);
+    }
+
+    @Override
+    public AgentProjectFlowPaletteResponse getAgentProjectFlowPalette(final UUID projectId) {
+        final AgentProjectFlowPaletteResponseDTO responseDTO = this.atmssoxClientCallExecutor.execute(
+                () -> this.agentProjectApi.getAgentProjectFlowPalette(projectId)
+        );
+        return this.agentClientMapper.asAgentProjectFlowPaletteResponse(responseDTO);
     }
 
     public AgentProject patchAgentProject(final UUID projectId, final PatchAgentProjectRequest request) {
