@@ -80,7 +80,7 @@ public interface ChatAgentApiMapper {
     AgentConversationsResponseDTO asAgentConversationsResponseDto(AgentConversationsResponse src);
 
     @Mapping(target = "messages", source = "messages")
-    @Mapping(target = "execution", source = "executions")
+    @Mapping(target = "execution", source = "execution")
     AgentConversationDetailsDTO asAgentConversationDetailsDto(AgentConversationDetails src);
 
     default AgentConversationDetailsDTO.TypeEnum map(final String value) {
@@ -131,13 +131,6 @@ public interface ChatAgentApiMapper {
 
     default ProjectConversationParticipantDTO.StatusEnum mapProjectConversationParticipantStatus(final String value) {
         return value == null ? null : ProjectConversationParticipantDTO.StatusEnum.fromValue(value);
-    }
-
-    default ChatExecutionDTO mapExecution(final List<ChatExecution> executions) {
-        if (executions == null || executions.isEmpty()) {
-            return null;
-        }
-        return this.asChatExecutionDto(executions.get(0));
     }
 
     default ExecutionStatusDTO mapSubmitExecutionStatus(final String value, final Boolean runtimeDispatched) {

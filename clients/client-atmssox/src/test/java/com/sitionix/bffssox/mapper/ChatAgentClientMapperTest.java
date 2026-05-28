@@ -187,7 +187,7 @@ class ChatAgentClientMapperTest {
                         "Clean architecture separates business logic.",
                         createdAt
                 )),
-                List.of(this.getFailedChatExecutionDto())
+                this.getFailedChatExecutionDto()
         );
         final AgentConversationDetails expected = this.getAgentConversationDetails(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -202,7 +202,7 @@ class ChatAgentClientMapperTest {
                         "Clean architecture separates business logic.",
                         createdAt
                 )),
-                List.of(this.getFailedChatExecution())
+                this.getFailedChatExecution()
         );
 
         //when
@@ -523,7 +523,7 @@ class ChatAgentClientMapperTest {
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
             final List<AgentConversationMessageDTO> messages,
-            final List<ChatExecutionDTO> executions
+            final ChatExecutionDTO execution
     ) {
         return AgentConversationDetailsDTO.builder()
                 .id(id)
@@ -533,7 +533,7 @@ class ChatAgentClientMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(execution)
                 .build();
     }
 
@@ -544,7 +544,7 @@ class ChatAgentClientMapperTest {
             final OffsetDateTime createdAt,
             final OffsetDateTime updatedAt,
             final List<ChatAgentMessage> messages,
-            final List<ChatExecution> executions
+            final ChatExecution execution
     ) {
         return AgentConversationDetails.builder()
                 .id(id)
@@ -554,7 +554,7 @@ class ChatAgentClientMapperTest {
                 .updatedAt(updatedAt)
                 .lastMessageAt(updatedAt)
                 .messages(messages)
-                .executions(executions)
+                .execution(execution)
                 .build();
     }
 

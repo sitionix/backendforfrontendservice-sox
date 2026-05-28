@@ -21,17 +21,15 @@
       "createdAt": "2026-04-21T10:01:00Z"
     }
   ],
-  "executions": [
-    {
-      "executionId": "d8827667-03f3-4d46-ae0d-d35e43ecdf95",
-      "conversationId": "11111111-1111-1111-1111-111111111111",
-      "agentId": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
-      "status": "IN_PROGRESS",
-      "acceptedAt": "2026-04-21T10:01:05Z",
-      "startedAt": "2026-04-21T10:01:06Z",
-      "completedAt": null,
-      "error": null,
-      "assistantMessage": null
-    }
-  ]
+  "execution": {
+    "executionId": "d8827667-03f3-4d46-ae0d-d35e43ecdf95",
+    "conversationId": "11111111-1111-1111-1111-111111111111",
+    "agentId": "4e0c95eb-9e63-4b3f-98f4-2c8c713233c0",
+    "status": "IN_PROGRESS",
+    "acceptedAt": "2026-04-21T10:01:05Z",
+    "startedAt": "2026-04-21T10:01:06Z",
+    "completedAt": null,
+    "error": null,
+    "assistantMessage": null
+  }
 }
