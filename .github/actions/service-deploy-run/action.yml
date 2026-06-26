@@ -1,5 +1,5 @@
-name: Dev Deploy Run
-description: Build, publish, deploy, and verify the BFF on the dev VM.
+name: Service Deploy Run
+description: Build, publish, deploy, and verify the BFF on the target VM environment.
 
 inputs:
   github_environment:
@@ -102,12 +102,12 @@ runs:
         SITIONIX_BIND_ADDRESS=127.0.0.1
         SITIONIX_HOST_PORT=8080
         SITIONIX_CONTAINER_PORT=8080
-        SITIONIX_ACTIVE_PROFILE=dev
-        SITIONIX_DOCKER_NETWORK=sitionix-dev
+        SITIONIX_ACTIVE_PROFILE=${GITHUB_ENVIRONMENT_NAME}
+        SITIONIX_DOCKER_NETWORK=sitionix-${GITHUB_ENVIRONMENT_NAME}
         SITIONIX_RUNTIME_ROOT=/opt/sitionix/runtime/backendforfrontendservice-sox
         SITIONIX_BACKUP_ROOT=/opt/sitionix/backups/backendforfrontendservice-sox
-        SITIONIX_SHARED_SECRET_ENV_PATH=/opt/sitionix/runtime/shared/dev-internal-auth.env
-        SITIONIX_SERVICE_ENV_PATH=/opt/sitionix/runtime/backendforfrontendservice-sox/shared/backendforfrontendservice-sox.dev.env
+        SITIONIX_SHARED_SECRET_ENV_PATH=/opt/sitionix/runtime/shared/${GITHUB_ENVIRONMENT_NAME}-internal-auth.env
+        SITIONIX_SERVICE_ENV_PATH=/opt/sitionix/runtime/backendforfrontendservice-sox/shared/backendforfrontendservice-sox.${GITHUB_ENVIRONMENT_NAME}.env
         SITIONIX_LOCAL_READINESS_URL=http://127.0.0.1:8080/bffssox/actuator/health/readiness
         EOF
 
@@ -117,7 +117,7 @@ runs:
           "imageRef": "${IMAGE_REF}",
           "githubSha": "${GITHUB_SHA}",
           "githubEnvironment": "${GITHUB_ENVIRONMENT_NAME}",
-          "dockerNetwork": "sitionix-dev",
+          "dockerNetwork": "sitionix-${GITHUB_ENVIRONMENT_NAME}",
           "containerName": "bffssox-service",
           "privateHostPort": "127.0.0.1:8080",
           "privateBaseUrl": "http://backendforfrontendservice-sox:8080/bffssox"
