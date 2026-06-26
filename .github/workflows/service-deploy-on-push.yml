@@ -25,10 +25,6 @@ on:
         required: false
         type: string
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   resolve-deploy-target:
     runs-on: ubuntu-latest
@@ -61,6 +57,9 @@ jobs:
     needs:
       - resolve-deploy-target
     environment: ${{ needs.resolve-deploy-target.outputs.environment_id }}
+    permissions:
+      contents: read
+      packages: write
     env:
       DEPLOY_VM_PORT: ${{ vars.DEPLOY_VM_PORT }}
     steps:
